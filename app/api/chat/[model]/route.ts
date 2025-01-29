@@ -29,7 +29,6 @@ export async function POST(
       messages,
       system: config.system,
       maxSteps: config.maxSteps,
-      tools: config.tools,
     });
 
     return result.toTextStreamResponse();

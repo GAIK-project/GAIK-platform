@@ -13,13 +13,6 @@ export function generateUUID(): string {
   });
 }
 
-export const preprocessDocument = (content: string): string => {
-  return content
-    .toLowerCase() // muuta kaikki pieniksi kirjaimiksi
-    .replace(/\s+/g, " ") // standardoi välilyönnit
-    .trim(); // poista tyhjät alusta ja lopusta
-};
-
 // Apufunktio tiedostokoon muotoiluun
 export const formatFileSize = (bytes: number) => {
   if (bytes === 0) return "0 B";
