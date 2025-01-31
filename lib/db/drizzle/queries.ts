@@ -10,7 +10,7 @@ export async function getInviteByToken(token: string): Promise<Invite | null> {
     where: and(
       eq(invites.token, token),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date()),
+      gt(invites.expiresAt, new Date())
     ),
   });
 
@@ -32,7 +32,7 @@ export async function markInviteAsUsed(inviteId: string): Promise<boolean> {
   }
 }
 
-export async function getCurrentUser(): Promise<UserData | null> {
+export async function getUserData(): Promise<UserData | null> {
   const supabase = await createServerClient();
 
   try {
@@ -60,7 +60,7 @@ export async function getCurrentUser(): Promise<UserData | null> {
 
     // Jos profiilia ei ole, palauta null tai basic tiedot, tai ohjaa käyttäjä luomaan profiili
     if (!profile) {
-      return null;
+      return null; 
     }
 
     return {
@@ -83,14 +83,14 @@ export async function getCurrentUser(): Promise<UserData | null> {
 }
 export async function validateInvite(
   email: string,
-  organization: Organization,
+  organization: Organization
 ): Promise<Invite | null> {
   const existingInvite = await db.query.invites.findFirst({
     where: and(
       eq(invites.email, email.toLowerCase()),
       eq(invites.organization, organization),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date()),
+      gt(invites.expiresAt, new Date())
     ),
   });
 
@@ -106,7 +106,7 @@ type UserProfileUpdate = Partial<{
 
 export async function updateUserProfile(
   userId: string,
-  data: UserProfileUpdate,
+  data: UserProfileUpdate
 ) {
   try {
     const [updatedProfile] = await db

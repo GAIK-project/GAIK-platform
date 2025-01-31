@@ -2,14 +2,14 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { BreadcrumbHeader } from "@/components/sidebar/breadcrumb-header";
 import { SidebarRouteHandler } from "@/components/sidebar/sidebar-router-handler";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getCurrentUser } from "@/lib/db/drizzle/queries";
+import { getUserData } from "@/lib/db/drizzle/queries";
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const user = await getUserData();
   const userData = user
     ? {
         name: user.name,
