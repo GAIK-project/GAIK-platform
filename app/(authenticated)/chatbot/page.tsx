@@ -1,5 +1,5 @@
+import { DEFAULT_MODEL_NAME, models } from "@/ai/model-names";
 import { Chat } from "@/components/chat/chat";
-import { DEFAULT_MODEL_NAME, models } from "@/lib/ai/model-names";
 import { generateUUID } from "@/lib/utils";
 import { cookies } from "next/headers";
 

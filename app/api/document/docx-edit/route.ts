@@ -1,5 +1,5 @@
+import { inMemoryFS } from "@/ai/inmemory-store";
 import { strReplaceEditor } from "@/ai/tools/str-replace-editor";
-import { inMemoryFS } from "@/lib/ai/inmemory-store";
 import { anthropic } from "@ai-sdk/anthropic";
 import { CoreMessage, streamText } from "ai";
 import { Document, Packer, Paragraph, TextRun } from "docx";

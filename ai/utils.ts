@@ -1,11 +1,11 @@
 import { openai } from "@ai-sdk/openai";
 import {
-  LanguageModelV1CallOptions,
-  LanguageModelV1Message,
-  LanguageModelV1TextPart,
+    LanguageModelV1CallOptions,
+    LanguageModelV1Message,
+    LanguageModelV1TextPart,
 } from "@ai-sdk/provider";
 import { CoreMessage, generateObject } from "ai";
-import { searchDocuments } from "../actions/search";
+import { searchDocuments } from "./ai-actions/search";
 
 // Helper function to get last user message text
 export const getLastUserMessageText = (
@@ -62,7 +62,7 @@ export const addToLastUserMessage = (
         .map((part) => part.text)
         .join("\n")
     : lastMessage.content;
-
+  
   const updatedMessage: LanguageModelV1Message = {
     role: "user",
     content: [

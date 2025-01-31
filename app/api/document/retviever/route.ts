@@ -1,5 +1,5 @@
 // app/api/inmemory-file/route.ts
-import { inMemoryFS } from "@/lib/ai/inmemory-store";
+import { inMemoryFS } from "@/ai/inmemory-store";
 import { NextRequest } from "next/server";
 
 // Oletetaan, että viet inMemoryFS jossain modulissa:

@@ -54,21 +54,15 @@ export const routes: RouteConfig[] = [
     icon: "tabler:user-screen",
   },
   {
-    path: "settings",
-    title: "Settings",
+    path: "invite-user",
+    title: "Invite",
     icon: "tabler:adjustments",
-    children: [
-      { path: "general", title: "General" },
-      { path: "team", title: "Team" },
-      { path: "billing", title: "Billing" },
-      { path: "limits", title: "Limits" },
-    ],
   },
 ];
 // Helper function to get route title by path
 export function getRouteTitle(
   path: string,
-  routeConfigs: RouteConfig[] = routes,
+  routeConfigs: RouteConfig[] = routes
 ): string | null {
   const normalizedPath = path.toLowerCase();
 

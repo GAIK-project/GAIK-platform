@@ -20,7 +20,9 @@ import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
+import { getCurrentUser } from "@/lib/db/drizzle/queries";
 // This is sample data.
+
 const data = {
   user: {
     name: "Kass",
@@ -66,6 +68,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navMainItems = getNavMainItems();
 
+  
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

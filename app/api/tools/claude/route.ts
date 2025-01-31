@@ -1,4 +1,4 @@
-import { strReplaceEditor } from "@/lib/ai/tools/str-replace-editor";
+import { strReplaceEditor } from "@/ai/tools/str-replace-editor";
 import { anthropic } from "@ai-sdk/anthropic";
 import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     console.error("Claude route error:", err);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

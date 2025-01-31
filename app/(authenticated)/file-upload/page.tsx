@@ -3,7 +3,7 @@ import { allasClient } from "@/lib/allasClient";
 
 async function getFiles(bucket: string) {
   try {
-    const files = await allasClient.listFiles(bucket);
+    const files = !bucket ? [] : await allasClient.listFiles(bucket);
     return files;
   } catch (error) {
     console.error("Error fetching files:", error);
@@ -12,7 +12,7 @@ async function getFiles(bucket: string) {
 }
 
 export default async function Page() {
-  const bucketName = "gaik-demo-storage";
+  const bucketName = process.env.ALLAS_BUCKET || "";
   const files = await getFiles(bucketName);
 
   return (

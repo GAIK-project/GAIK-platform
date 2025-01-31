@@ -1,3 +1,4 @@
+import { models } from "@/ai/model-names";
 import { saveModelId } from "@/app/(authenticated)/chatbot/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { models } from "@/lib/ai/model-names";
 import { cn } from "@/lib/utils";
 import { CheckCircle, ChevronDown } from "lucide-react";
 import { startTransition, useOptimistic } from "react";

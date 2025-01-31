@@ -25,6 +25,18 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { createBrowserClient } from "@/lib/db/supabase/client";
+import { redirect } from "next/navigation";
+
+export async function signOut() {
+  const supabase = createBrowserClient();
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error("Error signing out:", error.message);
+    throw error;
+  }
+  redirect("/login");
+}
 
 export function NavUser({
   user,

@@ -1,9 +1,7 @@
 // lib/str-replace-editor.ts
-
-import { inMemoryFS } from "@/lib/ai/inmemory-store";
+import { inMemoryFS } from "@/ai/inmemory-store";
 import { tool } from "ai";
 import { z } from "zod";
-
 /**
  * strReplaceEditor: Mukautettu tekstieditorityökalu LLM-malleja varten
  *

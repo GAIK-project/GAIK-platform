@@ -2,8 +2,12 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { BreadcrumbHeader } from "@/components/sidebar/breadcrumb-header";
 import { SidebarRouteHandler } from "@/components/sidebar/sidebar-router-handler";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getCurrentUser } from "@/lib/db/drizzle/queries";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  console.log('user:', user);
+  
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex w-full h-screen overflow-hidden user-select-none">
