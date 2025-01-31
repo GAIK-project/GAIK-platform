@@ -10,7 +10,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const user = await getUserData();
-  const userData = user
+  const userProfileData = user
     ? {
         name: user.name,
         email: user.email,
@@ -22,7 +22,7 @@ export default async function Layout({
     <SidebarProvider defaultOpen={false}>
       <div className="flex w-full h-screen overflow-hidden user-select-none">
         <SidebarRouteHandler />
-        <AppSidebar variant="inset" userData={userData} />
+        <AppSidebar variant="inset" userData={userProfileData} />
         <SidebarInset>
           <BreadcrumbHeader />
           <div className="relative flex-1 overflow-auto">

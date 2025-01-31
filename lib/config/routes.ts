@@ -54,7 +54,7 @@ export const routes: RouteConfig[] = [
     icon: "tabler:user-screen",
   },
   {
-    path: "invite-user",
+    path: "admin/invite-user",
     title: "Invite",
     icon: "tabler:adjustments",
   },

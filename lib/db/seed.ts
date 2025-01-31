@@ -10,6 +10,8 @@ config({ path: path.resolve(process.cwd(), ".env.local") });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const adminUserEmail = process.env.ADMIN_USER_EMAIL;
+const adminUserPassword = process.env.ADMIN_USER_PASSWORD;
 
 if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error("Missing Supabase credentials in .env.local");
@@ -18,14 +20,26 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function seed() {
+  if (!adminUserEmail || !adminUserPassword) {
+    throw new Error("Missing admin credentials in .env.local");
+  }
   try {
+    // Check if admin already exists
+    const { data: existingUser } =
+      await supabase.auth.admin.getUserById(adminUserEmail);
+
+    if (existingUser.user) {
+      console.log("Admin user already exists");
+      return;
+    }
+
     console.log("Starting seed...");
 
     // Create admin user in Supabase
     const { data: authUser, error: authError } =
       await supabase.auth.admin.createUser({
-        email: "gaik@gaik.com",
-        password: "gaik1234!",
+        email: adminUserEmail,
+        password: adminUserPassword,
         email_confirm: true,
         user_metadata: {
           name: "Gaik User",
@@ -49,15 +63,9 @@ async function seed() {
       id: authUser.user.id,
       // Esimerkki oletusasetuksista
       preferences: {
-        theme: "light",
         language: "fi",
         notifications: {
           email: true,
-          push: false,
-        },
-        sidebar: {
-          defaultOpen: true,
-          position: "left",
         },
       },
       // Voit lisätä avatarin jos haluat
