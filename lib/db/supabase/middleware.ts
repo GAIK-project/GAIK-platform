@@ -14,15 +14,15 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
+            request.cookies.set(name, value),
           );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           );
         },
       },
-    }
+    },
   );
 
   const {
@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   const isPublicRoute = publicRoutes.some(
     (route) =>
       request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(`${route}/`)
+      request.nextUrl.pathname.startsWith(`${route}/`),
   );
 
   // If user is not logged in, redirect to sign-in page

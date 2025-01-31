@@ -4,15 +4,25 @@ import { SidebarRouteHandler } from "@/components/sidebar/sidebar-router-handler
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getCurrentUser } from "@/lib/db/drizzle/queries";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = await getCurrentUser();
-  console.log('user:', user);
-  
+  const userData = user
+    ? {
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar || "",
+      }
+    : undefined;
+
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex w-full h-screen overflow-hidden user-select-none">
         <SidebarRouteHandler />
-        <AppSidebar variant="inset" />
+        <AppSidebar variant="inset" userData={userData} />
         <SidebarInset>
           <BreadcrumbHeader />
           <div className="relative flex-1 overflow-auto">

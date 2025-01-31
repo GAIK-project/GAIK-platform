@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpass
       POSTGRES_DB: mydb
-      POSTGRES_HOST_AUTH_METHOD: trust  # Tämä sallii yhteydet ilman salasanaa
+      POSTGRES_HOST_AUTH_METHOD: trust # Tämä sallii yhteydet ilman salasanaa
     ports:
       - "5432:5432"
     volumes:

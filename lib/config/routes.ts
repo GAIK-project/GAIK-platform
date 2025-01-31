@@ -62,7 +62,7 @@ export const routes: RouteConfig[] = [
 // Helper function to get route title by path
 export function getRouteTitle(
   path: string,
-  routeConfigs: RouteConfig[] = routes
+  routeConfigs: RouteConfig[] = routes,
 ): string | null {
   const normalizedPath = path.toLowerCase();
 

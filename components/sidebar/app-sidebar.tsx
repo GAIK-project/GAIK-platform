@@ -20,8 +20,6 @@ import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
-import { getCurrentUser } from "@/lib/db/drizzle/queries";
-// This is sample data.
 
 const data = {
   user: {
@@ -65,10 +63,16 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userData?: {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}
+export function AppSidebar({ userData, ...props }: AppSidebarProps) {
   const navMainItems = getNavMainItems();
 
-  
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -79,6 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
+        {/* <NavUserWrapper /> */}
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

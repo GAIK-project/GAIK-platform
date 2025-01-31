@@ -34,7 +34,7 @@ type State = {
 
 export async function registerUser(
   prevState: State | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<State> {
   try {
     // Validate inputs and transform email to lowercase

@@ -3,19 +3,14 @@ import { UserData } from "@/lib/types/user";
 import { and, eq, gt } from "drizzle-orm";
 import { createServerClient } from "../supabase/server";
 import { db } from "./drizzle";
-import {
-  Invite,
-  Organization,
-  invites,
-  userProfiles
-} from "./schema";
+import { Invite, Organization, invites, userProfiles } from "./schema";
 
 export async function getInviteByToken(token: string): Promise<Invite | null> {
   const invite = await db.query.invites.findFirst({
     where: and(
       eq(invites.token, token),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date())
+      gt(invites.expiresAt, new Date()),
     ),
   });
 
@@ -40,34 +35,34 @@ export async function markInviteAsUsed(inviteId: string): Promise<boolean> {
 export async function getCurrentUser(): Promise<UserData | null> {
   const supabase = await createServerClient();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return null;
-  }
-
   try {
-    // Get or create profile
-    let profile = await db.query.userProfiles.findFirst({
-      where: eq(userProfiles.id, user.id),
-    });
+    // Hae käyttäjän auth tiedot
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    if (!profile) {
-      // Create minimal profile if it doesn't exist
-      const [newProfile] = await db
-        .insert(userProfiles)
-        .values({
-          id: user.id,
-          preferences: {} as Record<string, unknown>,
-        })
-        .returning();
-      profile = newProfile;
+    if (authError || !user) {
+      return null;
     }
 
-    // Combine auth user data and profile
+    // Hae profiilitiedot
+    const { data: profile, error: profileError } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+      return null;
+    }
+
+    // Jos profiilia ei ole, palauta null tai basic tiedot, tai ohjaa käyttäjä luomaan profiili
+    if (!profile) {
+      return null;
+    }
+
     return {
       id: user.id,
       email: user.email!,
@@ -76,27 +71,26 @@ export async function getCurrentUser(): Promise<UserData | null> {
       role: user.user_metadata.role,
       isActive: true,
       avatar: profile.avatar,
-      preferences: profile.preferences as Record<string, unknown>,
+      preferences: profile.preferences,
       lastLoginAt: profile.lastLoginAt,
       createdAt: new Date(user.created_at),
       updatedAt: profile.updatedAt,
     };
   } catch (error) {
-    console.error("Error getting user profile:", error);
+    console.error("Error in getCurrentUser:", error);
     return null;
   }
 }
-
 export async function validateInvite(
   email: string,
-  organization: Organization
+  organization: Organization,
 ): Promise<Invite | null> {
   const existingInvite = await db.query.invites.findFirst({
     where: and(
       eq(invites.email, email.toLowerCase()),
       eq(invites.organization, organization),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date())
+      gt(invites.expiresAt, new Date()),
     ),
   });
 
@@ -112,7 +106,7 @@ type UserProfileUpdate = Partial<{
 
 export async function updateUserProfile(
   userId: string,
-  data: UserProfileUpdate
+  data: UserProfileUpdate,
 ) {
   try {
     const [updatedProfile] = await db

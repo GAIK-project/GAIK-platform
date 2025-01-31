@@ -1,4 +1,3 @@
-
 import { db } from "@/lib/db/drizzle/drizzle";
 import { organizationInvites, organizations } from "@/lib/db/drizzle/schema";
 // import { sendEmail } from "@/lib/email"; // Implement this
@@ -11,7 +10,8 @@ export async function POST(request: Request) {
     const adminEmail = formData.get("adminEmail") as string;
 
     // 1. Create organization
-    const [organization] = await db.insert(organizations)
+    const [organization] = await db
+      .insert(organizations)
       .values({
         name: organizationName,
         isActive: true,
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     console.error(error);
     return Response.json(
       { success: false, error: "Failed to create organization" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

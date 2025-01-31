@@ -32,7 +32,7 @@ type State = {
 
 export async function createInvite(
   prevState: State | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<State> {
   try {
     const supabase = await createServerClient();
@@ -74,7 +74,7 @@ export async function createInvite(
     // Check for existing invite using the query function
     const existingInvite = await validateInvite(
       email,
-      organization as Organization
+      organization as Organization,
     );
     if (existingInvite) {
       return {

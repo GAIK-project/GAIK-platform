@@ -1,14 +1,14 @@
 import { openai } from "@ai-sdk/openai";
 import {
-    LanguageModelV1CallOptions,
-    LanguageModelV1Message,
-    LanguageModelV1TextPart,
+  LanguageModelV1CallOptions,
+  LanguageModelV1Message,
+  LanguageModelV1TextPart,
 } from "@ai-sdk/provider";
 import {
-    CoreMessage,
-    generateObject,
-    generateText,
-    LanguageModelV1Middleware
+  CoreMessage,
+  generateObject,
+  generateText,
+  LanguageModelV1Middleware,
 } from "ai";
 import { searchDocuments } from "../ai-actions/search";
 

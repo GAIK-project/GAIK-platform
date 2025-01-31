@@ -20,12 +20,12 @@ const searchSchema = z.object({
   expectedInfo: z
     .array(z.string())
     .describe(
-      "Required information WITH FULL CONTEXT. Example: 'Helsingin yliopiston raportointiohjeen kirjoittaja' NOT just 'kirjoittaja'"
+      "Required information WITH FULL CONTEXT. Example: 'Helsingin yliopiston raportointiohjeen kirjoittaja' NOT just 'kirjoittaja'",
     ),
 });
 
 const createSearchContext = async (
-  userMessage: string
+  userMessage: string,
 ): Promise<SearchContext> => {
   const { object: context } = await generateObject({
     model: openai("gpt-4o", { structuredOutputs: true }),
@@ -47,13 +47,13 @@ const createSearchContext = async (
 };
 
 const fetchAndRerankDocuments = async (
-  context: SearchContext
+  context: SearchContext,
 ): Promise<SearchDocument[]> => {
   try {
     // 1. Get initial search results
     const retvievedDocs = await searchDocuments(
       context.searchTerms.join(" "),
-      7
+      7,
     );
 
     if (!retvievedDocs) {
@@ -68,7 +68,7 @@ const fetchAndRerankDocuments = async (
         pageContent: doc.content || "", // Use the content for BM25 ranking
         metadata: doc, // Save the original document
       })),
-      { k: 5 }
+      { k: 5 },
     );
 
     console.log("reranked results");
@@ -90,7 +90,7 @@ interface AnalysisResult {
 // Analyze results for completeness
 const answerCheck = async (
   results: SearchDocument[],
-  expectedInfo: string[]
+  expectedInfo: string[],
 ): Promise<AnalysisResult[]> => {
   const { object: analysis } = await generateObject({
     model: openai("gpt-4o-2024-11-20", { structuredOutputs: true }),
@@ -118,10 +118,10 @@ const answerCheck = async (
             searchTerms: z
               .array(z.string())
               .describe("2-3 search terms in query language"),
-          })
+          }),
         )
         .describe(
-          "Must be empty array if information exists in ANY form in results"
+          "Must be empty array if information exists in ANY form in results",
         ),
     }),
     prompt: JSON.stringify({
@@ -143,7 +143,7 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
   let results = await fetchAndRerankDocuments(context);
   console.log(
     "fetchAndRerankDocuments number of docs returned: ",
-    results.length
+    results.length,
   );
 
   // 3. Check for missing information
@@ -156,7 +156,7 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
 
   console.log(
     "analyzeResults is missing these informations",
-    missingInfo.map((info) => info.info)
+    missingInfo.map((info) => info.info),
   );
 
   // 4. Additional searches if needed
@@ -166,18 +166,18 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
 
     // 1. Deduplicate search terms
     const uniqueSearchTerms = Array.from(
-      new Set(missingInfo.flatMap((info) => info.searchTerms))
+      new Set(missingInfo.flatMap((info) => info.searchTerms)),
     );
     console.log("unique search terms", uniqueSearchTerms);
 
     // 2. Batch search in parallel
     const additionalDocs = await Promise.all(
-      uniqueSearchTerms.map((term) => searchDocuments(term, 2))
+      uniqueSearchTerms.map((term) => searchDocuments(term, 2)),
     );
     console.log("Number of additional searches:", additionalDocs.length);
     console.log(
       "Total documents before deduplication:",
-      additionalDocs.flat().length
+      additionalDocs.flat().length,
     );
 
     if (additionalDocs.length) {
@@ -185,7 +185,7 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
       const uniqueAdditionalDocs = _.uniqBy(additionalDocs.flat(), "id");
       console.log(
         "Unique documents after deduplication:",
-        uniqueAdditionalDocs.length
+        uniqueAdditionalDocs.length,
       );
       // Map to LangChain Document format: pageContent for BM25 ranking, original doc in metadata
       const retriever = BM25Retriever.fromDocuments(
@@ -193,12 +193,12 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
           pageContent: doc.content || "",
           metadata: doc,
         })),
-        { k: 3 }
+        { k: 3 },
       );
 
       const additional = await retriever.invoke(userMessage);
       const additionalResults = additional.map(
-        (doc) => doc.metadata as SearchDocument
+        (doc) => doc.metadata as SearchDocument,
       );
       const allResults = _.uniqBy([...results, ...additionalResults], "id") // Delete duplicates with same id
         .sort((a, b) => b.similarity - a.similarity) // Laskevassa järjestyksessä (suurin ensin)
@@ -206,7 +206,7 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
       console.log("allresults length after rerank", allResults.length);
       console.log(
         "results after rerank ids",
-        allResults.map((r) => r.id)
+        allResults.map((r) => r.id),
       );
 
       results = allResults;

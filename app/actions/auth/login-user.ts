@@ -21,7 +21,7 @@ type State = {
 
 export async function loginUser(
   prevState: State | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<State> {
   try {
     const validatedFields = LoginSchema.safeParse({
