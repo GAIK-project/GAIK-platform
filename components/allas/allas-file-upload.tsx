@@ -6,7 +6,7 @@ import type { _Object } from "@aws-sdk/client-s3";
 import { Download, Loader2, Trash2, Upload } from "lucide-react";
 import { useCallback, useOptimistic, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
-import { getFileIcon } from "./get-file-icon";
+import { getFileIcon } from "../get-file-icon";
 
 interface AllasFileUploadProps {
   bucket: string;

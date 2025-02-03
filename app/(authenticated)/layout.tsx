@@ -15,6 +15,7 @@ export default async function Layout({
         name: user.name,
         email: user.email,
         avatar: user.avatar || "",
+        role: user.role,
       }
     : undefined;
 
@@ -25,9 +26,9 @@ export default async function Layout({
         <AppSidebar variant="inset" userData={userProfileData} />
         <SidebarInset>
           <BreadcrumbHeader />
-          <div className="relative flex-1 overflow-auto">
-            {/* <div className="absolute inset-0 bg-dot-black/[0.2]" /> */}
-            <div className="relative bg-custom-gradient h-full">{children}</div>
+          {/* Background applied directly on the scrollable container */}
+          <div className="relative flex-1 overflow-auto bg-custom-gradient">
+            {children}
           </div>
         </SidebarInset>
       </div>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { fetcher } from "@/lib/utils/functions";
+import { fetcher } from "@/lib/helpers/functions";
 import { AlertCircle, FileIcon, LoaderIcon, TrashIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";

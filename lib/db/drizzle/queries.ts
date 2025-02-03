@@ -1,6 +1,8 @@
 // lib/db/drizzle/queries.ts
 import { UserData } from "@/lib/types/user";
 import { and, eq, gt } from "drizzle-orm";
+import { cacheLife } from "next/dist/server/use-cache/cache-life";
+import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { createServerClient } from "../supabase/server";
 import { db } from "./drizzle";
 import { Invite, Organization, invites, userProfiles } from "./schema";
@@ -34,9 +36,19 @@ export async function markInviteAsUsed(inviteId: string): Promise<boolean> {
 
 export async function getUserData(): Promise<UserData | null> {
   const supabase = await createServerClient();
+  return getCachedUserData(supabase);
+}
+
+async function getCachedUserData(supabase: any): Promise<UserData | null> {
+  "use cache";
+  cacheLife({
+    stale: 60 * 60 * 24, // 24h stale time
+    revalidate: 60 * 60 * 24, // 24h revalidate
+    expire: 60 * 60 * 24 * 7, // Viikko
+  });
+  cacheTag("user-profile");
 
   try {
-    // Hae käyttäjän auth tiedot
     const {
       data: { user },
       error: authError,
@@ -46,7 +58,6 @@ export async function getUserData(): Promise<UserData | null> {
       return null;
     }
 
-    // Hae profiilitiedot
     const { data: profile, error: profileError } = await supabase
       .from("user_profiles")
       .select("*")
@@ -58,7 +69,6 @@ export async function getUserData(): Promise<UserData | null> {
       return null;
     }
 
-    // Jos profiilia ei ole, palauta null tai basic tiedot, tai ohjaa käyttäjä luomaan profiili
     if (!profile) {
       return null;
     }
