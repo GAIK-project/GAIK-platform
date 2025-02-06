@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -38,7 +36,7 @@ export function NavMain({
     }[];
   }[];
 }) {
-  const { state, setOpen } = useSidebar();
+  const { state, setOpen, isMobile } = useSidebar();
   const pathname = usePathname();
   const isCollapsed = state === "collapsed";
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>(() => {
@@ -58,9 +56,7 @@ export function NavMain({
   }, [isCollapsed]);
 
   const handleMenuClick = (e: React.MouseEvent, item: (typeof items)[0]) => {
-    if (!item.items?.length) {
-      return;
-    }
+    if (!item.items?.length) return;
 
     if (isCollapsed) {
       e.preventDefault();
@@ -100,28 +96,23 @@ export function NavMain({
                     tooltip={item.title}
                     asChild
                     className={clsx(
-                      "h-9 transition-colors relative",
-                      "group-data-[collapsible=icon]/sidebar-wrapper:justify-center group-data-[collapsible=icon]/sidebar-wrapper:px-0",
-                      !isCollapsed && "px-3 rounded-md",
-                      active
+                      "h-9 transition-colors relative w-full",
+                      "px-3 rounded-md",
+                      active && !isCollapsed
                         ? "bg-secondary hover:bg-secondary"
-                        : "hover:bg-secondary",
+                        : !isCollapsed
+                          ? "hover:bg-secondary"
+                          : "hover:bg-white",
                     )}
                   >
-                    <a
-                      className={clsx(
-                        "flex items-center w-full group/link",
-                        !isCollapsed && "space-x-3",
-                      )}
-                    >
+                    <a className="flex items-center w-full space-x-3">
                       {item.icon && (
                         <div
                           className={clsx(
-                            "flex items-center justify-center rounded-md transition-all duration-200 ease-in-out",
-                            !isCollapsed && "bg-white shadow-sm p-1.5",
-                            !isCollapsed &&
-                              active &&
-                              "border-primary/30 bg-primary/10",
+                            "flex items-center justify-center rounded-md",
+                            "transition-all duration-200 ease-in-out",
+                            "bg-white shadow-sm p-1.5",
+                            active && "border-primary/30 bg-primary/10",
                           )}
                         >
                           <Icon
@@ -130,24 +121,29 @@ export function NavMain({
                               "w-5 h-5",
                               "transition-colors duration-200",
                               active ? "text-primary" : "text-muted-foreground",
-                              "group-hover/link:text-primary",
+                              "group-hover:text-primary",
                             )}
                           />
                         </div>
                       )}
-                      {!isCollapsed && (
-                        <span
-                          className={clsx(
-                            "text-sm transition-colors duration-200",
-                            active
-                              ? "font-medium text-foreground"
-                              : "text-muted-foreground",
-                            "group-hover/link:text-foreground",
-                          )}
-                        >
-                          {item.title}
-                        </span>
-                      )}
+                      <span
+                        className={clsx(
+                          "text-sm whitespace-nowrap",
+                          "transition-colors duration-200",
+                          active
+                            ? "font-medium text-foreground"
+                            : "text-muted-foreground",
+                          "group-hover:text-foreground",
+                          // Näytetään teksti aina mobiilissa
+                          isMobile
+                            ? "block"
+                            : isCollapsed
+                              ? "hidden"
+                              : "inline-block",
+                        )}
+                      >
+                        {item.title}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                 </Link>
@@ -169,30 +165,20 @@ export function NavMain({
                     onClick={(e) => handleMenuClick(e, item)}
                     className={clsx(
                       "h-9 transition-colors relative w-full",
-                      "group-data-[collapsible=icon]/sidebar-wrapper:justify-center group-data-[collapsible=icon]/sidebar-wrapper:px-0",
-                      !isCollapsed && "px-3 rounded-md",
+                      "px-3 rounded-md",
                       active
                         ? "bg-secondary hover:bg-secondary"
                         : "hover:bg-secondary",
                     )}
                   >
-                    <div
-                      className={clsx(
-                        "flex items-center w-full group/link",
-                        !isCollapsed && "space-x-3",
-                      )}
-                    >
+                    <div className="flex items-center w-full space-x-3">
                       {item.icon && (
                         <div
                           className={clsx(
-                            "flex items-center justify-center rounded-md transition-all duration-200 ease-in-out",
-                            !isCollapsed &&
-                              "bg-white border border-border/50 shadow-sm p-1.5",
-                            !isCollapsed &&
-                              "group-hover/link:border-primary/20 group-hover/link:bg-primary/5",
-                            !isCollapsed &&
-                              active &&
-                              "border-primary/30 bg-primary/10",
+                            "flex items-center justify-center rounded-md",
+                            "transition-all duration-200 ease-in-out",
+                            "bg-white shadow-sm p-1.5",
+                            active && "border-primary/30 bg-primary/10",
                           )}
                         >
                           <Icon
@@ -201,28 +187,28 @@ export function NavMain({
                               "w-5 h-5",
                               "transition-colors duration-200",
                               active ? "text-primary" : "text-muted-foreground",
-                              "group-hover/link:text-primary",
+                              "group-hover:text-primary",
                             )}
                           />
                         </div>
                       )}
+                      <span
+                        className={clsx(
+                          "text-sm whitespace-nowrap",
+                          "transition-colors duration-200",
+                          active
+                            ? "font-medium text-foreground"
+                            : "text-muted-foreground",
+                          "group-hover:text-foreground",
+                          isCollapsed ? "hidden" : "inline-block",
+                        )}
+                      >
+                        {item.title}
+                      </span>
                       {!isCollapsed && (
-                        <span
-                          className={clsx(
-                            "text-sm transition-colors duration-200",
-                            active
-                              ? "font-medium text-foreground"
-                              : "text-muted-foreground",
-                            "group-hover/link:text-foreground",
-                          )}
-                        >
-                          {item.title}
-                        </span>
+                        <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                       )}
                     </div>
-                    {!isCollapsed && (
-                      <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    )}
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -231,28 +217,35 @@ export function NavMain({
                       const subActive = isActive(subItem.url);
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            className={clsx(
-                              "h-8 px-8 rounded-md transition-colors",
-                              subActive
-                                ? "bg-secondary hover:bg-secondary"
-                                : "hover:bg-secondary",
-                            )}
-                          >
-                            <Link href={subItem.url}>
-                              <span
-                                className={clsx(
-                                  "text-xs",
-                                  subActive
-                                    ? "font-medium text-foreground"
-                                    : "text-muted-foreground",
-                                )}
-                              >
-                                {subItem.title}
-                              </span>
-                            </Link>
-                          </SidebarMenuSubButton>
+                          <Link href={subItem.url} passHref legacyBehavior>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={clsx(
+                                "h-8 px-8 rounded-md transition-colors",
+                                subActive
+                                  ? "bg-secondary hover:bg-secondary"
+                                  : "hover:bg-secondary",
+                              )}
+                            >
+                              <a>
+                                <span
+                                  className={clsx(
+                                    "text-xs whitespace-nowrap",
+                                    subActive
+                                      ? "font-medium text-foreground"
+                                      : "text-muted-foreground",
+                                    isMobile
+                                      ? "block"
+                                      : isCollapsed
+                                        ? "hidden"
+                                        : "inline-block",
+                                  )}
+                                >
+                                  {subItem.title}
+                                </span>
+                              </a>
+                            </SidebarMenuSubButton>
+                          </Link>
                         </SidebarMenuSubItem>
                       );
                     })}

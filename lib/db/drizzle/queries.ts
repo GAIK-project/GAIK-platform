@@ -1,7 +1,6 @@
 // lib/db/drizzle/queries.ts
 import { UserData } from "@/lib/types/user";
 import { and, eq, gt } from "drizzle-orm";
-import { cacheLife } from "next/dist/server/use-cache/cache-life";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { createServerClient } from "../supabase/server";
 import { db } from "./drizzle";
