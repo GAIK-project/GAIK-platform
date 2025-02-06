@@ -316,18 +316,18 @@ function MarketShareTrendChartCard() {
 // Interactive Bar Chart Card
 function InteractiveBarChartCard() {
   const [activeChart, setActiveChart] = React.useState<"desktop" | "mobile">(
-    "desktop"
+    "desktop",
   );
 
   const total = React.useMemo(
     () => ({
       desktop: interactiveChartData.reduce(
         (acc, curr) => acc + curr.desktop,
-        0
+        0,
       ),
       mobile: interactiveChartData.reduce((acc, curr) => acc + curr.mobile, 0),
     }),
-    []
+    [],
   );
 
   return (
@@ -448,20 +448,20 @@ function AutomatedReportCard() {
   // Esikäsitellään dataa simuloimalla reasoning-mallia
   const totalRevenue = companies.reduce(
     (acc, company) => acc + company.revenue,
-    0
+    0,
   );
   const averageRevenue = totalRevenue / companies.length;
   const totalAiProjects = companies.reduce(
     (acc, company) => acc + company.aiProjects,
-    0
+    0,
   );
   const averageAiProjects = totalAiProjects / companies.length;
 
   const topRevenueCompany = companies.reduce((prev, curr) =>
-    curr.revenue > prev.revenue ? curr : prev
+    curr.revenue > prev.revenue ? curr : prev,
   );
   const topAiProjectsCompany = companies.reduce((prev, curr) =>
-    curr.aiProjects > prev.aiProjects ? curr : prev
+    curr.aiProjects > prev.aiProjects ? curr : prev,
   );
 
   // Yksinkertainen reasoning-logiikka suorituskykymittarille

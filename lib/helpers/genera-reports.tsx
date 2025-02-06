@@ -12,7 +12,7 @@ export function generateCSV(data: any[]): string {
   const rows = data.map((row) =>
     Object.values(row)
       .map((value) => `"${value}"`) // Wrap values in quotes (adjust as needed)
-      .join(",")
+      .join(","),
   );
   return [headers, ...rows].join("\n");
 }

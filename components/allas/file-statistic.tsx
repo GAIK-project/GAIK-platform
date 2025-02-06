@@ -32,43 +32,52 @@ export default function FileStatistics({ files }: FileStatisticsProps) {
   const totalSize = files.reduce((acc, file) => acc + (file.Size || 0), 0);
 
   return (
-    <Card>
+    <Card className="border-0 shadow-none">
       <CardHeader>
-        <CardTitle>File Analysis</CardTitle>
+        <CardTitle>Storage Statistics</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>
-          <strong>Total Storage Used:</strong> {formatFileSize(totalSize)}
-        </p>
-        <p>
-          <strong>Total files:</strong> {files.length}
-        </p>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="size"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={110}
-              fill="#8884d8"
-              label={({ name, percent }) =>
-                `${name} ${(percent * 100).toFixed(0)}%`
-              }
-              labelLine={false}
-            >
-              {data.map((_, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value) => formatFileSize(value as number)} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Total Files</span>
+              <span className="font-medium">{files.length}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">
+                Storage Used
+              </span>
+              <span className="font-medium">{formatFileSize(totalSize)}</span>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="size"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
+                labelLine={false}
+              >
+                {data.map((_, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => formatFileSize(value as number)} />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

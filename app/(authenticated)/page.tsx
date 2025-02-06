@@ -1,9 +1,9 @@
-import { MetricsCard } from "@/components/charts/metrics-card"
-import { StatsChart } from "@/components/charts/stats-chart"
-import { VaultTable } from "@/components/charts/vault-table"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { ChevronDown } from "lucide-react"
+import { MetricsCard } from "@/components/charts/metrics-card";
+import { StatsChart } from "@/components/charts/stats-chart";
+import { VaultTable } from "@/components/charts/vault-table";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ChevronDown } from "lucide-react";
 
 export default function Page() {
   return (
@@ -12,7 +12,9 @@ export default function Page() {
         <div className="mb-6 flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="text-2xl font-bold">Overview</h1>
-            <div className="text-sm text-muted-foreground">Aug 13, 2023 - Aug 18, 2023</div>
+            <div className="text-sm text-muted-foreground">
+              Aug 13, 2023 - Aug 18, 2023
+            </div>
           </div>
           <Button variant="outline" className="gap-2">
             Ethereum Network
@@ -64,5 +66,5 @@ export default function Page() {
         </div>
       </main>
     </div>
-  )
+  );
 }

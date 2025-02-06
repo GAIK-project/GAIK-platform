@@ -42,7 +42,7 @@ export function JsonSchemaGenerator({
     const schema = {
       type: "object",
       properties: Object.fromEntries(
-        fields.map((field) => [field.name, { type: field.type }])
+        fields.map((field) => [field.name, { type: field.type }]),
       ),
       required: fields
         .filter((field) => field.required)
@@ -79,11 +79,17 @@ export function JsonSchemaGenerator({
             <input
               type="checkbox"
               checked={field.required}
-              onChange={(e) => updateField(index, { required: e.target.checked })}
+              onChange={(e) =>
+                updateField(index, { required: e.target.checked })
+              }
             />
             <span>Required</span>
           </Label>
-          <Button variant="ghost" size="icon" onClick={() => removeField(index)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => removeField(index)}
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>

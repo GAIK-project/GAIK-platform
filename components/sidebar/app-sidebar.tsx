@@ -48,7 +48,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 export function AppSidebar({ userData, ...props }: AppSidebarProps) {
   const navMainItems = getNavMainItems(userData?.role);
-  
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -58,7 +58,6 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
         <NavMain items={navMainItems} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <NavUserWrapper /> */}
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

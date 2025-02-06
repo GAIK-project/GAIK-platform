@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
     console.error("Error processing data:", error);
     return NextResponse.json(
       { error: "Failed to process data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { AttachmentList } from "./attachment-list";
+import { RAGFiles } from "./rag-files";
 
 interface ChatInputProps {
   input: string;
@@ -140,8 +141,8 @@ export function ChatInput({
               type="button"
               size="icon"
               variant="ghost"
-              disabled={!true}
-              onClick={() => setIsRAGFilesVisible(true)}
+              // disabled={true}
+              onClick={() => setIsRAGFilesVisible((prev) => !prev)}
               className="h-8 w-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ml-2"
             >
               <Database className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -150,6 +151,10 @@ export function ChatInput({
         </div>
         <AttachmentList attachments={attachments} onRemove={removeAttachment} />
       </form>
+      <RAGFiles
+        isVisible={isRAGFilesVisible}
+        onClose={() => setIsRAGFilesVisible(false)}
+      />
     </div>
   );
 }

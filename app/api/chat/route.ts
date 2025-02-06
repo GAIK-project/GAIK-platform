@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const result = streamText({
     model: selectedModel,
     system:
-      "Olet ystävällinen avustaja! Pidä vastauksesi ytimekkäinä ja avuliaana.",
+      "You are helpful assistant. Keep the answers short and to the point.",
     messages: messages,
     experimental_transform: smoothStream(),
   });

@@ -5,15 +5,18 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function POST(request: Request) {
-
   const incidentReportSchema = z.object({
     reportTitle: z.string().describe("The title of the incident report"),
-    incidentSummary: z.string().describe("A summary description of the incident"),
+    incidentSummary: z
+      .string()
+      .describe("A summary description of the incident"),
     causeAnalysis: z.string().describe("Analysis of what caused the incident"),
-    recommendedActions: z.string().describe("Recommendations to avoid future incidents"),
+    recommendedActions: z
+      .string()
+      .describe("Recommendations to avoid future incidents"),
     incidentTimestamp: z.string().describe("The timestamp of the incident"),
   });
-  
+
   try {
     // Get incident details from the request body
     const { incidentDetails } = await request.json();
@@ -37,7 +40,7 @@ Incident Details: ${incidentDetails}
       prompt,
       providerOptions: {
         openai: {
-          reasoningEffort: 'medium',
+          reasoningEffort: "medium",
         },
       },
     });
@@ -48,7 +51,7 @@ Incident Details: ${incidentDetails}
     console.error("Error generating incident report:", error);
     return NextResponse.json(
       { error: error.message || "Error generating report." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

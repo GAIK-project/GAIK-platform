@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { fetcher } from "@/lib/helpers/functions";
+import { fetcher } from "@/lib/utils";
 import { AlertCircle, FileIcon, LoaderIcon, TrashIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState } from "react";
@@ -35,11 +35,15 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
     mutate, // Funktio listan manuaaliseen päivittämiseen
     isLoading, // Lataustilamuuttuja
     error, // Mahdollinen virhetilanne
-  } = useSWR<FileData[]>("/api/files/list/", fetcher, {
-    fallbackData: [], // Oletusarvo ennen ensimmäistä latausta
-    refreshInterval: 30000, // Päivitä lista 30s välein
-    revalidateOnFocus: true, // Päivitä kun välilehti saa fokuksen
-  });
+  } = useSWR<FileData[]>(
+    isVisible ? "/api/files/list/" : null, // If not visible, no fetching will occur
+    fetcher,
+    {
+      fallbackData: [], // Oletusarvo ennen ensimmäistä latausta
+      refreshInterval: 30000, // Päivitä lista 30s välein
+      revalidateOnFocus: true, // Päivitä kun välilehti saa fokuksen
+    },
+  );
 
   // Sulkee modaalin kun klikataan sen ulkopuolelta
   useOnClickOutside(drawerRef, onClose);
@@ -56,7 +60,7 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
     const file = e.target.files?.[0];
     // Tarkista että tiedosto on PDF
     if (!file || !file.name.toLowerCase().endsWith(".pdf")) {
-      toast.error("Virheellinen tiedostotyyppi. Lataa PDF-tiedosto.");
+      toast.error("Invalid file type. Please upload a PDF file.");
       return;
     }
 
@@ -71,15 +75,15 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Lataus epäonnistui: ${response.statusText}`);
+        throw new Error(`Upload failed: ${response.statusText}`);
       }
 
       // Päivitä tiedostolista ja näytä onnistumisilmoitus
       await mutate();
-      toast.success(`${file.name} ladattu onnistuneesti`);
+      toast.success(`${file.name} uploaded successfully`);
     } catch (error) {
-      console.error("Virhe tiedoston latauksessa:", error);
-      toast.error(`Virhe ladattaessa tiedostoa ${file.name}`);
+      console.error("Error uploading file:", error);
+      toast.error(`Error uploading file ${file.name}`);
     } finally {
       // Siivoa UI latauksen jälkeen
       if (fileInputRef.current) {
@@ -107,7 +111,7 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Poisto epäonnistui: ${response.statusText}`);
+        throw new Error(`Deletion failed: ${response.statusText}`);
       }
 
       // Optimistinen UI päivitys - päivitä UI ennen serverin vahvistusta
@@ -115,10 +119,10 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
         files?.filter((f) => f.pathname !== fileName),
         false,
       );
-      toast.success(`${fileName} poistettu onnistuneesti`);
+      toast.success(`${fileName} deleted successfully`);
     } catch (error) {
-      console.error("Virhe tiedoston poistossa:", error);
-      toast.error(`Virhe poistettaessa tiedostoa ${fileName}`);
+      console.error("Error deleting file:", error);
+      toast.error(`Error deleting file ${fileName}`);
       await mutate(); // Virhetilanteessa hae päivitetty lista serveriltä
     } finally {
       // Poista tiedosto poistojonosta
@@ -146,9 +150,9 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
             <div className="flex flex-row justify-between items-center">
               <div className="text-sm">
                 <div className="text-zinc-900 dark:text-zinc-300">
-                  Hallinnoi tiedostoja
+                  Manage Chatbot Memory Files
                   <span className="text-xs text-zinc-500 block mt-1">
-                    Vain PDF-tiedostot
+                    Only PDF files
                   </span>
                 </div>
               </div>
@@ -169,7 +173,7 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
                 disabled={isLoading || uploadQueue.length > 0}
               >
                 <FileIcon className="h-4 w-4" />
-                Lisää tiedosto
+                Add file
               </Button>
             </div>
 
@@ -183,7 +187,7 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
               {error && (
                 <div className="flex flex-col items-center justify-center h-full text-sm text-red-500">
                   <AlertCircle className="h-8 w-8 mb-2" />
-                  <p>Virhe ladattaessa tiedostoja</p>
+                  <p>Error loading files</p>
                 </div>
               )}
 
@@ -193,7 +197,7 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
                 uploadQueue.length === 0 && (
                   <div className="flex flex-col items-center justify-center h-full text-sm text-zinc-500">
                     <FileIcon className="h-8 w-8 mb-2" />
-                    <p>Ei ladattuja tiedostoja</p>
+                    <p>No uploaded files</p>
                   </div>
                 )}
 
@@ -229,16 +233,16 @@ export function RAGFiles({ isVisible, onClose }: RAGFilesProps) {
                 >
                   <LoaderIcon className="h-4 w-4 animate-spin" />
                   <span className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Ladataan: {fileName}
+                    Uploading: {fileName}
                   </span>
                 </div>
               ))}
             </div>
 
             <div className="flex justify-between items-center text-sm text-zinc-500">
-              <span>{files?.length || 0} tiedostoa</span>
+              <span>{files?.length || 0} files</span>
               {(uploadQueue.length > 0 || deleteQueue.length > 0) && (
-                <span className="animate-pulse">Käsitellään...</span>
+                <span className="animate-pulse">Processing...</span>
               )}
             </div>
           </motion.div>

@@ -73,6 +73,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+
         "custom-bg": {
           light: "hsl(var(--ai-bg-light))",
           dark: "hsl(var(--ai-bg-dark))",

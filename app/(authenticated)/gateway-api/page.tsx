@@ -66,7 +66,7 @@ const EndpointSchema = z
     {
       message: "Schema is required for structured output",
       path: ["schema"],
-    }
+    },
   );
 
 type Endpoint = z.infer<typeof EndpointSchema>;
@@ -108,10 +108,11 @@ export default function DashboardPage() {
     useState(false);
 
   // States for editing an existing endpoint
-  const [editingEndpointId, setEditingEndpointId] = useState<string | null>(null);
-  const [editingEndpointData, setEditingEndpointData] = useState<Endpoint | null>(
-    null
+  const [editingEndpointId, setEditingEndpointId] = useState<string | null>(
+    null,
   );
+  const [editingEndpointData, setEditingEndpointData] =
+    useState<Endpoint | null>(null);
   // Controls the JSON schema dialog in editing mode
   const [isEditingSchemaDialogOpen, setIsEditingSchemaDialogOpen] =
     useState(false);
@@ -124,7 +125,7 @@ export default function DashboardPage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const messages = error.errors.map(
-          (err) => `${err.path.join(".")}: ${err.message}`
+          (err) => `${err.path.join(".")}: ${err.message}`,
         );
         toast.error(messages.join("\n"));
       }
@@ -147,8 +148,8 @@ export default function DashboardPage() {
                 ...endpoint,
                 status: endpoint.status === "active" ? "inactive" : "active",
               }
-            : endpoint
-        )
+            : endpoint,
+        ),
       );
     }
     toast.success("Endpoint status updated");
@@ -168,7 +169,8 @@ export default function DashboardPage() {
       status: "active",
       url: newEndpoint.url?.trim() || "",
       llmModel: newEndpoint.llmModel || "gpt-3.5-turbo",
-      outputType: newEndpoint.outputType === "structured" ? "structured" : "raw",
+      outputType:
+        newEndpoint.outputType === "structured" ? "structured" : "raw",
       schema: newEndpoint.schema || "",
     };
 
@@ -206,8 +208,10 @@ export default function DashboardPage() {
     if (editingEndpointData && validateEndpoint(editingEndpointData)) {
       setEndpoints((prev) =>
         prev.map((endpoint) =>
-          endpoint.id === editingEndpointData.id ? editingEndpointData : endpoint
-        )
+          endpoint.id === editingEndpointData.id
+            ? editingEndpointData
+            : endpoint,
+        ),
       );
       setEditingEndpointId(null);
       setEditingEndpointData(null);
@@ -245,7 +249,10 @@ export default function DashboardPage() {
               {endpoints.map((endpoint) =>
                 editingEndpointId === endpoint.id && editingEndpointData ? (
                   // --- EDITING MODE ---
-                  <div key={endpoint.id} className="p-4 border rounded-lg space-y-4">
+                  <div
+                    key={endpoint.id}
+                    className="p-4 border rounded-lg space-y-4"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col space-y-2">
                         <div>
@@ -340,9 +347,7 @@ export default function DashboardPage() {
                             onOpenChange={setIsEditingSchemaDialogOpen}
                           >
                             <DialogTrigger asChild>
-                              <Button variant="outline">
-                                Edit Schema
-                              </Button>
+                              <Button variant="outline">Edit Schema</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                               <DialogHeader>
@@ -369,7 +374,11 @@ export default function DashboardPage() {
                       <Button variant="ghost" size="icon" onClick={saveEditing}>
                         <Save className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={cancelEditing}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={cancelEditing}
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -391,7 +400,9 @@ export default function DashboardPage() {
                       <div className="flex items-center space-x-2">
                         <Switch
                           checked={endpoint.status === "active"}
-                          onCheckedChange={() => toggleEndpointStatus(endpoint.id)}
+                          onCheckedChange={() =>
+                            toggleEndpointStatus(endpoint.id)
+                          }
                         />
                         <Button
                           variant="ghost"
@@ -441,7 +452,7 @@ export default function DashboardPage() {
                       </Dialog>
                     )}
                   </div>
-                )
+                ),
               )}
 
               {/* --- New Endpoint Form --- */}
@@ -516,7 +527,8 @@ export default function DashboardPage() {
                       <DialogHeader>
                         <DialogTitle>Generate JSON Schema</DialogTitle>
                         <DialogDescription>
-                          Use this tool to easily generate a JSON schema for your structured output.
+                          Use this tool to easily generate a JSON schema for
+                          your structured output.
                         </DialogDescription>
                       </DialogHeader>
                       <JsonSchemaGenerator

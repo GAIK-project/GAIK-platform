@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type React from "react";
 import { useEffect, useState } from "react";
 
 export function NavMain({
@@ -83,9 +84,11 @@ export function NavMain({
   };
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
-      <SidebarMenu>
+    <SidebarGroup className="mt-8">
+      <SidebarGroupLabel className="text-base text-secondary-foreground mb-2">
+        Platform
+      </SidebarGroupLabel>
+      <SidebarMenu className="space-y-1">
         {items.map((item) => {
           const active = isActive(item.url);
 
@@ -96,25 +99,55 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     asChild
-                    className={active ? "bg-muted hover:bg-muted" : ""}
+                    className={clsx(
+                      "h-9 transition-colors relative",
+                      "group-data-[collapsible=icon]/sidebar-wrapper:justify-center group-data-[collapsible=icon]/sidebar-wrapper:px-0",
+                      !isCollapsed && "px-3 rounded-md",
+                      active
+                        ? "bg-secondary hover:bg-secondary"
+                        : "hover:bg-secondary",
+                    )}
                   >
-                    <a>
-                      {item.icon && (
-                        <Icon
-                          icon={item.icon}
-                          className={clsx(
-                            "w-6 h-6",
-                            active ? "text-foreground" : "",
-                          )}
-                        />
+                    <a
+                      className={clsx(
+                        "flex items-center w-full group/link",
+                        !isCollapsed && "space-x-3",
                       )}
-                      <span
-                        className={clsx(
-                          active ? "text-foreground font-medium" : "",
-                        )}
-                      >
-                        {item.title}
-                      </span>
+                    >
+                      {item.icon && (
+                        <div
+                          className={clsx(
+                            "flex items-center justify-center rounded-md transition-all duration-200 ease-in-out",
+                            !isCollapsed && "bg-white shadow-sm p-1.5",
+                            !isCollapsed &&
+                              active &&
+                              "border-primary/30 bg-primary/10",
+                          )}
+                        >
+                          <Icon
+                            icon={item.icon}
+                            className={clsx(
+                              "w-5 h-5",
+                              "transition-colors duration-200",
+                              active ? "text-primary" : "text-muted-foreground",
+                              "group-hover/link:text-primary",
+                            )}
+                          />
+                        </div>
+                      )}
+                      {!isCollapsed && (
+                        <span
+                          className={clsx(
+                            "text-sm transition-colors duration-200",
+                            active
+                              ? "font-medium text-foreground"
+                              : "text-muted-foreground",
+                            "group-hover/link:text-foreground",
+                          )}
+                        >
+                          {item.title}
+                        </span>
+                      )}
                     </a>
                   </SidebarMenuButton>
                 </Link>
@@ -134,23 +167,62 @@ export function NavMain({
                   <SidebarMenuButton
                     tooltip={item.title}
                     onClick={(e) => handleMenuClick(e, item)}
-                    className={active ? "bg-muted hover:bg-muted" : ""}
-                  >
-                    {item.icon && (
-                      <Icon
-                        icon={item.icon}
-                        className={clsx(
-                          "w-6 h-6",
-                          active ? "text-foreground" : "",
-                        )}
-                      />
+                    className={clsx(
+                      "h-9 transition-colors relative w-full",
+                      "group-data-[collapsible=icon]/sidebar-wrapper:justify-center group-data-[collapsible=icon]/sidebar-wrapper:px-0",
+                      !isCollapsed && "px-3 rounded-md",
+                      active
+                        ? "bg-secondary hover:bg-secondary"
+                        : "hover:bg-secondary",
                     )}
-                    <span
-                      className={active ? "text-foreground font-medium" : ""}
+                  >
+                    <div
+                      className={clsx(
+                        "flex items-center w-full group/link",
+                        !isCollapsed && "space-x-3",
+                      )}
                     >
-                      {item.title}
-                    </span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      {item.icon && (
+                        <div
+                          className={clsx(
+                            "flex items-center justify-center rounded-md transition-all duration-200 ease-in-out",
+                            !isCollapsed &&
+                              "bg-white border border-border/50 shadow-sm p-1.5",
+                            !isCollapsed &&
+                              "group-hover/link:border-primary/20 group-hover/link:bg-primary/5",
+                            !isCollapsed &&
+                              active &&
+                              "border-primary/30 bg-primary/10",
+                          )}
+                        >
+                          <Icon
+                            icon={item.icon}
+                            className={clsx(
+                              "w-5 h-5",
+                              "transition-colors duration-200",
+                              active ? "text-primary" : "text-muted-foreground",
+                              "group-hover/link:text-primary",
+                            )}
+                          />
+                        </div>
+                      )}
+                      {!isCollapsed && (
+                        <span
+                          className={clsx(
+                            "text-sm transition-colors duration-200",
+                            active
+                              ? "font-medium text-foreground"
+                              : "text-muted-foreground",
+                            "group-hover/link:text-foreground",
+                          )}
+                        >
+                          {item.title}
+                        </span>
+                      )}
+                    </div>
+                    {!isCollapsed && (
+                      <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    )}
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -161,15 +233,21 @@ export function NavMain({
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
                             asChild
-                            className={
-                              subActive ? "bg-muted hover:bg-muted" : ""
-                            }
+                            className={clsx(
+                              "h-8 px-8 rounded-md transition-colors",
+                              subActive
+                                ? "bg-secondary hover:bg-secondary"
+                                : "hover:bg-secondary",
+                            )}
                           >
                             <Link href={subItem.url}>
                               <span
-                                className={
-                                  subActive ? "text-foreground font-medium" : ""
-                                }
+                                className={clsx(
+                                  "text-xs",
+                                  subActive
+                                    ? "font-medium text-foreground"
+                                    : "text-muted-foreground",
+                                )}
                               >
                                 {subItem.title}
                               </span>

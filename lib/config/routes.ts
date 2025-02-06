@@ -56,26 +56,16 @@ export const routes: RouteConfig[] = [
     icon: "tabler:file-text",
   },
   {
-    path: "flow",
-    title: "React Flow",
-    icon: "tabler:user-screen",
-  },
-  {
-    path: "gateway-api",
-    title: "API",
-    icon: "tabler:user-screen",
-  },
-  {
     path: "admin/invite-user",
     title: "Invite",
-    icon: "tabler:adjustments",
+    icon: "tabler:send",
     roles: ["ADMIN"], // Restrict to admin only
   },
 ];
 // Helper function to get route title by path
 export function getRouteTitle(
   path: string,
-  routeConfigs: RouteConfig[] = routes
+  routeConfigs: RouteConfig[] = routes,
 ): string | null {
   const normalizedPath = path.toLowerCase();
 
@@ -98,19 +88,37 @@ export function getRouteTitle(
 
 // Convert routes to NavMain format
 export function getNavMainItems(userRole?: string): NavItem[] {
-  // filter routes based on user role
-  const filteredRoutes = routes.filter((route) => {
+  function hasAccess(route: RouteConfig): boolean {
     if (!route.roles) return true;
-    return userRole && route.roles.includes(userRole.toLowerCase());
-  });
+    return userRole ? route.roles.includes(userRole) : false;
+  }
 
-  return filteredRoutes.map((route) => ({
-    title: route.title,
-    url: `/${route.path}`,
-    icon: route.icon,
-    items: route.children?.map((child) => ({
-      title: child.title,
-      url: `/${route.path}/${child.path}`,
-    })),
-  }));
+  function processRoute(route: RouteConfig): NavItem | null {
+    if (!hasAccess(route)) return null;
+
+    const navItem: NavItem = {
+      title: route.title,
+      url: `/${route.path}`,
+      icon: route.icon,
+    };
+
+    if (route.children) {
+      const childItems = route.children
+        .map((child) => ({
+          title: child.title,
+          url: `${navItem.url}/${child.path}`,
+        }))
+        .filter(Boolean);
+
+      if (childItems.length > 0) {
+        navItem.items = childItems;
+      }
+    }
+
+    return navItem;
+  }
+
+  return routes
+    .map(processRoute)
+    .filter((item): item is NavItem => item !== null);
 }

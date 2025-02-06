@@ -35,49 +35,46 @@ export async function markInviteAsUsed(inviteId: string): Promise<boolean> {
 }
 
 export async function getUserData(): Promise<UserData | null> {
+  // Get all dynamic data first
   const supabase = await createServerClient();
-  return getCachedUserData(supabase);
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return null;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile) {
+    console.error("Error fetching profile:", profileError);
+    return null;
+  }
+
+  // Pass the data to cached function for transformation
+  return getCachedUserData(user, profile);
 }
 
-async function getCachedUserData(supabase: any): Promise<UserData | null> {
+async function getCachedUserData(
+  user: any,
+  profile: any,
+): Promise<UserData | null> {
   "use cache";
-  cacheLife({
-    stale: 60 * 60 * 24, // 24h stale time
-    revalidate: 60 * 60 * 24, // 24h revalidate
-    expire: 60 * 60 * 24 * 7, // Viikko
-  });
   cacheTag("user-profile");
 
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return null;
-    }
-
-    const { data: profile, error: profileError } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-
-    if (profileError) {
-      console.error("Error fetching profile:", profileError);
-      return null;
-    }
-
-    if (!profile) {
-      return null;
-    }
-
     return {
       id: user.id,
       email: user.email!,
       name: user.user_metadata.name,
-      organization: user.user_metadata.organization as Organization,
+      organization: user.user_metadata.organization,
       role: user.user_metadata.role,
       isActive: true,
       avatar: profile.avatar,
@@ -87,10 +84,11 @@ async function getCachedUserData(supabase: any): Promise<UserData | null> {
       updatedAt: profile.updatedAt,
     };
   } catch (error) {
-    console.error("Error in getCurrentUser:", error);
+    console.error("Error in getCachedUserData:", error);
     return null;
   }
 }
+
 export async function validateInvite(
   email: string,
   organization: Organization,

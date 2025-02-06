@@ -222,9 +222,13 @@ function DetailedCards() {
             <div key={i} className="flex items-center">
               <div className="space-y-1">
                 <p className="text-sm font-medium">Product {i}</p>
-                <p className="text-sm text-muted-foreground">{1000 - i * 100} sales</p>
+                <p className="text-sm text-muted-foreground">
+                  {1000 - i * 100} sales
+                </p>
               </div>
-              <div className="ml-auto font-medium">+${(1000 - i * 100) * 2}</div>
+              <div className="ml-auto font-medium">
+                +${(1000 - i * 100) * 2}
+              </div>
             </div>
           ))}
         </CardContent>
@@ -240,7 +244,10 @@ function DetailedCards() {
               <Globe className="mr-2 h-4 w-4 text-muted-foreground" />
               <div className="space-y-1">
                 <p className="text-sm font-medium">{region}</p>
-                <p className="text-sm text-muted-foreground" suppressHydrationWarning>
+                <p
+                  className="text-sm text-muted-foreground"
+                  suppressHydrationWarning
+                >
                   {Math.floor(Math.random() * 1000)} orders
                 </p>
               </div>

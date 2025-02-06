@@ -26,7 +26,6 @@ export default async function Layout({
         <AppSidebar variant="inset" userData={userProfileData} />
         <SidebarInset>
           <BreadcrumbHeader />
-          {/* Background applied directly on the scrollable container */}
           <div className="relative flex-1 overflow-auto bg-custom-gradient">
             {children}
           </div>

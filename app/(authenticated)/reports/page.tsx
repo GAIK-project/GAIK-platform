@@ -83,7 +83,7 @@ export default function DashboardV2() {
       { region: "Europe", orders: 650, percentage: 96 },
       { region: "Asia Pacific", orders: 900, percentage: 75 },
     ],
-    []
+    [],
   );
 
   return (

@@ -62,8 +62,7 @@ export type Document = typeof documents.$inferSelect;
 export type NewDocument = typeof documents.$inferInsert;
 export type SearchDocument = Document & { similarity: number };
 
-
-// JSON DATA EXAMPLE 
+// JSON DATA EXAMPLE
 export const contentTypeEnum = pgEnum("content_type", [
   "COURSE",
   "CAMPUS",
@@ -75,7 +74,7 @@ export const contentTypeEnum = pgEnum("content_type", [
 export const haagaHeliaContent = pgTable("haaga_helia_content", {
   id: serial("id").primaryKey(),
   type: contentTypeEnum("type").notNull(),
-  title: text("title").notNull(),  // Course title, Campus name, Program name, or Service name
+  title: text("title").notNull(), // Course title, Campus name, Program name, or Service name
   description: text("description"),
   content: jsonb("content").notNull(), // Structured content specific to each type
   metadata: jsonb("metadata").notNull(), // Additional metadata fields

@@ -1,14 +1,5 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,16 +17,24 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { createBrowserClient } from "@/lib/db/supabase/client";
-import { redirect } from "next/navigation";
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export async function signOut() {
+async function signOut() {
   const supabase = createBrowserClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error("Error signing out:", error.message);
     throw error;
   }
-  redirect("/login");
+  return true;
 }
 
 export function NavUser({
@@ -48,6 +47,19 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push("/login");
+      router.refresh(); // This will refresh the page data
+    } catch (error) {
+      console.error("Failed to log out:", error);
+      // You might want to show an error notification here
+    }
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -109,7 +121,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

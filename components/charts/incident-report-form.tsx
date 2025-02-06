@@ -8,7 +8,7 @@ export default function IncidentReportForm() {
   On October 10, 2024, at approximately 3:45 PM, a significant incident occurred at our production facility in Building 3. An unexpected malfunction in one of the primary cooling systems led to a rapid temperature increase in the assembly area. The automated safety protocols were immediately triggered, and all personnel were evacuated without incident. Although no injuries were reported, production was halted for nearly 2 hours, causing substantial downtime. Preliminary investigations suggest that a faulty sensor may have caused the system to overheat. A comprehensive review of the cooling system and an update to the maintenance procedures are recommended to prevent similar incidents in the future.
   `;
   const [incidentDetails, setIncidentDetails] = useState(
-    placeholderText.trim()
+    placeholderText.trim(),
   );
   const [report, setReport] = useState<{
     reportTitle: string;
@@ -44,7 +44,10 @@ export default function IncidentReportForm() {
   return (
     <div>
       <Separator className="mb-4 w-40 " />
-      <h1 className="text-2xl mb-4">Automated Incident Reporting | With o3-mini reasoning effort set to medium </h1>
+      <h1 className="text-2xl mb-4">
+        Automated Incident Reporting | With o3-mini reasoning effort set to
+        medium{" "}
+      </h1>
       <form onSubmit={handleSubmit}>
         <textarea
           value={incidentDetails}

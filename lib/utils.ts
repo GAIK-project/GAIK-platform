@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { z } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,3 +44,39 @@ export function formatDate(date: Date | string | undefined): string {
     minute: "2-digit",
   });
 }
+
+export const FileValidationSchema = z.object({
+  file: z
+    .instanceof(File)
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "Tiedoston koko tulee olla alle 5MB",
+    })
+    .refine(
+      (file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type),
+      {
+        message: "Vain JPEG, PNG ja WebP kuvat ovat sallittuja",
+      },
+    ),
+});
+
+interface ApplicationError extends Error {
+  info: string;
+  status: number;
+}
+
+export const fetcher = async (url: string) => {
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    const error = new Error(
+      "An error occurred while fetching the data.",
+    ) as ApplicationError;
+
+    error.info = await res.json();
+    error.status = res.status;
+
+    throw error;
+  }
+
+  return res.json();
+};
