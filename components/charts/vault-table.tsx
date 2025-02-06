@@ -61,7 +61,7 @@ const vaults = [
 
 export function VaultTable() {
   return (
-    <Table>
+    <Table className="bg-background rounded-lg">
       <TableHeader>
         <TableRow>
           <TableHead>Vault</TableHead>
