@@ -1,6 +1,6 @@
 "use server";
 import { SearchDocument } from "@/lib/db/drizzle/schema";
-import { createClient } from "@/lib/db/supabase/client";
+import { createBrowserClient } from "@/lib/db/supabase/client";
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
 
@@ -12,7 +12,7 @@ export async function searchDocuments(
   query: string,
   limit = 5,
 ): Promise<SearchDocument[]> {
-  const supabase = createClient();
+  const supabase = createBrowserClient();
   try {
     const { embedding, usage } = await embed({
       model: openai.embedding("text-embedding-3-small"),

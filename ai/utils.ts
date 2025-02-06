@@ -5,7 +5,7 @@ import {
   LanguageModelV1TextPart,
 } from "@ai-sdk/provider";
 import { CoreMessage, generateObject } from "ai";
-import { searchDocuments } from "../actions/search";
+import { searchDocuments } from "./ai-actions/search";
 
 // Helper function to get last user message text
 export const getLastUserMessageText = (

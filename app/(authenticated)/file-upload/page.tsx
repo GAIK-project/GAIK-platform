@@ -1,9 +1,11 @@
-import AllasFileUpload from "@/components/allas-file-upload";
+import Dashboard from "@/components/allas/dashboard";
+import { LoadingDashboard } from "@/components/loading";
 import { allasClient } from "@/lib/allasClient";
+import { Suspense } from "react";
 
 async function getFiles(bucket: string) {
   try {
-    const files = await allasClient.listFiles(bucket);
+    const files = !bucket ? [] : await allasClient.listFiles(bucket);
     return files;
   } catch (error) {
     console.error("Error fetching files:", error);
@@ -12,15 +14,12 @@ async function getFiles(bucket: string) {
 }
 
 export default async function Page() {
-  const bucketName = "gaik-demo-storage";
+  const bucketName = process.env.ALLAS_BUCKET_NAME || "";
   const files = await getFiles(bucketName);
 
   return (
-    <main className="container mx-auto py-8">
-      <h1 className="md:text-4xl text-3xl font-bold mb-6 text-center">
-        Allas File Upload
-      </h1>
-      <AllasFileUpload bucket={bucketName} initialFiles={files} />
-    </main>
+    <Suspense fallback={<LoadingDashboard />}>
+      <Dashboard bucketName={bucketName} initialFiles={files} />
+    </Suspense>
   );
 }

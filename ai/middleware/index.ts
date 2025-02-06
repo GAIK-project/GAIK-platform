@@ -1,7 +1,7 @@
 //app/ai/index.ts
 import { openai } from "@ai-sdk/openai";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { experimental_wrapLanguageModel as wrapLanguageModel } from "ai";
+import { wrapLanguageModel } from "ai";
 import { hydeMiddleware } from "./hyde-rag";
 import { multiStagellmMiddleware } from "./multistage-rag";
 

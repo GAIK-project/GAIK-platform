@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { Message as MessageType } from "ai";
 import { PaperclipIcon } from "lucide-react";
-import { Message } from "./message";
+import { Message, ThinkingMessage } from "./message";
 
 interface ChatMessagesProps {
   messages: MessageType[];
@@ -52,9 +52,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
             )}
           </Message>
         ))}
-        {showThinkingMessage && (
-          <Message role="assistant" content="Thinking..." isLoading={true} />
-        )}
+        {showThinkingMessage && <ThinkingMessage />}
       </>
     </div>
   );

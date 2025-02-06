@@ -29,16 +29,21 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 30% 100%; /* Almost white with tiny blue hint */
+    --sidebar-foreground: 222 20% 45%; /* Kept for readability */
+    --sidebar-border: 220 25% 96%; /* Very subtle border */
+    --sidebar-accent: 220 35% 97%; /* Subtle hover */
+    --sidebar-accent-foreground: 222 25% 25%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
     --ai-bg-light: 210 100% 98%;
     --ai-bg-dark: 220 80% 56%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -65,16 +70,21 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 222 30% 13%; /* Slightly richer dark background */
+    --sidebar-foreground: 222 15% 80%; /* Better contrast in dark mode */
+    --sidebar-border: 222 25% 18%; /* Subtle dark border */
+    --sidebar-accent: 222 25% 18%; /* Dark hover state */
+    --sidebar-accent-foreground: 222 15% 90%; /* Brighter text for dark mode */
+    --sidebar-primary: 217.2 91.2% 59.8%; /* Match your dark mode primary */
+    --sidebar-primary-foreground: 210 40% 98%; /* Bright text on primary */
+    --sidebar-ring: 224.3 76.3% 48%; /* Match your dark mode ring */
     --custom-bg-light: 210 100% 98%;
     --custom-bg-dark: 220 80% 56%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
@@ -89,11 +99,7 @@
 
 @layer utilities {
   .bg-custom-gradient {
-    background: linear-gradient(
-      180deg,
-      hsl(210, 100%, 96%, 0.45) 0%,
-      hsl(210, 100%, 96%, 0.5) 100%
-    );
+    background: hsl(220, 100%, 98%); /* Same as --sidebar-background */
   }
 }
 

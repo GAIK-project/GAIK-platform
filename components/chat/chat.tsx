@@ -14,6 +14,14 @@ import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
 
+const suggestedActions = [
+  {
+    title: "Who wrote",
+    label: "Haaga-Helia's reporting instructions",
+    action: "Who wrote Haaga-Helia's reporting instructions",
+  },
+];
+
 interface ChatProps {
   id: string;
   initialMessages: Array<Message>;
@@ -31,6 +39,7 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
     handleSubmit,
     isLoading,
     stop,
+    append,
     setMessages,
   } = useChat({
     id,
@@ -42,6 +51,13 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
       // Potential chat history saving logic
     },
   });
+
+  const handleSuggestionClick = async (action: any) => {
+    await append({
+      content: action,
+      role: "user",
+    });
+  };
 
   const {
     containerRef,
@@ -84,7 +100,25 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
             <h2 className="text-2xl font-semibold text-primary">
               What can I help you with?
             </h2>
+
+            {/* Suggested Actions */}
+            <div className="flex flex-col gap-2 mt-4">
+              {suggestedActions.map((suggestion, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="text-left"
+                  onClick={() => handleSuggestionClick(suggestion.action)}
+                >
+                  <span className="font-medium">{suggestion.title}</span>{" "}
+                  <span className="text-muted-foreground">
+                    {suggestion.label}
+                  </span>
+                </Button>
+              ))}
+            </div>
           </div>
+
           <div className="w-full max-w-xl">
             <ChatInput
               input={input}
@@ -108,7 +142,6 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
               </div>
             </div>
 
-            {/* Optional “scroll to bottom” button */}
             {showScrollButton && (
               <Button
                 size="icon"
@@ -125,8 +158,7 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
             )}
           </div>
 
-          {/* Input at the bottom once there’s at least one message */}
-          <div className="flex-shrink-0  p-4 ">
+          <div className="flex-shrink-0 p-4">
             <div className="max-w-3xl mx-auto">
               <ChatInput
                 input={input}

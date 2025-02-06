@@ -1,7 +1,7 @@
 import { openAIembeddings } from "@/ai/middleware/index";
 import { db } from "@/lib/db/drizzle/drizzle";
 import { documents } from "@/lib/db/drizzle/schema";
-import { processPdfFile } from "@/lib/utils/pdf";
+import { processPdfFile } from "@/lib/helpers/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { NextRequest, NextResponse } from "next/server";
 

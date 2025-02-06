@@ -6,11 +6,11 @@ import {
 } from "@ai-sdk/provider";
 import {
   CoreMessage,
-  Experimental_LanguageModelV1Middleware,
   generateObject,
   generateText,
+  LanguageModelV1Middleware,
 } from "ai";
-import { searchDocuments } from "../actions/search";
+import { searchDocuments } from "../ai-actions/search";
 
 // Helper function to get last user message text
 const getLastUserMessageText = (messages: CoreMessage[]): string | null => {
@@ -90,7 +90,7 @@ const addToLastUserMessage = (
 };
 
 // RAG Middleware
-export const hydeMiddleware: Experimental_LanguageModelV1Middleware = {
+export const hydeMiddleware: LanguageModelV1Middleware = {
   transformParams: async ({ params }) => {
     try {
       const userMessage = getLastUserMessageText(params.prompt);
