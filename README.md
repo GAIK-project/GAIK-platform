@@ -1,59 +1,95 @@
-# Project Setup Guide
+# CSC S3 Credentials Setup Guide
 
-This guide will help you set up your development environment for this Next.js 15 project.
+This guide explains how to set up S3 credentials for CSC Allas service using OpenStack and AWS CLI to windows.
 
 ## Prerequisites
 
-Make sure you have the following installed on your system:
+- CSC account with access to Allas service
+- AWS CLI installed (check with `aws --version`)
+- Python and pip installed
 
-- Node.js (nodejs.org/en/download)
-- pnpm (pnpm.io/installation)
+## Steps
 
-## Installation Steps
+### 1. Download Configuration Files from CSC Pouta
 
-1. Clone the repository and install dependencies:
+1. Log in to https://pouta.csc.fi/dashboard/project/api_access/
+2. Download `clouds.yaml` file
+   - Contains necessary OpenStack configuration
 
-   ```bash
-   git clone https://github.com/GAIK-kokeilut/GAIK-dashboard
-   cd GAIK-dashboard
-   pnpm install
-   ```
+### 2. Set Up OpenStack Environment Variables
 
-2. Install required setup dependencies:
+Use PowerShell to set the following environment variables using the values from your `clouds.yaml`:
 
-   ```bash
-   pnpm add -D tsx
-   ```
-
-3. Run the setup script:
-
-   ```bash
-   pnpm db:setup
-   ```
-
-The setup script will guide you through configuring:
-
-- Supabase credentials (optional)
-- CSC Allas S3 storage (optional)
-- OpenAI API key (optional)
-
-You can skip any step if you don't need that functionality right now.
-
-After setup is complete, start the development server:
-
-```bash
-pnpm dev
+```powershell
+$env:OS_AUTH_URL = "your_auth_url"
+$env:OS_USERNAME = "your_username"
+$env:OS_PROJECT_ID = "your_project_id"
+$env:OS_PROJECT_NAME = "your_project_name"
+$env:OS_USER_DOMAIN_NAME = "Default"
+$env:OS_PASSWORD = "your_csc_password"
+$env:OS_IDENTITY_API_VERSION = "3"
+$env:OS_INTERFACE = "public"
 ```
 
-**Note:** Alternatively, you can set up environment variables manually:
+### 3. Get EC2 Credentials
 
-1. Copy `.env.example` to `.env.local`
-2. Fill in the required values in `.env.local`
+```powershell
+# Install OpenStack CLI if not already installed
+pip install python-openstackclient
 
-You can modify these values (e.g., S3 bucket name) at any time by editing `.env.local`
+# List EC2 credentials
+openstack ec2 credentials list
+```
 
-## Additional Resources
+### 4. Configure AWS CLI
 
-- [Supabase Documentation](https://supabase.com/docs)
-- [CSC Allas Documentation](https://docs.csc.fi/data/Allas/)
-- [OpenAI API Documentation](https://platform.openai.com/docs)
+Set up your AWS configuration files:
+
+1. Create/edit `C:\Users\YourUsername\.aws\config`:
+
+```ini
+[default]
+region = eu-north-1
+endpoint_url = https://a3s.fi
+s3 =
+    addressing_style = path
+    endpoint_url = https://a3s.fi
+```
+
+2. Create/edit `C:\Users\YourUsername\.aws\credentials`:
+
+```ini
+[default]
+aws_access_key_id = your_access_key
+aws_secret_access_key = your_secret_key
+```
+
+### 5. Test the Configuration
+
+- Check your AWS CLI version with `aws --version`
+
+```powershell
+# List all buckets
+aws s3 ls
+
+# List contents of a specific bucket
+aws s3 ls s3://bucket-name/
+```
+
+## Common AWS S3 Commands
+
+```powershell
+# Upload a file
+aws s3 cp file.txt s3://bucket-name/
+
+# Download a file
+aws s3 cp s3://bucket-name/file.txt ./
+
+# Sync a directory
+aws s3 sync local-directory s3://bucket-name/remote-directory
+
+# Delete a file
+aws s3 rm s3://bucket-name/file.txt
+```
+
+CSC docs: https://docs.csc.fi/support/faq/how-to-get-Allas-s3-credentials/
