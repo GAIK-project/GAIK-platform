@@ -9,7 +9,7 @@ import { revalidateTag } from "next/cache";
 
 const s3Client = new S3Client({
   region: "eu-north-1",
-  endpoint: process.env.ALLAS_ENDPOINT!,
+  endpoint: process.env.ALLAS_ENDPOINT_URL!,
   credentials: {
     accessKeyId: process.env.ALLAS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.ALLAS_SECRET_ACCESS_KEY!,
