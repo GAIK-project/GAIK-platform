@@ -30,9 +30,9 @@ You can access the chatbot directly at [http://localhost:3000/chatbot](http://lo
 
 ```mermaid
 graph TB
-    subgraph "Next.js 15.2 Full-Stack Framework"
-        A[Next.js UI Components]
-        U[Next.js Server Actions & API Routes]
+    subgraph "Next.js"
+        A[UI Components]
+        U[Server Actions & API]
     end
 
     subgraph "Authentication"
@@ -61,6 +61,10 @@ graph TB
         P[Database Migrations]
     end
 
+    subgraph "Storage"
+        R[CSC Allas S3 Bucket]
+    end
+
     subgraph "Communication"
         S[Resend Email]
         T[Invitation System]
@@ -80,6 +84,9 @@ graph TB
     J --> Z3
     Z3 --> Z1
     Z1 --> F
+    
+    %% Storage Flow
+    U <--> R
 
     %% Data Management
     N <--> O
@@ -87,6 +94,7 @@ graph TB
 
     %% Server Features
     S --> T
+    T <--> A
     U <--> N
     U <--> F
     U <--> S
