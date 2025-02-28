@@ -6,6 +6,8 @@ A modern web application for conversational AI, document management, and analyti
 
 The easiest way to get started is using the guest mode:
 
+> **Note**: If you don't have pnpm installed, you can download it from https://pnpm.io/
+
 ```bash
 # Install dependencies
 pnpm install
