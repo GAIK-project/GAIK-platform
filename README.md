@@ -8,15 +8,17 @@ The easiest way to get started is using the guest mode:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run the setup script
-npm run app:setup
+pnpm app:setup
 # Choose option 1 for easy setup
 
 # Start the development server
-npm run dev
+pnpm dev
 ```
+
+> **Note**: You can also use `npm` for all commands by replacing `pnpm` with `npm run` (e.g., `npm run app:setup` instead of `pnpm app:setup`).
 
 Then navigate to [http://localhost:3000](http://localhost:3000) and click "Continue as Guest" on the login page.
 
@@ -273,7 +275,7 @@ For complete functionality including authentication, database, and file storage:
 1. Run the setup script:
 
    ```bash
-   npm run app:setup
+   pnpm app:setup
    ```
 
 2. Choose option 2 (Full setup)
@@ -289,12 +291,12 @@ For complete functionality including authentication, database, and file storage:
 4. Run database migrations:
 
    ```bash
-   npm run db:migrate
+   pnpm db:migrate
    ```
 
 5. Start the development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
 ### Setting up CSC Allas Service
@@ -318,21 +320,21 @@ For more detailed setup, see [Resend Next.js Documentation](https://resend.com/d
 
 ```bash
 # Development
-npm run dev           # Start development server
+pnpm dev           # Start development server
 
 # Setup
-npm run app:setup     # Configure application settings
+pnpm app:setup     # Configure application settings
 
 # Database (needed for RAG functionality)
-npm run db:migrate    # Run database migrations
-npm run db:push       # Push schema to database
-npm run db:pull       # Pull schema from database
-npm run db:studio     # Open database explorer
-npm run db:seed       # Seed database with initial data
+pnpm db:migrate    # Run database migrations
+pnpm db:push       # Push schema to database
+pnpm db:pull       # Pull schema from database
+pnpm db:studio     # Open database explorer
+pnpm db:seed       # Seed database with initial data
 
 # Email (for admin invitation feature)
-npm run email         # Start email preview server
-npm run email:export  # Export email templates
+pnpm email         # Start email preview server
+pnpm email:export  # Export email templates
 ```
 
 ## Documentation References
