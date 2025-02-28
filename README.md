@@ -96,9 +96,9 @@ graph TB
 
 ### Core Framework
 
-- **Next.js 15.2**: Meta framework with server components and server actions
-- **React 19**: UI library for building interactive components
-- **Node.js**: Required runtime environment for Next.js
+- **Next.js 15.2**: Full-stack meta-framework that combines Node.js and React, featuring server components, server actions, and integrated API routes
+- **shadcn/ui**: Component library for building the application interface
+- **Vercel AI SDK**: Core toolkit for integrating AI capabilities, streaming responses, and building AI-powered applications
 
 ### Authentication
 
@@ -342,6 +342,7 @@ npm run email:export  # Export email templates
 - [Vercel AI SDK Documentation](https://sdk.vercel.ai/docs/ai-sdk-core/overview)
 - [Supabase Documentation](https://supabase.io/docs)
 - [Resend Documentation](https://resend.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
 
 ## Environment Variables
 
