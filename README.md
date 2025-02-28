@@ -332,7 +332,7 @@ pnpm db:migrate    # Run database migrations
 pnpm db:push       # Push schema to database
 pnpm db:pull       # Pull schema from database
 pnpm db:studio     # Open database explorer
-pnpm db:seed       # Seed database with initial data
+pnpm db:seed       # Add admin user to db manually
 
 # Email (for admin invitation feature)
 pnpm email         # Start email preview server
