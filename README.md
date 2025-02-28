@@ -1,95 +1,348 @@
-# CSC S3 Credentials Setup Guide
+# GAIK Application
 
-This guide explains how to set up S3 credentials for CSC Allas service using OpenStack and AWS CLI to windows.
+A modern web application for conversational AI, document management, and analytics, powered by RAG (Retrieval Augmented Generation) capabilities and built with Next.js 15.2 and React 19.
 
-## Prerequisites
+## Quick Start
 
-- CSC account with access to Allas service
-- AWS CLI installed (check with `aws --version`)
-- Python and pip installed
+The easiest way to get started is using the guest mode:
 
-## Steps
+```bash
+# Install dependencies
+npm install
 
-### 1. Download Configuration Files from CSC Pouta
+# Run the setup script
+npm run app:setup
+# Choose option 1 for easy setup
 
-1. Log in to https://pouta.csc.fi/dashboard/project/api_access/
-2. Download `clouds.yaml` file
-   - Contains necessary OpenStack configuration
-
-### 2. Set Up OpenStack Environment Variables
-
-Use PowerShell to set the following environment variables using the values from your `clouds.yaml`:
-
-```powershell
-$env:OS_AUTH_URL = "your_auth_url"
-$env:OS_USERNAME = "your_username"
-$env:OS_PROJECT_ID = "your_project_id"
-$env:OS_PROJECT_NAME = "your_project_name"
-$env:OS_USER_DOMAIN_NAME = "Default"
-$env:OS_PASSWORD = "your_csc_password"
-$env:OS_IDENTITY_API_VERSION = "3"
-$env:OS_INTERFACE = "public"
+# Start the development server
+npm run dev
 ```
 
-### 3. Get EC2 Credentials
+Then navigate to [http://localhost:3000](http://localhost:3000) and click "Continue as Guest" on the login page.
 
-```powershell
-# Install OpenStack CLI if not already installed
-pip install python-openstackclient
+You can access the chatbot directly at [http://localhost:3000/chatbot](http://localhost:3000/chatbot).
 
-# List EC2 credentials
-openstack ec2 credentials list
+## Application Architecture
+
+```mermaid
+graph TB
+    subgraph "Next.js 15.2 Full-Stack Framework"
+        A[Next.js UI Components]
+        U[Next.js Server Actions & API Routes]
+    end
+
+    subgraph "Authentication"
+        C[Supabase Auth]
+        D[JWT Tokens]
+        E[Guest Mode]
+    end
+
+    subgraph "AI Integration"
+        F[Vercel AI SDK]
+        G[OpenAI Models]
+        H[Streaming Responses]
+        I[Structured Outputs]
+    end
+
+    subgraph "RAG System"
+        Z1[RAG Middleware]
+        Z2[Embeddings Generation]
+        Z3[Vector Similarity Search]
+        J[Document Processing]
+    end
+
+    subgraph "Data Management"
+        N[Drizzle ORM]
+        O[PostgreSQL/Supabase]
+        P[Database Migrations]
+    end
+
+    subgraph "Communication"
+        S[Resend Email]
+        T[Invitation System]
+    end
+
+    A <--> C
+    A <--> E
+    A <--> U
+    C <--> D
+    F <--> G
+    F <--> H
+    F <--> I
+
+    %% RAG System Flow
+    Z1 --> Z2
+    Z2 --> Z3
+    J --> Z3
+    Z3 --> Z1
+    Z1 --> F
+
+    %% Data Management
+    N <--> O
+    N --> P
+
+    %% Server Features
+    S --> T
+    U <--> N
+    U <--> F
+    U <--> S
+    U <--> Z1
+
+    %% Data Flow
+    O --> Z3
 ```
 
-### 4. Configure AWS CLI
+## Technology Stack
 
-Set up your AWS configuration files:
+### Core Framework
 
-1. Create/edit `C:\Users\YourUsername\.aws\config`:
+- **Next.js 15.2**: Meta framework with server components and server actions
+- **React 19**: UI library for building interactive components
+- **Node.js**: Required runtime environment for Next.js
 
-```ini
-[default]
-region = eu-north-1
-endpoint_url = https://a3s.fi
-s3 =
-    addressing_style = path
-    endpoint_url = https://a3s.fi
+### Authentication
+
+- **Supabase Auth**: User authentication with JWT tokens
+- **Guest Mode**: Allow users to access features without authentication
+
+### Database & ORM
+
+- **PostgreSQL/Supabase**: Database for user data and vector embeddings
+- **Drizzle ORM**: Type-safe ORM for database operations
+- **PgVector**: Vector storage and similarity search for RAG functionality
+
+### AI Integration
+
+- **Vercel AI SDK**: Core tools for AI integration and streaming
+- **OpenAI Models**: LLM capabilities for chatbot and text generation
+- **Custom RAG Middleware**: Enhanced context-aware AI responses
+
+### Storage
+
+- **CSC Allas**: S3-compatible object storage for documents and files
+
+### Communication
+
+- **Resend**: Email delivery service for user invitations
+
+## Detailed Architecture
+
+### RAG (Retrieval Augmented Generation) System
+
+The RAG capability is powered by:
+
+1. **RAG Middleware** (`ai/middleware/`):
+
+   - Intercepts user queries and enhances them with relevant context
+   - Offers multiple strategies: HyDE (Hypothetical Document Embeddings) and Multi-stage RAG
+   - HyDE generates hypothetical answers to improve retrieval accuracy
+   - Adds retrieved document content to user prompts before sending to LLM
+
+2. **Embeddings Generation**:
+
+   - Creates vector embeddings for both documents and queries
+   - Uses OpenAI's text-embedding-3-small model
+   - Consistent vector dimensions (1536) for comparison
+
+3. **Vector Similarity Search**:
+
+   - Custom SQL function (`match_documents`) in PostgreSQL
+   - Uses PgVector extension for efficient similarity calculations
+   - Returns documents ranked by relevance score
+   - Query executed via Supabase RPC call
+   - Implemented in `ai/ai-actions/search.ts` which uses the Supabase function
+   - **Important**: You need to create the `match_documents` function in your database using the SQL in `lib/db/function.sql`
+
+4. **Document Processing**:
+   - Files processed and chunked into manageable segments
+   - Embeddings stored in PostgreSQL with metadata
+   - Full document lifecycle management
+   - New documents can be added via the API endpoint at `/api/seed`
+
+### Vector Search Implementation
+
+The `ai/ai-actions/search.ts` server action handles vector comparisons by:
+
+1. Converting the user's query into an embedding vector using OpenAI's embedding model
+2. Calling the `match_documents` Supabase function to find similar documents
+3. Returning the most relevant documents based on similarity
+
+```typescript
+// Example from ai/ai-actions/search.ts
+export async function searchDocuments(query: string, limit = 5): Promise<SearchDocument[]> {
+  const supabase = createBrowserClient();
+  try {
+    // Generate embedding for the query
+    const { embedding, usage } = await embed({
+      model: openai.embedding("text-embedding-3-small"),
+      value: query,
+    });
+
+    // Use match_documents function from lib/db/function.sql
+    const { data, error } = await supabase.rpc("match_documents", {
+      query_embedding: embedding,
+      match_threshold: 0, // How similar the documents should be (0-1)
+      match_count: limit, // How many documents to return
+    });
+
+    if (error) throw error;
+    return data as SearchDocument[];
+  } catch (error) {
+    console.error("Error in searchDocuments:", error);
+    throw error;
+  }
+}
 ```
 
-2. Create/edit `C:\Users\YourUsername\.aws\credentials`:
+### Adding Documents to the RAG System
 
-```ini
-[default]
-aws_access_key_id = your_access_key
-aws_secret_access_key = your_secret_key
+You can add new documents to the database for use in the RAG system by using the `/api/seed` endpoint:
+
+1. Send a POST request with a PDF file in a FormData object
+2. The server will:
+   - Process the PDF file to extract text and metadata
+   - Split the text into manageable chunks
+   - Generate embeddings for each chunk using OpenAI
+   - Store the chunks and embeddings in the database
+
+Example usage with `curl`:
+
+```bash
+curl -X POST http://localhost:3000/api/seed \
+  -F "file=@/path/to/your/document.pdf"
 ```
 
-### 5. Test the Configuration
+Or using the Fetch API in JavaScript:
 
-- Check your AWS CLI version with `aws --version`
+```javascript
+const formData = new FormData();
+formData.append('file', fileObject);
 
-```powershell
-# List all buckets
-aws s3 ls
+const response = await fetch('/api/seed', {
+  method: 'POST',
+  body: formData
+});
 
-# List contents of a specific bucket
-aws s3 ls s3://bucket-name/
+const result = await response.json();
 ```
 
-## Common AWS S3 Commands
+The document will then be available for retrieval in RAG-powered conversations.
 
-```powershell
-# Upload a file
-aws s3 cp file.txt s3://bucket-name/
+### Authentication System
 
-# Download a file
-aws s3 cp s3://bucket-name/file.txt ./
+- **Supabase Auth**: Handles user authentication, session management
+- **JWT Tokens**: Secures API requests and maintains user state
+- **Guest Mode**: Cookie-based alternative to bypass authentication for simple use cases
 
-# Sync a directory
-aws s3 sync local-directory s3://bucket-name/remote-directory
+### Database Management
 
-# Delete a file
-aws s3 rm s3://bucket-name/file.txt
+- **Drizzle ORM**: Type-safe database access with automated migrations
+- Key commands:
+  - `db:push`: For quick schema updates (development)
+  - `db:pull`: For reflecting database changes to Drizzle schema
+  - `db:migrate`: For proper migration management in production
+
+## Setup and Configuration
+
+### Easy Setup (Guest Mode)
+
+For a quick start with minimal configuration:
+
+1. Run the setup script:
+
+   ```bash
+   npm run app:setup
+   ```
+
+2. Choose option 1 (Easy setup)
+
+3. Optionally provide an OpenAI API key (for AI functionality)
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Navigate to `http://localhost:3000` and click "Continue as Guest"
+
+### Full Setup
+
+For complete functionality including authentication, database, and file storage:
+
+1. Run the setup script:
+
+   ```bash
+   npm run app:setup
+   ```
+
+2. Choose option 2 (Full setup)
+
+3. Provide credentials for:
+
+   - Supabase (authentication)
+   - Database (for RAG capabilities)
+   - Allas S3 (file storage)
+   - OpenAI (AI functionality)
+   - Resend (email functionality)
+
+4. Run database migrations:
+
+   ```bash
+   npm run db:migrate
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+### Setting up CSC Allas Service
+
+For detailed instructions on setting up CSC Allas service and obtaining credentials, please refer to [lib/db/README.md](./lib/db/README.md).
+
+### Setting up Resend for Email
+
+1. Create an account at [Resend](https://resend.com/)
+2. Add your domain or use Resend's test email capabilities
+3. Add your API key to `.env.local`:
+   ```
+   RESEND_API_KEY=your_api_key
+   ```
+
+> **Note**: Without a proper domain setup, you can only send emails to your own verified email address during development.
+
+For more detailed setup, see [Resend Next.js Documentation](https://resend.com/docs/send-with-nextjs).
+
+## Command Reference
+
+```bash
+# Development
+npm run dev           # Start development server
+
+# Setup
+npm run app:setup     # Configure application settings
+
+# Database (needed for RAG functionality)
+npm run db:migrate    # Run database migrations
+npm run db:push       # Push schema to database
+npm run db:pull       # Pull schema from database
+npm run db:studio     # Open database explorer
+npm run db:seed       # Seed database with initial data
+
+# Email (for admin invitation feature)
+npm run email         # Start email preview server
+npm run email:export  # Export email templates
 ```
 
-CSC docs: https://docs.csc.fi/support/faq/how-to-get-Allas-s3-credentials/
+## Documentation References
+
+- [Next.js 15.2 Documentation](https://nextjs.org/docs)
+- [Drizzle ORM Documentation](https://orm.drizzle.team/)
+- [Vercel AI SDK Documentation](https://sdk.vercel.ai/docs/ai-sdk-core/overview)
+- [Supabase Documentation](https://supabase.io/docs)
+- [Resend Documentation](https://resend.com/docs)
+
+## Environment Variables
+
+See `.env.example` for all available configuration options.

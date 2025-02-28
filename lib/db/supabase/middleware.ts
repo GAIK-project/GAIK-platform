@@ -2,6 +2,15 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Check for a guest mode cookie
+  const guestMode = request.cookies.get("guest-mode")?.value === "true";
+
+  // If guest mode is active, skip authentication
+  if (guestMode) {
+    return NextResponse.next({ request });
+  }
+
+  // Rest of your existing middleware code
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

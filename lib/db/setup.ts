@@ -12,15 +12,11 @@ function question(query: string): Promise<string> {
     rl.question(query, (ans) => {
       rl.close();
       resolve(ans);
-    }),
+    })
   );
 }
 
-async function shouldSetupStep(stepName: string): Promise<boolean> {
-  const answer = await question(`Do you want to setup ${stepName}? (y/N): `);
-  return answer.toLowerCase() === "y";
-}
-
+// Validation utility functions
 function isValidUrl(urlString: string): boolean {
   try {
     const url = new URL(urlString);
@@ -33,7 +29,7 @@ function isValidUrl(urlString: string): boolean {
 async function getValidInput(
   prompt: string,
   validator: (input: string) => boolean,
-  errorMessage: string,
+  errorMessage: string
 ): Promise<string> {
   while (true) {
     const input = await question(prompt);
@@ -45,144 +41,205 @@ async function getValidInput(
   }
 }
 
-async function getSupabaseCredentials() {
-  console.log("\nStep 1: Setting up Supabase credentials");
-
-  if (!(await shouldSetupStep("Supabase"))) {
-    return {
-      supabaseUrl: "",
-      supabaseAnonKey: "",
-      databaseUrl: "",
-    };
+async function writeEnvFile(content: string) {
+  try {
+    await fs.writeFile(path.join(process.cwd(), ".env.local"), content);
+    console.log("\n✅ Successfully wrote .env.local file!");
+  } catch (error) {
+    console.error("❌ Error writing .env.local file:", error);
+    throw error;
   }
+}
 
-  console.log("Please visit: https://supabase.com/dashboard");
-  console.log("Create a new project or select an existing one");
+// Dummy values for required environment variables
+const DUMMY_VALUES = {
+  SUPABASE_URL: "https://example.supabase.co",
+  SUPABASE_ANON_KEY:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4YW1wbGUiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.example-signature",
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/postgres",
+};
+
+async function simpleSetup() {
+  console.log("\n🚀 Setting up basic mode...");
+
   console.log(
-    "Go to Project Home Screen -> Click 'Connect' and Select App Frameworks tab to find your credentials\n",
+    "\nℹ️  You can optionally add an OpenAI API key for AI functionality"
+  );
+  console.log(
+    "    Skip with Enter if you just want to explore the UI without AI features"
   );
 
+  // Add validation for OpenAI API key
+  const openaiKey = await getValidInput(
+    "OpenAI API Key (optional): ",
+    (key) => key.startsWith("sk-") || key === "",
+    'Invalid OpenAI API Key format. Should start with "sk-"'
+  );
+
+  // Start with base environment content
+  let envContent = "# Basic setup settings\n\n";
+
+  // Add OpenAI key if provided
+  if (openaiKey.trim()) {
+    envContent += "# OpenAI settings\n";
+    envContent += `OPENAI_API_KEY=${openaiKey}\n\n`;
+  }
+
+  // Add dummy values for required database and Supabase settings
+  envContent += "# Dummy Supabase settings (not real credentials)\n";
+  envContent += `NEXT_PUBLIC_SUPABASE_URL=${DUMMY_VALUES.SUPABASE_URL}\n`;
+  envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${DUMMY_VALUES.SUPABASE_ANON_KEY}\n`;
+  envContent += `DATABASE_URL=${DUMMY_VALUES.DATABASE_URL}\n`;
+  envContent +=
+    "# Note: These are dummy values to prevent errors. They don't connect to real services.\n\n";
+
+  // Add default email settings for development
+  envContent += "# Email settings (minimal defaults for development)\n";
+  envContent += `NEXT_PUBLIC_APP_URL=http://localhost:3000\n`;
+
+  await writeEnvFile(envContent);
+
+  console.log("\n✨ Basic mode setup complete!");
+  console.log("🔍 You can now run 'npm run dev' to start the application");
+  console.log("📝 The application will be available at http://localhost:3000");
+  console.log("🤖 Chatbot will be accessible at http://localhost:3000/chatbot");
+}
+
+async function fullSetup() {
+  console.log("\n🚀 Starting full project setup...");
+  console.log("This will configure all settings for your application");
+
+  // Supabase settings
+  console.log("\n1️⃣  Supabase Configuration (for authentication)");
+  console.log("Visit https://supabase.com to create an account and project");
+
+  // Add validation for Supabase URL
   const supabaseUrl = await getValidInput(
-    "Enter your Supabase URL: ",
-    (url) => isValidUrl(url),
-    "Invalid URL format. URL must start with http:// or https://",
+    "Supabase URL (or press Enter for dummy value): ",
+    (url) => isValidUrl(url) || url === "",
+    "Invalid URL format. URL must start with http:// or https://"
   );
 
-  const supabaseAnonKey = await question("Enter your Supabase Anon Key: ");
+  const supabaseKey = await question(
+    "Supabase Anon Key (or press Enter for dummy value): "
+  );
 
+  // Add validation for Database URL
   const databaseUrl = await getValidInput(
-    "Enter your Database URL (for Drizzle): ",
-    (url) => url.startsWith("postgresql://"),
-    'Invalid Database URL format. Should start with "postgresql://"',
+    "Database URL (or press Enter for dummy value): ",
+    (url) => url.startsWith("postgresql://") || url === "",
+    'Invalid Database URL format. Should start with "postgresql://"'
   );
 
-  return { supabaseUrl, supabaseAnonKey, databaseUrl };
-}
+  // S3 settings
+  console.log("\n2️⃣  Allas S3 Configuration (for file storage)");
 
-async function getCSCCredentials() {
-  console.log("\nStep 2: Setting up CSC Allas (S3) credentials");
+  const s3AccessKey = await question("Allas Access Key ID: ");
+  const s3SecretKey = await question("Allas Secret Access Key: ");
 
-  if (!(await shouldSetupStep("CSC Allas (S3)"))) {
-    return {
-      accessKeyId: "",
-      secretAccessKey: "",
-      endpointUrl: "",
-      bucketName: "",
-    };
+  // Add validation for Allas Endpoint URL
+  const s3Endpoint = await getValidInput(
+    "Allas Endpoint URL: ",
+    (url) => isValidUrl(url) || url === "",
+    "Invalid URL format. URL must start with http:// or https://"
+  );
+
+  const s3Bucket = await question("Allas Bucket Name: ");
+
+  // OpenAI settings
+  console.log("\n3️⃣  OpenAI Configuration (for AI functionality)");
+
+  // Add validation for OpenAI API key
+  const openaiKey = await getValidInput(
+    "OpenAI API Key: ",
+    (key) => key.startsWith("sk-") || key === "",
+    'Invalid OpenAI API Key format. Should start with "sk-"'
+  );
+
+  // Email settings
+  console.log("\n4️⃣  Email Configuration (for invitations)");
+  console.log("Visit https://resend.com to create an account and get API key");
+
+  // Add validation for Application URL
+  const appUrl = await getValidInput(
+    "Application URL (press Enter for http://localhost:3000): ",
+    (url) => isValidUrl(url) || url === "",
+    "Invalid URL format. URL must start with http:// or https://"
+  );
+
+  const resendApiKey = await question("Resend API Key: ");
+  const emailFrom = await question(
+    "Email From address (e.g., noreply@yourdomain.com): "
+  );
+
+  // Build env file content
+  let envContent = "";
+
+  // Supabase - use provided values or dummy values if empty
+  envContent += "# Supabase settings\n";
+  envContent += `NEXT_PUBLIC_SUPABASE_URL=${supabaseUrl.trim() || DUMMY_VALUES.SUPABASE_URL}\n`;
+  envContent += `NEXT_PUBLIC_SUPABASE_ANON_KEY=${supabaseKey.trim() || DUMMY_VALUES.SUPABASE_ANON_KEY}\n`;
+  envContent += `DATABASE_URL=${databaseUrl.trim() || DUMMY_VALUES.DATABASE_URL}\n\n`;
+
+  // If using dummy values, add a note
+  if (!supabaseUrl.trim() || !supabaseKey.trim() || !databaseUrl.trim()) {
+    envContent +=
+      "# Note: Some dummy values are used above to prevent errors. They don't connect to real services.\n\n";
   }
 
-  console.log("Please visit:");
-  console.log("- https://docs.csc.fi/cloud/pouta/");
-  console.log(
-    "- https://docs.csc.fi/support/faq/how-to-get-Allas-s3-credentials/\n",
-  );
-
-  const accessKeyId = await question("Enter your Allas Access Key ID: ");
-  const secretAccessKey = await question(
-    "Enter your Allas Secret Access Key: ",
-  );
-  const endpointUrl = await getValidInput(
-    "Enter your Allas Endpoint URL: ",
-    (url) => isValidUrl(url),
-    "Invalid URL format. URL must start with http:// or https://",
-  );
-  const bucketName = await question("Enter your Allas Bucket Name: ");
-
-  return { accessKeyId, secretAccessKey, endpointUrl, bucketName };
-}
-
-async function getOpenAIKey() {
-  console.log("\nStep 3: Setting up OpenAI API");
-
-  if (!(await shouldSetupStep("OpenAI API"))) {
-    return "";
+  // S3
+  if (s3AccessKey || s3SecretKey || s3Endpoint || s3Bucket) {
+    envContent += "# Allas S3 settings\n";
+    if (s3AccessKey) envContent += `ALLAS_ACCESS_KEY_ID=${s3AccessKey}\n`;
+    if (s3SecretKey) envContent += `ALLAS_SECRET_ACCESS_KEY=${s3SecretKey}\n`;
+    if (s3Endpoint) envContent += `ALLAS_ENDPOINT_URL=${s3Endpoint}\n`;
+    if (s3Bucket) envContent += `ALLAS_BUCKET_NAME=${s3Bucket}\n\n`;
   }
 
-  console.log(
-    "Please visit: https://platform.openai.com/api-keys to get your API key\n",
-  );
+  // OpenAI
+  if (openaiKey) {
+    envContent += "# OpenAI settings\n";
+    envContent += `OPENAI_API_KEY=${openaiKey}\n\n`;
+  }
 
-  return await getValidInput(
-    "Enter your OpenAI API Key: ",
-    (key) => key.startsWith("sk-"),
-    'Invalid OpenAI API Key format. Should start with "sk-"',
-  );
-}
+  // Email
+  envContent += "# Email settings\n";
+  envContent += `NEXT_PUBLIC_APP_URL=${appUrl.trim() || "http://localhost:3000"}\n`;
+  if (resendApiKey) envContent += `RESEND_API_KEY=${resendApiKey}\n`;
+  if (emailFrom) envContent += `EMAIL_FROM=${emailFrom}\n\n`;
 
-async function writeEnvFile(envVars: Record<string, string>) {
-  console.log("\nWriting environment variables to .env.local file...");
+  await writeEnvFile(envContent);
 
-  // Filter out empty values
-  const filteredEnvVars = Object.fromEntries(
-    Object.entries(envVars).filter(([_, value]) => value !== ""),
-  );
+  console.log("\n✨ Full setup complete!");
+  console.log("\nNext steps:");
 
-  const envContent = Object.entries(filteredEnvVars)
-    .map(([key, value]) => `${key}=${value}`)
-    .join("\n");
-
-  await fs.writeFile(path.join(process.cwd(), ".env.local"), envContent);
+  // Only suggest running migrations if user provided real DB credentials
+  if (databaseUrl.trim() && databaseUrl !== DUMMY_VALUES.DATABASE_URL) {
+    console.log("1. Run migrations: npm run db:migrate");
+    console.log("2. Start the server: npm run dev");
+  } else {
+    console.log("1. Start the server: npm run dev");
+    console.log(
+      "Note: Database migrations were skipped as you're using dummy credentials"
+    );
+  }
 }
 
 async function main() {
-  console.log("🚀 Starting project setup...\n");
-  console.log(
-    "For each step, you can choose to skip if you don't need it now.\n",
+  console.log("🌟 Application Setup 🌟");
+  console.log("\nThis script will help you set up your environment variables.");
+  console.log("❗ Warning: This will overwrite any existing .env.local file");
+
+  const setupType = await question(
+    "\nChoose setup type:\n1. Basic setup (minimal configuration)\n2. Full setup (all settings)\nEnter choice (1/2): "
   );
-  console.log(
-    "❗ Warning running this script will overwrite your existing .env.local file ❗\n",
-  );
 
-  try {
-    // Get all credentials
-    const supabase = await getSupabaseCredentials();
-    const csc = await getCSCCredentials();
-    const openaiKey = await getOpenAIKey();
-
-    // Combine all environment variables
-    const envVars = {
-      NEXT_PUBLIC_SUPABASE_URL: supabase.supabaseUrl,
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: supabase.supabaseAnonKey,
-      DATABASE_URL: supabase.databaseUrl + `\n\n#Allas S3 credentials`,
-      ALLAS_ACCESS_KEY_ID: csc.accessKeyId,
-      ALLAS_SECRET_ACCESS_KEY: csc.secretAccessKey,
-      ALLAS_ENDPOINT_URL: csc.endpointUrl,
-      ALLAS_BUCKET_NAME: csc.bucketName + `\n\n#AI API credentials`,
-      OPENAI_API_KEY: openaiKey,
-    };
-
-    // Write to .env.local file
-    await writeEnvFile(envVars);
-
-    console.log("\n✅ Setup completed successfully!");
-    console.log("Created .env.local file with your configuration.");
-    console.log("\nNEXT STEPS:");
-    console.log(
-      '1. Run your database migrations (if using Supabase/Drizzle) "pnpm db:push" OR "pnpm db:migrate"',
-    );
-    console.log('2. Start your development server with "pnpm dev"');
-  } catch (error) {
-    console.error("❌ An error occurred during setup:", error);
+  if (setupType === "1") {
+    await simpleSetup();
+  } else if (setupType === "2") {
+    await fullSetup();
+  } else {
+    console.log("❌ Invalid choice. Please run the script again.");
     process.exit(1);
   }
 }

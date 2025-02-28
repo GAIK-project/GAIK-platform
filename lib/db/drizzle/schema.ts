@@ -61,30 +61,3 @@ export type Invite = typeof invites.$inferSelect;
 export type Document = typeof documents.$inferSelect;
 export type NewDocument = typeof documents.$inferInsert;
 export type SearchDocument = Document & { similarity: number };
-
-// JSON DATA EXAMPLE
-export const contentTypeEnum = pgEnum("content_type", [
-  "COURSE",
-  "CAMPUS",
-  "PROGRAM",
-  "SERVICE",
-] as const);
-
-// Unified content table
-export const haagaHeliaContent = pgTable("haaga_helia_content", {
-  id: serial("id").primaryKey(),
-  type: contentTypeEnum("type").notNull(),
-  title: text("title").notNull(), // Course title, Campus name, Program name, or Service name
-  description: text("description"),
-  content: jsonb("content").notNull(), // Structured content specific to each type
-  metadata: jsonb("metadata").notNull(), // Additional metadata fields
-  embedding: vector("embedding", { dimensions: 1536 }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Type definitions
-export type ContentType = (typeof contentTypeEnum.enumValues)[number];
-export type HaagaHeliaContent = typeof haagaHeliaContent.$inferSelect;
-export type NewHaagaHeliaContent = typeof haagaHeliaContent.$inferInsert;
-export type SearchResult = HaagaHeliaContent & { similarity: number };

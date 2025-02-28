@@ -52,7 +52,7 @@ export function NavUser({
   const handleLogout = async () => {
     try {
       await signOut();
-      router.push("/login");
+      router.push("/sign-in"); // This will redirect to the sign-in page
       router.refresh(); // This will refresh the page data
     } catch (error) {
       console.error("Failed to log out:", error);

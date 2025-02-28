@@ -8,6 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowUpRight,
@@ -18,7 +26,16 @@ import {
   Users2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Bar, BarChart, Line, LineChart, ResponsiveContainer } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 // ----------------------
 // Type Definitions & Sample Data
@@ -55,6 +72,23 @@ const recentActivities = [
   "Product review submitted",
   "Account settings updated",
 ];
+
+// ----------------------
+// Chart Configurations
+// ----------------------
+const revenueChartConfig: ChartConfig = {
+  revenue: {
+    label: "Monthly Revenue",
+    color: "hsl(var(--primary))",
+  },
+} satisfies ChartConfig;
+
+const customersChartConfig: ChartConfig = {
+  customers: {
+    label: "Customer Growth",
+    color: "hsl(var(--primary))",
+  },
+} satisfies ChartConfig;
 
 // ----------------------
 // Reusable Components
@@ -95,7 +129,6 @@ export default function DashboardV2() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="reports">Reports</TabsTrigger>
             </TabsList>
           </Tabs>
@@ -115,17 +148,44 @@ export default function DashboardV2() {
             <Card className="md:col-span-4">
               <CardHeader>
                 <CardTitle>Revenue Overview</CardTitle>
+                <CardDescription>Monthly revenue analysis</CardDescription>
               </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={data}>
+              <CardContent>
+                <ChartContainer
+                  config={revenueChartConfig}
+                  className="min-h-[350px] w-full"
+                >
+                  <BarChart accessibilityLayer data={data}>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                      tickFormatter={(value) => `$${value}`}
+                    />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelKey="revenue"
+                          formatter={(value) => `$${value}`}
+                        />
+                      }
+                    />
+                    <ChartLegend content={<ChartLegendContent />} />
                     <Bar
                       dataKey="revenue"
-                      fill="hsl(var(--primary))"
-                      opacity={0.9}
+                      fill="var(--color-revenue)"
+                      radius={[4, 4, 0, 0]}
+                      barSize={40}
                     />
                   </BarChart>
-                </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
             <div className="grid gap-4 md:col-span-2">
@@ -151,13 +211,36 @@ export default function DashboardV2() {
                 <CardTitle className="text-sm font-medium">
                   Active Products
                 </CardTitle>
-                <Package2 className="h-4 w-4 text-muted-foreground" />
+                <Package2 className="h-4 w-4 text-primary" />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">+12,234</div>
-                <div className="flex items-center pt-1 text-xs text-green-500">
-                  <ArrowUpRight className="h-4 w-4" />
+              <CardContent className="pt-2">
+                <div className="text-3xl font-bold mb-1">12,234</div>
+                <div className="flex items-center text-xs text-green-500">
+                  <ArrowUpRight className="h-4 w-4 mr-1" />
                   <span>+19% from last month</span>
+                </div>
+                <div className="h-8 mt-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={[
+                        { value: 30 },
+                        { value: 25 },
+                        { value: 40 },
+                        { value: 35 },
+                        { value: 55 },
+                        { value: 50 },
+                        { value: 65 },
+                      ]}
+                    >
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -167,13 +250,33 @@ export default function DashboardV2() {
                 <CardTitle className="text-sm font-medium">
                   Sales Today
                 </CardTitle>
-                <LineChartIcon className="h-4 w-4 text-muted-foreground" />
+                <LineChartIcon className="h-4 w-4 text-primary" />
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">+573</div>
-                <div className="flex items-center pt-1 text-xs text-green-500">
-                  <ArrowUpRight className="h-4 w-4" />
-                  <span>+201 since last hour</span>
+              <CardContent className="pt-2">
+                <div className="text-3xl font-bold mb-1">$8,573</div>
+                <div className="flex items-center text-xs text-green-500">
+                  <ArrowUpRight className="h-4 w-4 mr-1" />
+                  <span>+$1,201 since last hour</span>
+                </div>
+                <div className="h-8 mt-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[
+                        { value: 10 },
+                        { value: 25 },
+                        { value: 40 },
+                        { value: 30 },
+                        { value: 45 },
+                        { value: 50 },
+                      ]}
+                    >
+                      <Bar
+                        dataKey="value"
+                        fill="hsl(var(--primary))"
+                        radius={[2, 2, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -219,20 +322,38 @@ export default function DashboardV2() {
                 <CardTitle>Customer Growth</CardTitle>
                 <CardDescription>Monthly customer acquisition</CardDescription>
               </CardHeader>
-              <CardContent className="pl-2">
-                <ResponsiveContainer width="100%" height={350}>
+              <CardContent>
+                <ChartContainer
+                  config={customersChartConfig}
+                  className="min-h-[350px] w-full"
+                >
                   <LineChart
+                    accessibilityLayer
                     data={data}
                     margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
                   >
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                    />
+                    <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+                    <ChartTooltip
+                      content={<ChartTooltipContent labelKey="customers" />}
+                    />
+                    <ChartLegend content={<ChartLegendContent />} />
                     <Line
                       type="monotone"
                       strokeWidth={2}
                       dataKey="customers"
-                      stroke="hsl(var(--primary))"
+                      stroke="var(--color-customers)"
+                      dot={{ strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, strokeWidth: 0 }}
                     />
                   </LineChart>
-                </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
 

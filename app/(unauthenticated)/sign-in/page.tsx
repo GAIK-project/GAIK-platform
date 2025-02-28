@@ -1,5 +1,6 @@
 "use client";
 
+import { enableGuestMode } from "@/app/actions/auth/guest-mode";
 import { loginUser } from "@/app/actions/auth/login-user";
 import { PasswordInput } from "@/components/password-input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -8,12 +9,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Particles } from "@/components/ui/particles";
 import Shapes from "@/public/shapes.svg";
+import { Separator } from "@radix-ui/react-separator";
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -34,6 +37,16 @@ const fadeInUp = {
     },
   },
 };
+
+function GuestButton() {
+  return (
+    <form action={enableGuestMode}>
+      <Button type="submit" variant="outline" className="w-full">
+        Continue as Guest
+      </Button>
+    </form>
+  );
+}
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -145,6 +158,13 @@ export default function LoginPage() {
               </div>
             </form>
           </CardContent>
+          <CardFooter className="flex flex-col">
+            <Separator className="my-4" />
+            <GuestButton />
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              Guest mode provides access without authentication
+            </p>
+          </CardFooter>
         </Card>
       </motion.div>
     </div>
