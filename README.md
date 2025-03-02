@@ -57,7 +57,7 @@ graph TB
 
     subgraph "Data Management"
         N[Drizzle ORM]
-        O[PostgreSQL/Supabase]
+        O[Supabase(PostgreSQL)]
         P[Database Migrations]
     end
 
@@ -117,11 +117,11 @@ graph TB
 - **Supabase Auth**: User authentication with JWT tokens
 - **Guest Mode**: Allow users to access features without authentication
 
-### Database & ORM
+### Database (Supabase) & ORM
 
 - **PostgreSQL/Supabase**: Database for user data and vector embeddings
 - **Drizzle ORM**: Type-safe ORM for database operations
-- **PgVector**: Vector storage and similarity search for RAG functionality
+- **PgVector**: Vector storage and similarity search for RAG functionality (extension added to Postgres tables in Supabase)
 
 ### AI Integration
 
