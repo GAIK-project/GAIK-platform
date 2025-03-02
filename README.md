@@ -109,6 +109,7 @@ graph TB
 ### Core Framework
 
 - **Next.js 15.2**: Full-stack meta-framework that combines Node.js and React, featuring server components, server actions, and integrated API routes
+- **React 19**: Latest version of React with advanced features and performance improvements
 - **shadcn/ui**: Component library for building the application interface
 - **Vercel AI SDK**: Core toolkit for integrating AI capabilities, streaming responses, and building AI-powered applications
 
