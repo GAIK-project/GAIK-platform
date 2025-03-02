@@ -57,7 +57,7 @@ graph TB
 
     subgraph "Data Management"
         N[Drizzle ORM]
-        O[Supabase(PostgreSQL)]
+        O["Supabase (PostgreSQL)"]
         P[Database Migrations]
     end
 
