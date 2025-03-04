@@ -15,7 +15,7 @@ interface MetricsCardProps {
 
 export function MetricsCard({ title, value, change, chart }: MetricsCardProps) {
   return (
-    <Card className="p-4 bg-background backdrop-blur">
+    <Card className="p-4 bg-background backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm text-muted-foreground">{title}</h3>
         {chart ? (

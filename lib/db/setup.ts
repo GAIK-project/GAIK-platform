@@ -12,7 +12,7 @@ function question(query: string): Promise<string> {
     rl.question(query, (ans) => {
       rl.close();
       resolve(ans);
-    })
+    }),
   );
 }
 
@@ -29,7 +29,7 @@ function isValidUrl(urlString: string): boolean {
 async function getValidInput(
   prompt: string,
   validator: (input: string) => boolean,
-  errorMessage: string
+  errorMessage: string,
 ): Promise<string> {
   while (true) {
     const input = await question(prompt);
@@ -63,17 +63,17 @@ async function simpleSetup() {
   console.log("\n🚀 Setting up basic mode...");
 
   console.log(
-    "\nℹ️  You can optionally add an OpenAI API key for AI functionality"
+    "\nℹ️  You can optionally add an OpenAI API key for AI functionality",
   );
   console.log(
-    "    Skip with Enter if you just want to explore the UI without AI features"
+    "    Skip with Enter if you just want to explore the UI without AI features",
   );
 
   // Add validation for OpenAI API key
   const openaiKey = await getValidInput(
     "OpenAI API Key (optional): ",
     (key) => key.startsWith("sk-") || key === "",
-    'Invalid OpenAI API Key format. Should start with "sk-"'
+    'Invalid OpenAI API Key format. Should start with "sk-"',
   );
 
   // Start with base environment content
@@ -117,18 +117,18 @@ async function fullSetup() {
   const supabaseUrl = await getValidInput(
     "Supabase URL (or press Enter for dummy value): ",
     (url) => isValidUrl(url) || url === "",
-    "Invalid URL format. URL must start with http:// or https://"
+    "Invalid URL format. URL must start with http:// or https://",
   );
 
   const supabaseKey = await question(
-    "Supabase Anon Key (or press Enter for dummy value): "
+    "Supabase Anon Key (or press Enter for dummy value): ",
   );
 
   // Add validation for Database URL
   const databaseUrl = await getValidInput(
     "Database URL (or press Enter for dummy value): ",
     (url) => url.startsWith("postgresql://") || url === "",
-    'Invalid Database URL format. Should start with "postgresql://"'
+    'Invalid Database URL format. Should start with "postgresql://"',
   );
 
   // S3 settings
@@ -141,7 +141,7 @@ async function fullSetup() {
   const s3Endpoint = await getValidInput(
     "Allas Endpoint URL: ",
     (url) => isValidUrl(url) || url === "",
-    "Invalid URL format. URL must start with http:// or https://"
+    "Invalid URL format. URL must start with http:// or https://",
   );
 
   const s3Bucket = await question("Allas Bucket Name: ");
@@ -153,7 +153,7 @@ async function fullSetup() {
   const openaiKey = await getValidInput(
     "OpenAI API Key: ",
     (key) => key.startsWith("sk-") || key === "",
-    'Invalid OpenAI API Key format. Should start with "sk-"'
+    'Invalid OpenAI API Key format. Should start with "sk-"',
   );
 
   // Email settings
@@ -164,12 +164,12 @@ async function fullSetup() {
   const appUrl = await getValidInput(
     "Application URL (press Enter for http://localhost:3000): ",
     (url) => isValidUrl(url) || url === "",
-    "Invalid URL format. URL must start with http:// or https://"
+    "Invalid URL format. URL must start with http:// or https://",
   );
 
   const resendApiKey = await question("Resend API Key: ");
   const emailFrom = await question(
-    "Email From address (e.g., noreply@yourdomain.com): "
+    "Email From address (e.g., noreply@yourdomain.com): ",
   );
 
   // Build env file content
@@ -220,7 +220,7 @@ async function fullSetup() {
   } else {
     console.log("1. Start the server: npm run dev");
     console.log(
-      "Note: Database migrations were skipped as you're using dummy credentials"
+      "Note: Database migrations were skipped as you're using dummy credentials",
     );
   }
 }
@@ -231,7 +231,7 @@ async function main() {
   console.log("❗ Warning: This will overwrite any existing .env.local file");
 
   const setupType = await question(
-    "\nChoose setup type:\n1. Basic setup (minimal configuration)\n2. Full setup (all settings)\nEnter choice (1/2): "
+    "\nChoose setup type:\n1. Basic setup (minimal configuration)\n2. Full setup (all settings)\nEnter choice (1/2): ",
   );
 
   if (setupType === "1") {

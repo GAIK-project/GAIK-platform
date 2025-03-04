@@ -90,7 +90,7 @@ export default function IncidentReportForm() {
         <Separator className="my-4" />
       </div>
 
-      <Card className="border border-border shadow-sm">
+      <Card className="border border-border shadow-xs">
         <CardHeader className="bg-muted/40">
           <CardTitle className="flex items-center">
             <FileText className="mr-2 h-5 w-5" />
@@ -142,7 +142,7 @@ export default function IncidentReportForm() {
       )}
 
       {(isProcessing || Object.keys(partialReport).length > 0) && (
-        <Card className="border border-border shadow-sm">
+        <Card className="border border-border shadow-xs">
           <CardHeader
             className={`${partialReport.reportTitle ? "bg-muted/40" : "bg-muted/20"}`}
           >

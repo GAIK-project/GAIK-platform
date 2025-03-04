@@ -126,10 +126,7 @@ const MarkdownComponents = {
     <pre className={cn("overflow-x-auto", className)} {...props} />
   ),
   p: ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p
-      className={cn("leading-7 [&:not(:first-child)]:mt-4", className)}
-      {...props}
-    />
+    <p className={cn("leading-7 not-first:mt-4", className)} {...props} />
   ),
   ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
     <ul

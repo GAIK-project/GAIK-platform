@@ -87,7 +87,7 @@ export function ChatInput({
                 "placeholder-gray-400 dark:placeholder-gray-500",
                 "scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600",
                 "scrollbar-track-transparent",
-                "focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
+                "focus:outline-hidden focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0",
                 isLoading && "opacity-50",
               )}
               rows={1}

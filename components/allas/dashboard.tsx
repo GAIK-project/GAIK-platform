@@ -31,7 +31,7 @@ export default function Dashboard({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* File Upload Section - Takes up 2/3 of the space */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-border/40 p-6">
+            <div className="bg-white rounded-lg shadow-xs border border-border/40 p-6">
               <AllasFileUpload
                 bucket={bucketName}
                 initialFiles={initialFiles}
@@ -41,7 +41,7 @@ export default function Dashboard({
 
           {/* Statistics Section - Takes up 1/3 of the space */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-border/40 h-full">
+            <div className="bg-white rounded-lg shadow-xs border border-border/40 h-full">
               <FileStatistics files={initialFiles} />
             </div>
           </div>

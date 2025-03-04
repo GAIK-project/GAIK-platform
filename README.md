@@ -169,7 +169,10 @@ The `ai/ai-actions/search.ts` server action handles vector comparisons by:
 
 ```typescript
 // Example from ai/ai-actions/search.ts
-export async function searchDocuments(query: string, limit = 5): Promise<SearchDocument[]> {
+export async function searchDocuments(
+  query: string,
+  limit = 5,
+): Promise<SearchDocument[]> {
   const supabase = createBrowserClient();
   try {
     // Generate embedding for the query
@@ -216,11 +219,11 @@ Or using the Fetch API in JavaScript:
 
 ```javascript
 const formData = new FormData();
-formData.append('file', fileObject);
+formData.append("file", fileObject);
 
-const response = await fetch('/api/seed', {
-  method: 'POST',
-  body: formData
+const response = await fetch("/api/seed", {
+  method: "POST",
+  body: formData,
 });
 
 const result = await response.json();

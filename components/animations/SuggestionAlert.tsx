@@ -62,7 +62,7 @@ const SuggestionAlert = () => {
     >
       <div className="flex items-center gap-1.5">
         <div ref={lightbulbRef} className="origin-center">
-          <LightbulbIcon className="h-3 w-3 text-zinc-600 dark:text-zinc-400 flex-shrink-0" />
+          <LightbulbIcon className="h-3 w-3 text-zinc-600 dark:text-zinc-400 shrink-0" />
         </div>
         <AlertDescription className="text-xs tracking-tight md:tracking-normal text-zinc-600 dark:text-zinc-300 ">
           Voit esimerkiksi kysyä: &quot;Mikä liike myy 20-luvun antiikkia
