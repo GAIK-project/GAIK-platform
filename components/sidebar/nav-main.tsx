@@ -111,7 +111,7 @@ export function NavMain({
                           className={clsx(
                             "flex items-center justify-center rounded-md",
                             "transition-all duration-200 ease-in-out",
-                            "bg-white shadow-sm p-1.5",
+                            "bg-white shadow-xs p-1.5",
                             active && "border-primary/30 bg-primary/10",
                           )}
                         >
@@ -177,7 +177,7 @@ export function NavMain({
                           className={clsx(
                             "flex items-center justify-center rounded-md",
                             "transition-all duration-200 ease-in-out",
-                            "bg-white shadow-sm p-1.5",
+                            "bg-white shadow-xs p-1.5",
                             active && "border-primary/30 bg-primary/10",
                           )}
                         >

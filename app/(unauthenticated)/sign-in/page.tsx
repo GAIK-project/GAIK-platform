@@ -72,7 +72,7 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="relative overflow-hidden h-screen w-screen bg-gradient-to-br from-transparent via-secondary to-secondary dark:from-transparent dark:via-zinc-900 dark:to-zinc-900">
+    <div className="relative overflow-hidden h-screen w-screen bg-linear-to-br from-transparent via-secondary to-secondary dark:from-transparent dark:via-zinc-900 dark:to-zinc-900">
       <Image
         src={Shapes}
         alt="shapes"

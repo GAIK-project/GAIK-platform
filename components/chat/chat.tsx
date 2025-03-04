@@ -158,7 +158,7 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
             )}
           </div>
 
-          <div className="flex-shrink-0 p-4">
+          <div className="shrink-0 p-4">
             <div className="max-w-3xl mx-auto">
               <ChatInput
                 input={input}
