@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     const { title } = body;
     
     console.log(title);
+    let newTitle : string = title.toString();
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });

@@ -13,6 +13,8 @@ export default async function Page() {
     <div>
       <AddTodoForm /> {/* Client Component */}
       <TodoList todos={todos || []} />
+      <></>
+      <></>
     </div>
   );
 }
