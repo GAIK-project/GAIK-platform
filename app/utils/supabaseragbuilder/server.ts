@@ -1,4 +1,4 @@
-"use server"
+// Poistettettu "use server" se tekee muuten tästä tästä public POST routen
 import { createServerClient as createClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
