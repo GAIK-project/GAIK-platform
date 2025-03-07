@@ -8,6 +8,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { title } = body;
     
+    console.log(title);
+
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
