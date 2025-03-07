@@ -357,6 +357,8 @@ pnpm email:export  # Export email templates
 - [Drizzle ORM Documentation](https://orm.drizzle.team/)
 - [Vercel AI SDK Documentation](https://sdk.vercel.ai/docs/ai-sdk-core/overview)
 - [Supabase Documentation](https://supabase.io/docs)
+- [Using OpenAI embeddings on Supabase database](https://www.youtube.com/watch?v=pG95GO0Kcxs)
+
 - [Resend Documentation](https://resend.com/docs)
 - [shadcn/ui Documentation](https://ui.shadcn.com/)
 
