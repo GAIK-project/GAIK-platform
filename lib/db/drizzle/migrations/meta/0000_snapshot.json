@@ -1,5 +1,5 @@
 {
-  "id": "4fcf7994-b4e0-4752-b429-3bf98bc4abc0",
+  "id": "cdc5b424-b7a8-4001-973c-ff9deac0707b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -124,8 +124,12 @@
           "name": "invites_created_by_id_user_profiles_id_fk",
           "tableFrom": "invites",
           "tableTo": "user_profiles",
-          "columnsFrom": ["created_by_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -135,7 +139,9 @@
         "invites_token_unique": {
           "name": "invites_token_unique",
           "nullsNotDistinct": false,
-          "columns": ["token"]
+          "columns": [
+            "token"
+          ]
         }
       },
       "policies": {},
@@ -192,12 +198,18 @@
     "public.organization_type": {
       "name": "organization_type",
       "schema": "public",
-      "values": ["HAAGA_HELIA", "GAIK_COMPANIES"]
+      "values": [
+        "HAAGA_HELIA",
+        "GAIK_COMPANIES"
+      ]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": ["ADMIN", "USER"]
+      "values": [
+        "ADMIN",
+        "USER"
+      ]
     }
   },
   "schemas": {},
