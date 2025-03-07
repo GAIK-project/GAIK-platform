@@ -51,8 +51,8 @@ export const routes: RouteConfig[] = [
     icon: "tabler:cloud-upload",
   },
   {
-    path: "documentation",
-    title: "Documentation",
+    path: "rag-builder",
+    title: "RAG Builder",
     icon: "tabler:file-text",
   },
   {
@@ -65,7 +65,7 @@ export const routes: RouteConfig[] = [
 // Helper function to get route title by path
 export function getRouteTitle(
   path: string,
-  routeConfigs: RouteConfig[] = routes,
+  routeConfigs: RouteConfig[] = routes
 ): string | null {
   const normalizedPath = path.toLowerCase();
 
