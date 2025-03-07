@@ -1,3 +1,3 @@
 export default function Page() {
-  return <div>RAG-builder page</div>;
+  return <div>RAG-builder page juu</div>;
 }
