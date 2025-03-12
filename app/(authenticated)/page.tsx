@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 export default function Page() {
   return (
     <div className="min-h-screen">
-      <main className="p-6">
+      {/* <main className="p-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="text-2xl font-bold">Overview</h1>
@@ -64,7 +64,7 @@ export default function Page() {
         <div className="mt-6">
           <VaultTable />
         </div>
-      </main>
+      </main> */}
     </div>
   );
 }
