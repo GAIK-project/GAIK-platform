@@ -11,7 +11,7 @@ interface LinkNode {
 
 // Constants
 const MAX_DEPTH = 2; // Maximum depth for recursion
-const MAX_TOTAL_LINKS = 50; // Global limit for total links
+const MAX_TOTAL_LINKS = 50; // Global limit for total links I would keep this low or it go crazy on some sites
 
 // Global counter for tracking processed links
 let totalLinksProcessed = 0;
