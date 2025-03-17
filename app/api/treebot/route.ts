@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
       
-    let testTree : any = await buildLinkTree("https://yle.fi/");
+    let testTree : any = await buildLinkTree("https://www.mtvuutiset.fi/");
     console.log(testTree);
     
     // Return success response

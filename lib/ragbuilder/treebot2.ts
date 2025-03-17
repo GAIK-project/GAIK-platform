@@ -11,7 +11,7 @@ interface LinkNode {
 
 // Constants
 const MAX_DEPTH = 2; // Maximum depth for recursion
-const MAX_TOTAL_LINKS = 50; // Global limit for total links I would keep this low or it go crazy on some sites
+const MAX_TOTAL_LINKS = 20; // Global limit for total links I would keep this low or it go crazy on some sites
 
 // Global counter for tracking processed links
 let totalLinksProcessed = 0;
@@ -65,7 +65,7 @@ const scrapeLinks = async (
         const children: LinkNode[] = [];
 
         for (const link of links) {
-            console.log(totalLinksProcessed);
+            // console.log(totalLinksProcessed);
             if (totalLinksProcessed >= MAX_TOTAL_LINKS) break; // Stop if we reach the limit
 
             const child = await scrapeLinks(link, domain, depth + 1, visited);
