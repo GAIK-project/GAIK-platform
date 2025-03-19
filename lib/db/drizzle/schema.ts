@@ -9,6 +9,7 @@ import {
   timestamp,
   uuid,
   vector,
+  integer
 } from "drizzle-orm/pg-core";
 
 export const organizationEnum = pgEnum("organization_type", [
@@ -17,6 +18,17 @@ export const organizationEnum = pgEnum("organization_type", [
 ] as const);
 
 export const userRoleEnum = pgEnum("user_role", ["ADMIN", "USER"] as const);
+
+//table to store all metadata of different assistants from ragbuilder
+export const assistants = pgTable("assistants", {
+  id: serial("id").primaryKey(),
+  assistantName: text("assistant_name").notNull(),
+  systemPrompt: text("system_prompt").notNull(),
+  currentChunk: integer("current_chunk").notNull(),
+  totalChunks: integer("total_chunks").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  taskCompleted: boolean("task_completed").notNull().default(false),
+});
 
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
