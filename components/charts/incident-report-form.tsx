@@ -1,30 +1,32 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import { processIncidentReport } from "@/ai/ai-actions/incident";
+import { TranscriptionModal } from "@/components/charts/transcription-modal";
+import { VoiceRecorder } from "@/components/charts/voice-recorder";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { readStreamableValue } from "ai/rsc";
 import {
   AlertCircle,
-  FileText,
-  Loader2,
-  Clock,
   AlertTriangle,
   CheckCircle2,
+  Clock,
+  FileText,
   Lightbulb,
+  Loader2,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { readStreamableValue } from "ai/rsc";
-import { processIncidentReport } from "@/ai/ai-actions/incident";
+import React, { useCallback, useRef, useState } from "react";
 
 type ReportType = {
   reportTitle: string;
@@ -40,11 +42,39 @@ export default function IncidentReportForm() {
   `;
 
   const [incidentDetails, setIncidentDetails] = useState(
-    placeholderText.trim(),
+    placeholderText.trim()
   );
   const [partialReport, setPartialReport] = useState<Partial<ReportType>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // New state for voice transcription
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [transcription, setTranscription] = useState("");
+
+  // Create a ref for the form
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleTranscriptionComplete = useCallback((text: string) => {
+    setTranscription(text);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleConfirmTranscription = useCallback(() => {
+    setIncidentDetails(transcription);
+    setIsModalOpen(false);
+
+    // Add a slight delay to ensure state is updated before submitting
+    setTimeout(() => {
+      // Automatically submit the form after confirming transcription
+      if (formRef.current) {
+        formRef.current.dispatchEvent(
+          new Event("submit", { cancelable: true, bubbles: true })
+        );
+      }
+    }, 100);
+  }, [transcription]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -64,13 +94,15 @@ export default function IncidentReportForm() {
             }));
           }
         }
-      } catch (err: any) {
-        setError(err.message || "Error generating report");
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error ? err.message : "Error generating report"
+        );
       } finally {
         setIsProcessing(false);
       }
     },
-    [incidentDetails],
+    [incidentDetails]
   );
 
   return (
@@ -102,7 +134,19 @@ export default function IncidentReportForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <VoiceRecorder
+                onTranscriptionComplete={handleTranscriptionComplete}
+                isTranscribing={isTranscribing}
+                setIsTranscribing={setIsTranscribing}
+              />
+              <span className="text-sm text-muted-foreground">
+                {isTranscribing
+                  ? "Transcribing speech..."
+                  : "Click microphone to dictate incident details"}
+              </span>
+            </div>
             <Textarea
               value={incidentDetails}
               onChange={(e) => setIncidentDetails(e.target.value)}
@@ -113,7 +157,7 @@ export default function IncidentReportForm() {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                disabled={isProcessing}
+                disabled={isProcessing || isTranscribing}
                 className="px-4 py-2"
               >
                 {isProcessing ? (
@@ -260,6 +304,14 @@ export default function IncidentReportForm() {
           )}
         </Card>
       )}
+
+      <TranscriptionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        transcription={transcription}
+        onConfirm={handleConfirmTranscription}
+        onEdit={setTranscription}
+      />
     </div>
   );
 }
