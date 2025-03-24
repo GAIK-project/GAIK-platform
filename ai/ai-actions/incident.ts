@@ -49,7 +49,7 @@ export async function processIncidentReport(incidentDetails: string) {
       }
 
       stream.done();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error processing incident report:", error);
       stream.error(error);
     }
