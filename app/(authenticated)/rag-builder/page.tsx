@@ -102,18 +102,16 @@ export default function Home() {
         }
     };
 
-    async function checkUniqueName(name : string) {
-        console.log("Checking name: ", name);
-        const res = await fetch(`/api/checkUniqueName?assistantId=${name}`);
+    const checkUniqueName = async (name: string) => {
+        const res = await fetch('/api/checkAssistantName', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assistantName: name }),
+        });
+      
         const data = await res.json();
-
-        if(data.unique){
-            console.log("Name already exists");
-            return true;
-        }
-        console.log("Name is free to take");
-        return false;
-    }
+        return data.isTaken;
+    };
 
     async function checkStatus() {
         const interval = setInterval(async () => {
