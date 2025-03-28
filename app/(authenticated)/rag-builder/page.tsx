@@ -14,6 +14,7 @@ export default function Home() {
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [processCompleted, setProcessCompleted] = useState<boolean>(false);
+    const [progressPercent, setProgressPercent] = useState<number>(0);
 
     const handleSystemPromptChange = (e : any) => {
         setSystemPrompt(e.target.value);
@@ -32,7 +33,12 @@ export default function Home() {
     };
 
     const addLinkField = () => {
-        setLinks([...links, ""]);
+        if(links.length > 4){
+            setErrorMessage("You can add maximum of 5 links");
+        }
+        else {
+            setLinks([...links, ""]);
+        }  
     };
 
     const validateForm = (prompt : string, linksArray : string[]) => {
@@ -83,7 +89,7 @@ export default function Home() {
         setIsButtonEnabled(false);
 
         try {
-            const response = await fetch("/api/saveModelData", {
+            const response = await fetch("/api/setupRag", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -115,14 +121,31 @@ export default function Home() {
 
     async function checkStatus() {
         const interval = setInterval(async () => {
-          const res = await fetch(`/api/checkTaskStatus?assistantId=${assistantName}`);
-          const data = await res.json();
-          setProcessCompleted(data.taskCompleted);
+            try {
+                const res = await fetch('/api/checkTaskStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ assistantName }),
+                });
     
-          if (data.taskCompleted) {
-            clearInterval(interval);
-            setLoading(false);
-          }
+                if (!res.ok) {
+                    console.error('Failed to fetch task status');
+                    return;
+                }
+    
+                const data = await res.json();
+    
+                setProgressPercent(data.percentageCompleted);
+    
+                setProcessCompleted(data.taskCompleted);
+    
+                if (data.taskCompleted) {
+                    clearInterval(interval);
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error('Error while checking task status:', error);
+            }
         }, 10000); // Poll every 10 seconds
     }
 
@@ -148,7 +171,7 @@ export default function Home() {
                     <input 
                         className="input"
                         type="text"
-                        maxLength={20}
+                        maxLength={30}
                         value={assistantName}
                         onChange={(e) => handleNameChange(e.target.value)}
                         placeholder="Formulasensei" 
@@ -168,7 +191,7 @@ export default function Home() {
                             <input
                                 className="input"
                                 type="text"
-                                maxLength={200}
+                                maxLength={300}
                                 value={link}
                                 onChange={(e) => handleLinkChange(index, e.target.value)}
                                 placeholder={(index === 0) ? 'https://en.wikipedia.org/wiki/Formula_One' : `Link ${index + 1}`}
@@ -203,6 +226,7 @@ export default function Home() {
                 {(loading &&
                     <div className="loader-container">
                         <p className="loader-text">Data is being collected from the provided links and prepared to a form your AI assistant can understand... This might take several minutes depending on your data size</p>
+                        <p className="loader-text">Progress: {progressPercent}</p>
                         <div className="loader"></div>
                     </div>
                 )}

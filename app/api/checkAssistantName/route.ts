@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from '@/lib/db/drizzle/drizzle';
 import { assistants } from '@/lib/db/drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { sanitizeTableName } from "@/app/utils/functions/functions";
 
 export async function POST(request: NextRequest) {
     try {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       }
   
       // Sanitize input
-      const safeTableName = assistantName.replace(/[^a-zA-Z0-9_]/g, '');
+      const safeTableName = sanitizeTableName(assistantName);
   
       if (!safeTableName) {
         return NextResponse.json({ error: 'Invalid assistantName after sanitization' }, { status: 400 });
