@@ -1,29 +1,31 @@
-// app/api/chat/route.ts
-import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
-import { searchDocuments } from "@/ai/ai-actions/search_ragbuilder";
+import { hydeModel, multiStageModel } from "@/ai/middleware";
+import { openai } from "@ai-sdk/openai";
+import { smoothStream, streamText } from "ai";
+export const maxDuration = 30;
 
-export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json();
-    const latestMessage = messages[messages.length - 1]?.content;
+export async function POST(request: Request) {
+  const { messages, modelId } = await request.json();
 
-    const documents = await searchDocuments(latestMessage, 10);
-    const docContext = JSON.stringify(documents.map((d : any) => d.content));
+  let selectedModel;
 
-    const template = {
-      role: 'system',
-      content: `You are an AI assistant. Use the below context. START CONTEXT ${docContext} END CONTEXT. QUESTION: ${latestMessage}`,
-    };
-
-    const result = await streamText({
-      model: openai('gpt-4o'),
-      messages: [template, ...messages],
-    });
-
-    return result.toDataStreamResponse();
-  } catch (error) {
-    console.error('Error handling chat route:', error);
-    return new Response('Internal Server Error', { status: 500 });
+  switch (modelId) {
+    case "hyde-rag":
+      selectedModel = hydeModel;
+      break;
+    case "multi-stage-rag":
+      selectedModel = multiStageModel;
+      break;
+    default:
+      selectedModel = openai(modelId || "gpt-4o-mini");
   }
+
+  const result = streamText({
+    model: selectedModel,
+    system:
+      "You are helpful assistant. Keep the answers short and to the point.",
+    messages: messages,
+    experimental_transform: smoothStream(),
+  });
+
+  return result.toDataStreamResponse({});
 }
