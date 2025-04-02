@@ -25,6 +25,7 @@ export function ChatHeader({
         </Button>
         {/* TODO: How to display modelselector on mobile. We have isMobile props already */}
         <ModelSelector selectedModelId={modelId} />
+        {/* Tähän custom mallin valinta */}
       </div>
     </header>
   );

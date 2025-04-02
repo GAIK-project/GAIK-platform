@@ -4,7 +4,7 @@ import { smoothStream, streamText } from "ai";
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
-  const { messages, modelId } = await request.json();
+  const { messages, modelId, customModel } = await request.json();
 
   let selectedModel;
 

@@ -10,7 +10,7 @@ import {
   generateText,
   LanguageModelV1Middleware,
 } from "ai";
-import { searchDocuments } from "../ai-actions/search";
+import { searchCustomDocuments, searchDocuments } from "../ai-actions/search";
 
 // Helper function to get last user message text
 const getLastUserMessageText = (messages: CoreMessage[]): string | null => {
@@ -50,7 +50,7 @@ const findSources = async (text: string) => {
     console.log("hypotheticalAnswer", hypotheticalAnswer);
 
     // Retrieve relevant sources
-    return await searchDocuments(hypotheticalAnswer, 5);
+    return await searchCustomDocuments(hypotheticalAnswer, 5);
   } catch (error) {
     console.error("Error finding sources:", error);
     return [];
