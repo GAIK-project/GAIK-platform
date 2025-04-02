@@ -13,6 +13,7 @@ import { motion } from "motion/react";
 import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
+import { Model } from "@/ai/custom-model-names";
 
 const suggestedActions = [
   {
@@ -26,9 +27,11 @@ interface ChatProps {
   id: string;
   initialMessages: Array<Message>;
   selectedModelId: string;
+  selectedCustomModel: string;
+  customModels: Model[];
 }
 
-export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
+export function Chat({ id, initialMessages, selectedModelId, selectedCustomModel, customModels }: ChatProps) {
   const router = useRouter();
   const { width } = useWindowSize();
 
@@ -87,6 +90,8 @@ export function Chat({ id, initialMessages, selectedModelId }: ChatProps) {
         onReset={handleReset}
         isLoading={isLoading}
         isMobile={isMobile}
+        customModelId={selectedCustomModel}
+        customModels={customModels}
       />
 
       {!hasMessages ? (
