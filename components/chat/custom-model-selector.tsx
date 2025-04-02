@@ -1,4 +1,4 @@
-import { Model, fetchModels } from "@/ai/custom-model-names";
+import { Model } from "@/ai/custom-model-names";
 import { saveCustomModel } from "@/app/(authenticated)/chatbot/actions";
 import { Button } from "@/components/ui/button";
 import {

@@ -32,7 +32,7 @@ export function ChatHeader({
         {/* TODO: How to display modelselector on mobile. We have isMobile props already */}
         <ModelSelector selectedModelId={modelId} />
         {/* Tähän custom mallin valinta */}
-        <p className="text-lg font-semibold">Custom model: </p>
+        <p className="text-lg">Custom model: </p>
         <CustomModelSelector selectedModelId={customModelId} models={customModels}/>
       </div>
     </header>
