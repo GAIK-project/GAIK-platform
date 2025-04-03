@@ -23,7 +23,7 @@ const getLastUserMessageText = (messages: CoreMessage[]): string | null => {
 };
 
 // Helper function to find relevant sources
-const findSources = async (text: string) => {
+const findSources = async (text: string, customModel: string) => {
   try {
     // Classify the user message
     const { object: classification } = await generateObject({
@@ -49,8 +49,15 @@ const findSources = async (text: string) => {
     });
     console.log("hypotheticalAnswer", hypotheticalAnswer);
 
-    // Retrieve relevant sources
-    return await searchCustomDocuments(hypotheticalAnswer, 5);
+    // Retrieve relevant sources, use custom model if defined
+    if(customModel.toLowerCase() !== "none"){
+      return await searchCustomDocuments(hypotheticalAnswer, 5, customModel);
+      
+    }
+    else{
+      return await searchDocuments(hypotheticalAnswer, 5);
+    }
+    
   } catch (error) {
     console.error("Error finding sources:", error);
     return [];
@@ -89,8 +96,35 @@ const addToLastUserMessage = (
   };
 };
 
-// RAG Middleware
-export const hydeMiddleware: LanguageModelV1Middleware = {
+// RAG Middleware, vanha, tein uuden että voi pass parameters
+// export const hydeMiddleware: LanguageModelV1Middleware = {
+//   transformParams: async ({ params }) => {
+//     try {
+//       const userMessage = getLastUserMessageText(params.prompt);
+//       if (!userMessage || userMessage.length < 6) {
+//         return params;
+//       }
+//       console.log("edetään", userMessage);
+
+//       const sources = await findSources(userMessage);
+//       if (!sources.length) {
+//         return params;
+//       }
+//       console.log("SOURCES--------------", JSON.stringify(sources, null, 2));
+
+//       const context =
+//         "Use the following information to answer the question:\n" +
+//         sources.map((source) => source.content).join("\n\n");
+
+//       return addToLastUserMessage(params, context);
+//     } catch (error) {
+//       console.error("Error in RAG middleware:", error);
+//       return params;
+//     }
+//   },
+// };
+
+export const createHydeMiddleware = (customModel: string): LanguageModelV1Middleware => ({
   transformParams: async ({ params }) => {
     try {
       const userMessage = getLastUserMessageText(params.prompt);
@@ -99,7 +133,7 @@ export const hydeMiddleware: LanguageModelV1Middleware = {
       }
       console.log("edetään", userMessage);
 
-      const sources = await findSources(userMessage);
+      const sources = await findSources(userMessage, customModel);
       if (!sources.length) {
         return params;
       }
@@ -115,4 +149,4 @@ export const hydeMiddleware: LanguageModelV1Middleware = {
       return params;
     }
   },
-};
+});

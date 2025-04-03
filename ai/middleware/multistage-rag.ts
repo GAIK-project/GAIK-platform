@@ -5,7 +5,7 @@ import { generateObject, LanguageModelV1Middleware } from "ai";
 import dedent from "dedent";
 import _ from "lodash";
 import { z } from "zod";
-import { searchDocuments } from "../ai-actions/search";
+import { searchDocuments, searchCustomDocuments } from "../ai-actions/search";
 import { addToLastUserMessage, getLastUserMessageText } from "../utils";
 
 interface SearchContext {
@@ -48,13 +48,24 @@ const createSearchContext = async (
 
 const fetchAndRerankDocuments = async (
   context: SearchContext,
+  customModel: string
 ): Promise<SearchDocument[]> => {
   try {
     // 1. Get initial search results
-    const retvievedDocs = await searchDocuments(
-      context.searchTerms.join(" "),
-      7,
-    );
+    let retvievedDocs;
+    if(customModel.toLowerCase() !== "none"){
+      retvievedDocs = await searchCustomDocuments(        
+        context.searchTerms.join(" "),
+        7,
+        customModel
+      );
+    }
+    else{
+      retvievedDocs = await searchDocuments(
+        context.searchTerms.join(" "),
+        7,
+      );
+    }
 
     if (!retvievedDocs) {
       console.log("No documents found in initial search");
@@ -133,14 +144,14 @@ const answerCheck = async (
   return analysis.missingInfo;
 };
 
-const enhancedRAG = async (userMessage: string): Promise<string> => {
+const enhancedRAG = async (userMessage: string, customModel: string): Promise<string> => {
   // 1. Create search context
   const context = await createSearchContext(userMessage);
 
   console.log("search context", context);
 
   // 2. Perform search and reranking
-  let results = await fetchAndRerankDocuments(context);
+  let results = await fetchAndRerankDocuments(context, customModel);
   console.log(
     "fetchAndRerankDocuments number of docs returned: ",
     results.length,
@@ -171,9 +182,18 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
     console.log("unique search terms", uniqueSearchTerms);
 
     // 2. Batch search in parallel
-    const additionalDocs = await Promise.all(
-      uniqueSearchTerms.map((term) => searchDocuments(term, 2)),
-    );
+    let additionalDocs;
+    if(customModel.toLowerCase() !== "none"){
+      additionalDocs = await Promise.all(
+        uniqueSearchTerms.map((term) => searchCustomDocuments(term, 2, customModel)),
+      );
+    }
+    else{
+      additionalDocs = await Promise.all(
+        uniqueSearchTerms.map((term) => searchDocuments(term, 2)),
+      );
+    }
+
     console.log("Number of additional searches:", additionalDocs.length);
     console.log(
       "Total documents before deduplication:",
@@ -216,7 +236,7 @@ const enhancedRAG = async (userMessage: string): Promise<string> => {
   return formatResults(results);
 };
 
-export const multiStagellmMiddleware: LanguageModelV1Middleware = {
+export const createMultiStagellmMiddleware = (customModel : string): LanguageModelV1Middleware => ({
   transformParams: async ({ params }) => {
     console.log("multiStageRAG middleware kutsuttu");
 
@@ -236,7 +256,7 @@ export const multiStagellmMiddleware: LanguageModelV1Middleware = {
         return params;
       }
 
-      const context = await enhancedRAG(userMessage);
+      const context = await enhancedRAG(userMessage, customModel);
       const duration = performance.now() - startTime;
       console.log(`RAG processing took ${(duration / 1000).toFixed(2)}s`);
 
@@ -247,7 +267,7 @@ export const multiStagellmMiddleware: LanguageModelV1Middleware = {
       return params;
     }
   },
-};
+});
 
 const formatResults = (results: SearchDocument[]): string => {
   return (

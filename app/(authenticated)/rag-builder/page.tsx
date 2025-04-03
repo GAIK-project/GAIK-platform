@@ -4,10 +4,15 @@ import Link from "next/link";
 import Head from "next/head";
 import { XCircle } from "lucide-react";
 import AutoGrowingTextarea from "@/components/ragbuilder/AutoTextArea";
+import { useRouter } from "next/navigation";
+import useStore from "@/app/utils/store/useStore";
+import { saveCustomModel, saveModelId } from "../chatbot/actions";
+import { sanitizeTableName } from "@/app/utils/functions/functions";
 import "@/app/styles/ragbuilder.css";
 
 export default function Home() {
     const [assistantName, setAssistantName] = useState<string>("");
+    const [persistantAssistantName, setPersistantAssistantName] = useState<string>("");
     const [systemPrompt, setSystemPrompt] = useState<string>("");
     const [links, setLinks] = useState<string[]>([""]);
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
@@ -15,6 +20,17 @@ export default function Home() {
     const [loading, setLoading] = useState<boolean>(false);
     const [processCompleted, setProcessCompleted] = useState<boolean>(false);
     const [progressPercent, setProgressPercent] = useState<number>(0);
+
+    const router = useRouter();
+
+    const { setBaseModel, setCustomModel } = useStore();
+
+    const scrollToBottom = () => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth', // or 'auto'
+        });
+    };
 
     const handleSystemPromptChange = (e : any) => {
         setSystemPrompt(e.target.value);
@@ -73,6 +89,7 @@ export default function Home() {
     };
 
     const handleSubmit = async () => {
+        scrollToBottom();
         let check : boolean =  await checkUniqueName(assistantName);
         if(check){
             setErrorMessage("Assistant name already exists, please select a new one");
@@ -100,6 +117,8 @@ export default function Home() {
             if (response.ok) {
                 checkStatus();
                 console.log("Data sent successfully!");
+                let newAssistantName : string = sanitizeTableName(assistantName);
+                setPersistantAssistantName(newAssistantName);
             } else {
                 console.error("Failed to send data.");
             }
@@ -146,12 +165,20 @@ export default function Home() {
             } catch (error) {
                 console.error('Error while checking task status:', error);
             }
-        }, 10000); // Poll every 10 seconds
+        }, 5000); // Poll every x seconds
     }
 
     async function testDb() {
         const res = await fetch(`/api/testDb`);
         const data = await res.json();
+    }
+
+    async function redirectToChat() {
+        await saveModelId("hyde-rag");
+        await saveCustomModel(persistantAssistantName);
+        setBaseModel("hyde-rag");
+        setCustomModel(persistantAssistantName);
+        router.push('/chatbot');
     }
 
     return (
@@ -242,13 +269,12 @@ export default function Home() {
                 </div>
 
                 {(processCompleted &&
-                    <Link href={`/completeragmodel?assistantId=${assistantName}`}>
                         <button
                             className="create-button"
+                            onClick={redirectToChat}
                         >
                             See your new AI assistant!
                         </button>
-                    </Link>
                 )}
                 {/*
                     <button

@@ -9,13 +9,13 @@ export interface Model {
 // Default models fallback
 export const defaultModels: Array<Model> = [
   {
-    id: "none",
-    label: "none",
-    description: "none",
+    id: "None",
+    label: "None",
+    description: "dont use any custom model",
   }
 ];
 
-export const DEFAULT_CUSTOM_MODEL_NAME: string = "none";
+export const DEFAULT_CUSTOM_MODEL_NAME: string = "None";
 
 // --- Supabase client ---
 const supabase = createBrowserClient();
@@ -30,11 +30,18 @@ export async function fetchModels(): Promise<Model[]> {
     if (error) throw error;
     if (!data || data.length === 0) return defaultModels;
 
-    return data.map((row) => ({
-      id: row.assistant_name,
-      label: row.assistant_name,
-      description: "Custom model from Supabase",
-    }));
+    return [
+        {
+          id: "None",
+          label: "None",
+          description: "Don't use any custom model",
+        },
+        ...data.map((row) => ({
+          id: row.assistant_name,
+          label: row.assistant_name,
+          description: "Custom model from Supabase",
+        })),
+    ];
   } catch (err) {
     console.error("Failed to fetch models, using default:", err);
     return defaultModels;

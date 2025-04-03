@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CheckCircle, ChevronDown } from "lucide-react";
 import { startTransition, useOptimistic } from "react";
+import useStore from "@/app/utils/store/useStore";
 
 interface ModelSelectorProps {
   selectedModelId: string;
@@ -21,6 +22,8 @@ export function ModelSelector({
   className,
 }: ModelSelectorProps) {
   const selectedModel = models.find((model) => model.id === selectedModelId);
+
+  const { setBaseModel } = useStore();
 
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
@@ -47,6 +50,7 @@ export function ModelSelector({
               startTransition(() => {
                 setOptimisticModelId(model.id);
                 saveModelId(model.id);
+                setBaseModel(model.id);
               });
             }}
             className="flex flex-row justify-between items-center gap-4"

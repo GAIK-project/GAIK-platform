@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 import { ModelSelector } from "./model-selector";
 import { CustomModelSelector } from "./custom-model-selector";
 import { Model } from "@/ai/custom-model-names";
+import { models } from "@/ai/model-names";
+import useStore from "@/app/utils/store/useStore";
 
 export function ChatHeader({
   modelId,
@@ -18,6 +20,9 @@ export function ChatHeader({
   customModelId: string;
   customModels: Model[]
 }) {
+
+  const { baseModel } = useStore();
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-4 py-2">
       <div className="flex items-center gap-2">
@@ -32,8 +37,16 @@ export function ChatHeader({
         {/* TODO: How to display modelselector on mobile. We have isMobile props already */}
         <ModelSelector selectedModelId={modelId} />
         {/* Tähän custom mallin valinta */}
-        <p className="text-lg">Custom model: </p>
-        <CustomModelSelector selectedModelId={customModelId} models={customModels}/>
+        {
+          (baseModel === "hyde-rag" || baseModel === "multi-stage-rag")
+          ? 
+          <>
+            <p className="text-lg">Custom model: </p>
+            <CustomModelSelector selectedModelId={customModelId} models={customModels}/>
+          </>
+          : null
+        }
+
       </div>
     </header>
   );

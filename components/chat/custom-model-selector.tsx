@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CheckCircle, ChevronDown } from "lucide-react";
 import { startTransition, useOptimistic } from "react";
+import useStore from "@/app/utils/store/useStore";
 
 interface ModelSelectorProps {
   selectedModelId: string;
@@ -22,6 +23,8 @@ export function CustomModelSelector({
   models,
   className,
 }: ModelSelectorProps) {
+
+  const { setCustomModel } = useStore();
 
   const selectedModel = models.find((model) => model.id === selectedModelId);
 
@@ -49,6 +52,7 @@ export function CustomModelSelector({
             onSelect={() => {
               startTransition(() => {
                 setOptimisticModelId(model.id);
+                setCustomModel(model.id);
                 saveCustomModel(model.id);
               });
             }}

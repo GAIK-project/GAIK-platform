@@ -4,7 +4,7 @@ import type { Message } from "ai";
 import { useChat } from "ai/react";
 import { ArrowBigRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useWindowSize } from "usehooks-ts";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
 import { Model } from "@/ai/custom-model-names";
+import useStore from "@/app/utils/store/useStore";
 
 const suggestedActions = [
   {
@@ -35,6 +36,9 @@ export function Chat({ id, initialMessages, selectedModelId, selectedCustomModel
   const router = useRouter();
   const { width } = useWindowSize();
 
+  // const [customModel, setCustomModel] = useState("none");
+  const { customModel, setCustomModel } = useStore();
+
   const {
     messages,
     input,
@@ -48,7 +52,7 @@ export function Chat({ id, initialMessages, selectedModelId, selectedCustomModel
     id,
     initialMessages,
     api: "/api/chat",
-    body: { id, modelId: selectedModelId },
+    body: { id, modelId: selectedModelId, customModel },
     experimental_throttle: 100,
     onFinish: async () => {
       // Potential chat history saving logic

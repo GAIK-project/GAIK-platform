@@ -37,6 +37,7 @@ export async function searchDocuments(
 export async function searchCustomDocuments(
   query: string,
   limit = 5,
+  tableName: string
 ): Promise<SearchDocument[]> {
   const supabase = createBrowserClient();
   try {

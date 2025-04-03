@@ -21,12 +21,12 @@ export default async function ChatPage() {
   const customModels = await fetchModels();
 
   const customModelFromCookie =
-    cookieStore.get("custom-model")?.value || DEFAULT_MODEL_NAME;
+    cookieStore.get("custom-model")?.value || DEFAULT_CUSTOM_MODEL_NAME;
 
   const customSelectedModelId =
   customModels.find((model) => model.id === customModelFromCookie)?.id ||
   customModels[0]?.id || // fallback if customModels is not empty
-  DEFAULT_MODEL_NAME;     // fallback if no models at all
+  DEFAULT_CUSTOM_MODEL_NAME;     // fallback if no models at all
 
   return (
     <div className="h-full ">

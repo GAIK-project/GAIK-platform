@@ -20,6 +20,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid assistantName after sanitization' }, { status: 400 });
       }
   
+      //we cant allow name "none" as a name its reseved for logic when no model is selected
+      if(safeTableName === "none" || safeTableName === "None"){
+        return NextResponse.json({ error: 'Name you tried is reserved, try another' }, { status: 400 });
+      }
+
       // Query the database
       const existing = await db
         .select()

@@ -2,22 +2,22 @@
 import { openai } from "@ai-sdk/openai";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { wrapLanguageModel } from "ai";
-import { hydeMiddleware } from "./hyde-rag";
-import { multiStagellmMiddleware } from "./multistage-rag";
+import { createHydeMiddleware } from "./hyde-rag";
+import { createMultiStagellmMiddleware } from "./multistage-rag";
 
-const BASE_MODEL = "gpt-4o-2024-11-20";
+const BASE_MODEL = "gpt-4o";
 
-export const createMultiStageRag = (modelName: string = BASE_MODEL) => {
+export const createMultiStageRag = (modelName: string = BASE_MODEL, customModel : string) => {
   return wrapLanguageModel({
     model: openai(modelName),
-    middleware: multiStagellmMiddleware,
+    middleware: createMultiStagellmMiddleware(customModel),
   });
 };
 
-export const createHydeRag = (modelName: string = BASE_MODEL) => {
+export const createHydeRag = (modelName: string, customModel : string) => {
   return wrapLanguageModel({
     model: openai(modelName),
-    middleware: hydeMiddleware,
+    middleware: createHydeMiddleware(customModel),
   });
 };
 
@@ -26,5 +26,5 @@ export const openAIembeddings = new OpenAIEmbeddings({
   dimensions: 1536,
 });
 
-export const multiStageModel = createMultiStageRag();
-export const hydeModel = createHydeRag();
+// export const multiStageModel = createMultiStageRag();
+// export const hydeModel = createHydeRag();

@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         metadata: {
-          assistantName,
+          safeTableName,
           totalChunks: allChunks.length //here figure out what is the total amount of chunks,
         },
       });
