@@ -35,13 +35,14 @@ export function ChatHeader({
           <Plus className="h-4 w-4" />
         </Button>
         {/* TODO: How to display modelselector on mobile. We have isMobile props already */}
+        <p className="text-lg">AI system: </p>
         <ModelSelector selectedModelId={modelId} />
         {/* Tähän custom mallin valinta */}
         {
           (baseModel === "hyde-rag" || baseModel === "multi-stage-rag")
           ? 
           <>
-            <p className="text-lg">Custom model: </p>
+            <p className="text-lg">Custom dataset: </p>
             <CustomModelSelector selectedModelId={customModelId} models={customModels}/>
           </>
           : null

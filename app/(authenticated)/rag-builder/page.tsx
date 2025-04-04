@@ -189,7 +189,7 @@ export default function Home() {
             <div className="welcome-section faded-shadow">
                 <div className="welcome-text">Create your own AI assistant</div>
                 <div className="welcome-subtitle">
-                    Define instructions for your assistant and add links as context, so the assistant can fetch answers from the given context!
+                    Define instructions for your assistant and add your custom dataset as context, so the assistant can fetch answers from the given context!
                 </div>
             </div>
 
