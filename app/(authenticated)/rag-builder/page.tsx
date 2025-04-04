@@ -168,6 +168,57 @@ export default function Home() {
         }, 5000); // Poll every x seconds
     }
 
+    async function checkStatusWithFailureCheck() {
+        let failureCount = 0;
+        const maxFailures = 5;
+    
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch('/api/checkTaskStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ assistantName }),
+                });
+    
+                if (!res.ok) {
+                    failureCount++;
+                    console.error(`Failed to fetch task status (${failureCount}/${maxFailures})`);
+    
+                    if (failureCount >= maxFailures) {
+                        clearInterval(interval);
+                        setLoading(false); // Optional: Stop loading due to error
+                        console.error('Max retry attempts reached. Stopping polling.');
+                    }
+                    return;
+                }
+    
+                // Reset failure count on success
+                failureCount = 0;
+    
+                const data = await res.json();
+    
+                setProgressPercent(data.percentageCompleted);
+                setProcessCompleted(data.taskCompleted);
+    
+                if (data.taskCompleted) {
+                    clearInterval(interval);
+                    setLoading(false);
+                }
+    
+            } catch (error) {
+                failureCount++;
+                console.error(`Error while checking task status (${failureCount}/${maxFailures}):`, error);
+    
+                if (failureCount >= maxFailures) {
+                    clearInterval(interval);
+                    setLoading(false);
+                    console.error('Max retry attempts reached due to errors. Stopping polling.');
+                }
+            }
+        }, 5000); // Poll every 5 seconds
+    }
+    
+
     async function testDb() {
         const res = await fetch(`/api/testDb`);
         const data = await res.json();
