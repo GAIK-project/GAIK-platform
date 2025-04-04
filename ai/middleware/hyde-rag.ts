@@ -11,6 +11,7 @@ import {
   LanguageModelV1Middleware,
 } from "ai";
 import { searchCustomDocuments, searchDocuments } from "../ai-actions/search";
+import { sanitizeTableName } from "@/app/utils/functions/functions";
 
 // Helper function to get last user message text
 const getLastUserMessageText = (messages: CoreMessage[]): string | null => {
@@ -50,11 +51,16 @@ const findSources = async (text: string, customModel: string) => {
     console.log("hypotheticalAnswer", hypotheticalAnswer);
 
     // Retrieve relevant sources, use custom model if defined
-    if(customModel.toLowerCase() !== "none"){
+    // console.log(customModel.toLocaleLowerCase());
+    let newName : string = sanitizeTableName(customModel);
+    console.log("Checking params: ", `${newName} + ${customModel}`);
+    if(newName !== "none"){
+      console.log("Searching from documents with: ", `${newName} + ${customModel}`);
       return await searchCustomDocuments(hypotheticalAnswer, 5, customModel);
       
     }
     else{
+      console.log("Searching from documents");
       return await searchDocuments(hypotheticalAnswer, 5);
     }
     
