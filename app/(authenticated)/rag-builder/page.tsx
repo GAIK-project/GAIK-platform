@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import useStore from "@/app/utils/store/useStore";
 import { saveCustomModel, saveModelId } from "../chatbot/actions";
 import { sanitizeTableName } from "@/app/utils/functions/functions";
+import FileUpload from "@/components/ragbuilder/FIleUpload";
 import "@/app/styles/ragbuilder.css";
 
 export default function Home() {
@@ -226,6 +227,7 @@ export default function Home() {
 
     async function redirectToChat() {
         await saveModelId("hyde-rag");
+        
         await saveCustomModel(persistantAssistantName);
         setBaseModel("hyde-rag");
         setCustomModel(persistantAssistantName);
@@ -289,6 +291,11 @@ export default function Home() {
                     <button className="add-button" onClick={addLinkField}>
                         Add Another Link
                     </button>
+                </div>
+
+                <div className="section">
+                    <h2 className="titles">Import files</h2>
+                    <FileUpload/>
                 </div>
 
                 {errorMessage && <div style={{display: "flex", flexDirection: 'row'}}>
