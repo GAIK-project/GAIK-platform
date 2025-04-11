@@ -2,7 +2,8 @@ export const acceptedTypes = {
     pdf: ['application/pdf'],
     images: ['image/jpeg', 'image/png', 'image/gif'],
     excel: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    text: ['text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    document: ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    text: ['text/plain'],
   }
   
   export const getFileCategory = (mime: string): keyof typeof acceptedTypes | null => {

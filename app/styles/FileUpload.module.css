@@ -42,3 +42,41 @@
     background-color: #2c5282;
   }
   
+  .fileList {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  
+  .fileItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0;
+    background: #f5f5f5;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  
+  .removeButton {
+    background: transparent;
+    border: none;
+    font-size: 1.2em;
+    color: #c00;
+    cursor: pointer;
+  }
+  
+  .totalSize {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 6px;
+  }
+  
+  .infoText {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }

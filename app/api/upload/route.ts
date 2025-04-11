@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFileCategory } from '@/lib/middleware/validateFileType'
 import { writeFile } from 'fs/promises'
+import { parsePdfOrDoc, parseImage, parseExcel, parseTxt } from '@/lib/parsers/parser'
 import path from 'path'
 
 export async function POST(req: NextRequest) {
@@ -19,22 +20,36 @@ export async function POST(req: NextRequest) {
     }
 
     switch (category) {
-      case 'pdf':
-        // PDF processing logic
-        results.push(`${file.name}: ✅ PDF block reached`)
-        break
-      case 'images':
-        // Image processing logic
-        results.push(`${file.name}: ✅ Image block reached`)
-        break
-      case 'excel':
-        // Excel processing logic
-        results.push(`${file.name}: ✅ Excel block reached`)
-        break
-      case 'text':
-        // Text document processing logic
-        results.push(`${file.name}: ✅ Text block reached`)
-        break
+        case 'pdf': {
+            const text = await parsePdfOrDoc(buffer, file.name);
+            // console.log("text: ", text);
+            results.push(`${file.name}: ✅ Parsed, ${text.length} chars`);
+            break;
+        }
+        case 'document': {
+            const text = await parsePdfOrDoc(buffer, file.name);
+            // console.log("text: ", text);
+            results.push(`${file.name}: ✅ Parsed, ${text.length} chars`);
+            break;
+        }
+        case 'text': {
+            const text = await parseTxt(buffer);
+            // console.log("text: ", text);
+            results.push(`${file.name}: ✅ Parsed, ${text.length} chars`);
+            break;
+        }
+        case 'images': {
+            const text = await parseImage(buffer, file.name);
+            // console.log("text: ", text);
+            results.push(`${file.name}: ✅ Image parsed to text (${text.length} chars)`);
+            break;
+        }
+        case 'excel': {
+            const text = await parseExcel(buffer, file.name);
+            // console.log("text: ", text);
+            results.push(`${file.name}: ✅ Excel parsed`);
+            break;
+        }
       default:
         results.push(`${file.name}: ❌ No matching block`)
     }

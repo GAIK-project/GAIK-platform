@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 import useStore from "@/app/utils/store/useStore";
 import { saveCustomModel, saveModelId } from "../chatbot/actions";
 import { sanitizeTableName } from "@/app/utils/functions/functions";
-import FileUpload from "@/components/ragbuilder/FIleUpload";
+// import FileUpload from "@/components/ragbuilder/FIleUpload";
+import FileUpload from "@/components/ragbuilder/FIleUpload2";
 import "@/app/styles/ragbuilder.css";
 
 export default function Home() {
@@ -295,6 +296,7 @@ export default function Home() {
 
                 <div className="section">
                     <h2 className="titles">Import files</h2>
+                    {/* <FileUpload/> */}
                     <FileUpload/>
                 </div>
 
