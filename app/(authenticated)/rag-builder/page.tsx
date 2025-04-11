@@ -266,7 +266,7 @@ export default function Home() {
                 </div>
 
                 <div className="section">
-                    <h2 className="titles">Links</h2>
+                    <h2 className="titles">Context from the web</h2>
                     {links.map((link, index) => (
                         <div key={index} className="link-field-container">
                             <input
@@ -295,7 +295,7 @@ export default function Home() {
                 </div>
 
                 <div className="section">
-                    <h2 className="titles">Import files</h2>
+                    <h2 className="titles">Context from files</h2>
                     {/* <FileUpload/> */}
                     <FileUpload/>
                 </div>
