@@ -9,14 +9,26 @@ export async function POST(req: NextRequest) {
   const files = formData.getAll('files') as File[]
 
   const results: string[] = []
+  let totalSize = 0;
+
+  const MAX_TOTAL_SIZE_MB = 200; // max total size allowed (in megabytes)
+  const MAX_TOTAL_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
 
   for (const file of files) {
     const buffer = Buffer.from(await file.arrayBuffer())
     const category = getFileCategory(file.type)
+    totalSize += buffer.length;
 
     if (!category) {
       results.push(`${file.name}: ❌ Unsupported file type: ${file.type}`)
       continue
+    }
+
+    if (totalSize > MAX_TOTAL_SIZE_BYTES) {
+      return new Response(
+        JSON.stringify({ error: `❌ Total file size exceeds ${MAX_TOTAL_SIZE_MB}MB.` }),
+        { status: 400 }
+      );
     }
 
     switch (category) {
