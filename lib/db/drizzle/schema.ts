@@ -29,6 +29,7 @@ export const assistants = pgTable("assistants", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   taskCompleted: boolean("task_completed").notNull().default(false),
 });
+//need to add to assistants table: owner, files, fileids and bring them on in ragbuilder process
 
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
