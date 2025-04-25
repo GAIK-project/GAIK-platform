@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ABeeZee, Bungee_Spice, Roboto } from "next/font/google";
+import { ABeeZee, Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
@@ -7,13 +7,6 @@ const aBeeZee = ABeeZee({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-abee-zee",
-  display: "swap",
-});
-
-const bungee = Bungee_Spice({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-bungee",
   display: "swap",
 });
 

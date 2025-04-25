@@ -27,3 +27,33 @@ begin             -- Start of the PL/pgSQL block
   limit match_count;       -- Limit the number of results
 end;              -- End of the PL/pgSQL block
 $$;              -- End of the code block
+
+-- This function should be executed when a new user is created in the auth.users table.
+create or replace function public.handle_new_user() 
+returns trigger as $$
+begin
+  -- Aseta oletusrooli jos sitä ei ole määritetty
+  if new.raw_user_meta_data->>'role' is null then
+    update auth.users
+    set raw_user_meta_data = 
+      raw_user_meta_data || 
+      json_build_object('role', 'USER', 'organization', 'HAAGA_HELIA')::jsonb
+    where id = new.id;
+  end if;
+
+  -- Luo profiili userProfiles-tauluun
+  insert into public.user_profiles (id, preferences, avatar)
+  values (
+    new.id, 
+    '{"language": "fi"}'::jsonb,
+    '/avatars/default.png'
+  );
+  
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Add the trigger to the auth.users table
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
