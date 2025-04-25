@@ -11,7 +11,7 @@ export async function getInviteByToken(token: string): Promise<Invite | null> {
     where: and(
       eq(invites.token, token),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date()),
+      gt(invites.expiresAt, new Date())
     ),
   });
 
@@ -63,7 +63,7 @@ export async function getUserData(): Promise<UserData | null> {
 
 async function getCachedUserData(
   user: any,
-  profile: any,
+  profile: any
 ): Promise<UserData | null> {
   "use cache";
   cacheTag("user-profile");
@@ -72,15 +72,15 @@ async function getCachedUserData(
     return {
       id: user.id,
       email: user.email!,
-      name: user.user_metadata.name,
-      organization: user.user_metadata.organization,
-      role: user.user_metadata.role,
+      name: user.user_metadata?.name || "",
+      organization: profile?.organization || "HAAGA_HELIA", // Muutettu
+      role: profile?.role || "USER", // Muutettu käyttämään profiilin roolia
       isActive: true,
-      avatar: profile.avatar,
-      preferences: profile.preferences,
-      lastLoginAt: profile.lastLoginAt,
+      avatar: profile?.avatar || "/avatars/default.png",
+      preferences: profile?.preferences || { language: "fi" },
+      lastLoginAt: profile?.lastLoginAt || null,
       createdAt: new Date(user.created_at),
-      updatedAt: profile.updatedAt,
+      updatedAt: profile?.updatedAt || new Date(user.updated_at),
     };
   } catch (error) {
     console.error("Error in getCachedUserData:", error);
@@ -90,14 +90,14 @@ async function getCachedUserData(
 
 export async function validateInvite(
   email: string,
-  organization: Organization,
+  organization: Organization
 ): Promise<Invite | null> {
   const existingInvite = await db.query.invites.findFirst({
     where: and(
       eq(invites.email, email.toLowerCase()),
       eq(invites.organization, organization),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date()),
+      gt(invites.expiresAt, new Date())
     ),
   });
 
@@ -113,7 +113,7 @@ type UserProfileUpdate = Partial<{
 
 export async function updateUserProfile(
   userId: string,
-  data: UserProfileUpdate,
+  data: UserProfileUpdate
 ) {
   try {
     const [updatedProfile] = await db

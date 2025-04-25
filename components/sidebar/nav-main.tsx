@@ -91,62 +91,63 @@ export function NavMain({
           if (!item.items?.length) {
             return (
               <SidebarMenuItem key={item.title}>
-                <Link href={item.url} passHref legacyBehavior>
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    asChild
-                    className={clsx(
-                      "h-9 transition-colors relative w-full",
-                      "px-3 rounded-md",
-                      active && !isCollapsed
-                        ? "bg-secondary hover:bg-secondary"
-                        : !isCollapsed
-                          ? "hover:bg-secondary"
-                          : "hover:bg-white",
-                    )}
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  asChild
+                  className={clsx(
+                    "h-9 transition-colors relative w-full",
+                    "px-3 rounded-md",
+                    active && !isCollapsed
+                      ? "bg-secondary hover:bg-secondary"
+                      : !isCollapsed
+                        ? "hover:bg-secondary"
+                        : "hover:bg-white"
+                  )}
+                >
+                  <Link
+                    href={item.url}
+                    className="flex items-center w-full space-x-3"
                   >
-                    <a className="flex items-center w-full space-x-3">
-                      {item.icon && (
-                        <div
-                          className={clsx(
-                            "flex items-center justify-center rounded-md",
-                            "transition-all duration-200 ease-in-out",
-                            "bg-white shadow-xs p-1.5",
-                            active && "border-primary/30 bg-primary/10",
-                          )}
-                        >
-                          <Icon
-                            icon={item.icon}
-                            className={clsx(
-                              "w-5 h-5",
-                              "transition-colors duration-200",
-                              active ? "text-primary" : "text-muted-foreground",
-                              "group-hover:text-primary",
-                            )}
-                          />
-                        </div>
-                      )}
-                      <span
+                    {item.icon && (
+                      <div
                         className={clsx(
-                          "text-sm whitespace-nowrap",
-                          "transition-colors duration-200",
-                          active
-                            ? "font-medium text-foreground"
-                            : "text-muted-foreground",
-                          "group-hover:text-foreground",
-                          // Näytetään teksti aina mobiilissa
-                          isMobile
-                            ? "block"
-                            : isCollapsed
-                              ? "hidden"
-                              : "inline-block",
+                          "flex items-center justify-center rounded-md",
+                          "transition-all duration-200 ease-in-out",
+                          "bg-white shadow-xs p-1.5",
+                          active && "border-primary/30 bg-primary/10"
                         )}
                       >
-                        {item.title}
-                      </span>
-                    </a>
-                  </SidebarMenuButton>
-                </Link>
+                        <Icon
+                          icon={item.icon}
+                          className={clsx(
+                            "w-5 h-5",
+                            "transition-colors duration-200",
+                            active ? "text-primary" : "text-muted-foreground",
+                            !isCollapsed && "group-hover:text-primary" // Corrected syntax
+                          )}
+                        />
+                      </div>
+                    )}
+                    <span
+                      className={clsx(
+                        "text-sm whitespace-nowrap",
+                        "transition-colors duration-200",
+                        active
+                          ? "font-medium text-foreground"
+                          : "text-muted-foreground",
+                        "group-hover:text-foreground",
+                        // Näytetään teksti aina mobiilissa
+                        isMobile
+                          ? "block"
+                          : isCollapsed
+                            ? "hidden"
+                            : "inline-block"
+                      )}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             );
           }
@@ -168,7 +169,7 @@ export function NavMain({
                       "px-3 rounded-md",
                       active
                         ? "bg-secondary hover:bg-secondary"
-                        : "hover:bg-secondary",
+                        : "hover:bg-secondary"
                     )}
                   >
                     <div className="flex items-center w-full space-x-3">
@@ -178,7 +179,7 @@ export function NavMain({
                             "flex items-center justify-center rounded-md",
                             "transition-all duration-200 ease-in-out",
                             "bg-white shadow-xs p-1.5",
-                            active && "border-primary/30 bg-primary/10",
+                            active && "border-primary/30 bg-primary/10"
                           )}
                         >
                           <Icon
@@ -187,7 +188,7 @@ export function NavMain({
                               "w-5 h-5",
                               "transition-colors duration-200",
                               active ? "text-primary" : "text-muted-foreground",
-                              "group-hover:text-primary",
+                              !isCollapsed && "group-hover:text-primary" // Apply hover only when not collapseder:text-primary" // Apply hover only when not collapsed
                             )}
                           />
                         </div>
@@ -200,7 +201,7 @@ export function NavMain({
                             ? "font-medium text-foreground"
                             : "text-muted-foreground",
                           "group-hover:text-foreground",
-                          isCollapsed ? "hidden" : "inline-block",
+                          isCollapsed ? "hidden" : "inline-block"
                         )}
                       >
                         {item.title}
@@ -217,35 +218,33 @@ export function NavMain({
                       const subActive = isActive(subItem.url);
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
-                          <Link href={subItem.url} passHref legacyBehavior>
-                            <SidebarMenuSubButton
-                              asChild
-                              className={clsx(
-                                "h-8 px-8 rounded-md transition-colors",
-                                subActive
-                                  ? "bg-secondary hover:bg-secondary"
-                                  : "hover:bg-secondary",
-                              )}
-                            >
-                              <a>
-                                <span
-                                  className={clsx(
-                                    "text-xs whitespace-nowrap",
-                                    subActive
-                                      ? "font-medium text-foreground"
-                                      : "text-muted-foreground",
-                                    isMobile
-                                      ? "block"
-                                      : isCollapsed
-                                        ? "hidden"
-                                        : "inline-block",
-                                  )}
-                                >
-                                  {subItem.title}
-                                </span>
-                              </a>
-                            </SidebarMenuSubButton>
-                          </Link>
+                          <SidebarMenuSubButton
+                            asChild
+                            className={clsx(
+                              "h-8 px-8 rounded-md transition-colors",
+                              subActive
+                                ? "bg-secondary hover:bg-secondary"
+                                : "hover:bg-secondary"
+                            )}
+                          >
+                            <Link href={subItem.url} className="block">
+                              <span
+                                className={clsx(
+                                  "text-xs whitespace-nowrap",
+                                  subActive
+                                    ? "font-medium text-foreground"
+                                    : "text-muted-foreground",
+                                  isMobile
+                                    ? "block"
+                                    : isCollapsed
+                                      ? "hidden"
+                                      : "inline-block"
+                                )}
+                              >
+                                {subItem.title}
+                              </span>
+                            </Link>
+                          </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       );
                     })}

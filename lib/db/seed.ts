@@ -61,6 +61,8 @@ async function seed() {
     // Create admin user in our database
     await db.insert(userProfiles).values({
       id: authUser.user.id,
+      role: "ADMIN",
+      organization: "HAAGA_HELIA",
       // Esimerkki oletusasetuksista
       preferences: {
         language: "fi",
