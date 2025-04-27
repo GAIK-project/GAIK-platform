@@ -84,7 +84,7 @@ graph TB
     J --> Z3
     Z3 --> Z1
     Z1 --> F
-    
+
     %% Storage Flow
     U <--> R
 
@@ -184,7 +184,7 @@ The `ai/ai-actions/search.ts` server action handles vector comparisons by:
 // Example from ai/ai-actions/search.ts
 export async function searchDocuments(
   query: string,
-  limit = 5,
+  limit = 5
 ): Promise<SearchDocument[]> {
   const supabase = createBrowserClient();
   try {
@@ -243,6 +243,63 @@ const result = await response.json();
 ```
 
 The document will then be available for retrieval in RAG-powered conversations.
+
+## RAG Implementation Strategies
+
+The application offers two distinct RAG (Retrieval Augmented Generation) strategies that can be selected based on your specific needs:
+
+### 1. HyDE-RAG (Hypothetical Document Embeddings)
+
+![HyDE-based RAG implementation](public/hyde-rag.png)
+
+HyDE-RAG is designed to improve search accuracy by generating hypothetical answers before document retrieval:
+
+**How it works:**
+
+1. **Message Classification**: Determines if the user input is a question requiring retrieval
+2. **Hypothetical Answer Generation**: For questions, creates a detailed hypothetical answer
+3. **Enhanced Retrieval**: Uses the hypothetical answer (not just the original query) for more accurate document retrieval
+4. **Context Integration**: Seamlessly adds retrieved information to the user's query
+
+**When to use**: Ideal for factual questions where generating a hypothetical answer can guide better document retrieval.
+
+### 2. Multi-Stage Semantic RAG
+
+![Multi-Stage Semantic RAG](public/multi-stage-rag.png)
+
+Multi-Stage RAG employs a sophisticated, iterative approach to information retrieval:
+
+**How it works:**
+
+1. **Search Context Creation**: Analyzes the query to extract key search terms and expected information
+2. **Multi-phase Retrieval**: Performs initial search followed by BM25-based reranking
+3. **Completeness Verification**: Checks if all expected information was found
+4. **Additional Retrieval**: If information is missing, conducts targeted additional searches
+5. **Result Integration**: Combines and reranks all results for the most relevant context
+
+**When to use**: Best for complex questions requiring information from multiple sources or when comprehensive answers are needed.
+
+### Using RAG in Your Application
+
+You can select your preferred RAG implementation when creating a chat:
+
+```typescript
+// Use HyDE-RAG
+import { hydeModel } from "@/ai/middleware";
+const chatStream = streamText({
+  model: hydeModel,
+  prompt: userMessage,
+});
+
+// Or use Multi-Stage RAG
+import { multiStageModel } from "@/ai/middleware";
+const chatStream = streamText({
+  model: multiStageModel,
+  prompt: userMessage,
+});
+```
+
+Both RAG strategies significantly enhance the AI's ability to provide accurate, context-aware responses by retrieving and incorporating relevant information from your document base.
 
 ### Authentication System
 
