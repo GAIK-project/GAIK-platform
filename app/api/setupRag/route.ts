@@ -14,11 +14,15 @@ const MAX_LINK_LENGTH = 300;
 
 export async function POST(request: NextRequest) {
     try {
-      const { assistantName, links, systemPrompt } = await request.json();
+      const formData = await request.formData();
+
+      // Get JSON data (sent as "data")
+      const dataString = formData.get('data') as string;
+      const { assistantName, links, systemPrompt } = JSON.parse(dataString);
       
       //check for missing values
       if (!assistantName || !links || !systemPrompt) {
-        return NextResponse.json({ error: "Missing assistantName, textData, or systemPrompt" }, { status: 400 });
+        return NextResponse.json({ error: "Missing req data" }, { status: 400 });
       }
 
       // Type checks

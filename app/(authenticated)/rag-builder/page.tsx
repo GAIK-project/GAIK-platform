@@ -22,6 +22,8 @@ export default function Home() {
     const [loading, setLoading] = useState<boolean>(false);
     const [processCompleted, setProcessCompleted] = useState<boolean>(false);
     const [progressPercent, setProgressPercent] = useState<number>(0);
+    const [files, setFiles] = useState<File[]>([]);
+    const [username, setUsername] = useState<string>("jaakko");
 
     const router = useRouter();
 
@@ -102,22 +104,34 @@ export default function Home() {
             assistantName,
             systemPrompt,
             links,
+            username
         };
 
         setLoading(true);
         setIsButtonEnabled(false);
 
         try {
+
+            const formData = new FormData();
+
+            // Append JSON data as a single blob
+            formData.append("data", JSON.stringify(payload));
+        
+            // Append files 
+            files.forEach((file, index) => {
+                formData.append("files", file);
+            });
+
             const response = await fetch("/api/setupRag", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(payload),
+                body: formData, //add formdata here
             });
 
             if (response.ok) {
-                checkStatus();
+                // checkStatus();
                 console.log("Data sent successfully!");
                 let newAssistantName : string = sanitizeTableName(assistantName);
                 setPersistantAssistantName(newAssistantName);
@@ -238,17 +252,17 @@ export default function Home() {
     return (
         <div className="container">
             <Head>
-                <title>Create RAG Model</title>
+                <title>Create dataset</title>
             </Head>
             <div className="welcome-section faded-shadow">
-                <div className="welcome-text">Create your own AI assistant</div>
+                <div className="welcome-text">Create your own AI dataset</div>
                 <div className="welcome-subtitle">
-                    Define instructions for your assistant and add your custom dataset as context, so the assistant can fetch answers from the given context!
+                    Here you can add custom data from weblinks or files as context, so that we can build a RAG asssistant to fetch answers from the given context!
                 </div>
             </div>
 
             <div className="section">
-                    <h2 className="titles">Name for your new assistant</h2>
+                    <h2 className="titles">Name for your new dataset</h2>
                     <input 
                         className="input"
                         type="text"
@@ -297,7 +311,7 @@ export default function Home() {
                 <div className="section">
                     <h2 className="titles">Context from files</h2>
                     {/* <FileUpload/> */}
-                    <FileUpload/>
+                    <FileUpload files={files} setFiles={setFiles}/>
                 </div>
 
                 {errorMessage && <div style={{display: "flex", flexDirection: 'row'}}>

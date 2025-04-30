@@ -5,8 +5,13 @@ import styles from '@/app/styles/FileUpload.module.css'
 
 const MAX_TOTAL_SIZE = 200 * 1024 * 1024 // 200 MB
 
-const FileUpload = () => {
-  const [files, setFiles] = useState<File[]>([])
+interface FileUploadProps {
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+}
+
+const FileUpload = ({ files, setFiles }: FileUploadProps) => {
+  
   const [error, setError] = useState<string | null>(null)
 
   const getTotalSize = (fileList: File[]) =>
