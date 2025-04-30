@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/*
+  ---break---
+*/
+@custom-variant dark (&:is(.dark *));
 
 @config '../tailwind.config.ts';
 
@@ -62,6 +66,7 @@
   --sidebar-ring: hsl(221.2 83.2% 53.3%);
   --ai-bg-light: hsl(210 100% 98%);
   --ai-bg-dark: hsl(220 80% 56%);
+  --sidebar: hsl(0 0% 98%);
 }
 
 .dark {
@@ -101,6 +106,7 @@
   --sidebar-ring: hsl(224.3 76.3% 48%); /* Match your dark mode ring */
   --custom-bg-light: hsl(210 100% 98%);
   --custom-bg-dark: hsl(220 80% 56%);
+  --sidebar: hsl(240 5.9% 10%);
 }
 
 @theme inline {
@@ -140,6 +146,7 @@
   --color-ai-bg-dark: var(--ai-bg-dark);
   --color-custom-bg-light: var(--custom-bg-light);
   --color-custom-bg-dark: var(--custom-bg-dark);
+  --color-sidebar: var(--sidebar);
 }
 
 @layer base {
@@ -163,4 +170,17 @@
 
 .animate-smooth-pulse {
   animation: smooth-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/*
+  ---break---
+*/
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
