@@ -23,6 +23,8 @@ export const userRoleEnum = pgEnum("user_role", ["ADMIN", "USER"] as const);
 export const assistants = pgTable("assistants", {
   id: serial("id").primaryKey(),
   assistantName: text("assistant_name").notNull(),
+  owner: text("owner").notNull(),
+  originalSources: jsonb("original_sources"),
   systemPrompt: text("system_prompt").notNull(),
   currentChunk: integer("current_chunk").notNull(),
   totalChunks: integer("total_chunks").notNull(),
