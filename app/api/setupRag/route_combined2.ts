@@ -10,6 +10,10 @@ import { parsePdfOrDoc, parseTxt, parseImage, parseExcel } from '@/lib/parsers/p
 import { getFileCategory } from '@/lib/middleware/validateFileType';
 import { v4 as uuidv4 } from 'uuid';
 
+const MAX_ASSISTANT_NAME_LENGTH = 30;
+const MAX_SYSTEM_PROMPT_LENGTH = 500;
+const MAX_LINKS_COUNT = 5;
+const MAX_LINK_LENGTH = 300;
 const MAX_TOTAL_SIZE_BYTES = 200 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
@@ -23,6 +27,24 @@ export async function POST(request: NextRequest) {
 
         if (!assistantName || !systemPrompt || (!links && files.length === 0)) {
             return NextResponse.json({ error: "Missing required data" }, { status: 400 });
+        }
+
+        
+        // --- Immediate validation ---
+        if (!assistantName || !links || !systemPrompt) {
+            return NextResponse.json({ error: "Missing required data" }, { status: 400 });
+        }
+
+        if (typeof assistantName !== "string" || typeof systemPrompt !== "string" || !Array.isArray(links)) {
+            return NextResponse.json({ error: "Invalid data types" }, { status: 400 });
+        }
+
+        if (assistantName.length > MAX_ASSISTANT_NAME_LENGTH || systemPrompt.length > MAX_SYSTEM_PROMPT_LENGTH || links.length > MAX_LINKS_COUNT) {
+            return NextResponse.json({ error: "Data length limits exceeded" }, { status: 400 });
+        }
+
+        if (!links.every(link => typeof link === "string" && link.length <= MAX_LINK_LENGTH)) {
+            return NextResponse.json({ error: "Invalid links provided" }, { status: 400 });
         }
 
         const safeTableName = sanitizeTableName(assistantName);
