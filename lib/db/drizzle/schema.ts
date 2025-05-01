@@ -25,6 +25,7 @@ export const assistants = pgTable("assistants", {
   assistantName: text("assistant_name").notNull(),
   owner: text("owner").notNull(),
   originalSources: jsonb("original_sources"),
+  errors: jsonb("errors"),
   systemPrompt: text("system_prompt").notNull(),
   currentChunk: integer("current_chunk").notNull(),
   totalChunks: integer("total_chunks").notNull(),

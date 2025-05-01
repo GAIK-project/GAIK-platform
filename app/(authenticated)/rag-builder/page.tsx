@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { XCircle } from "lucide-react";
@@ -16,7 +16,7 @@ export default function Home() {
     const [assistantName, setAssistantName] = useState<string>("");
     const [persistantAssistantName, setPersistantAssistantName] = useState<string>("");
     const [systemPrompt, setSystemPrompt] = useState<string>("");
-    const [links, setLinks] = useState<string[]>([""]);
+    const [links, setLinks] = useState<string[]>([]);
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,6 +28,12 @@ export default function Home() {
     const router = useRouter();
 
     const { setBaseModel, setCustomModel } = useStore();
+
+    useEffect(() => {
+        if (files.length > 0) {
+          validateForm(systemPrompt, links);
+        }
+      }, [files]);  // Run validation every time 'files' changes
 
     const scrollToBottom = () => {
         window.scrollTo({
@@ -50,6 +56,7 @@ export default function Home() {
 
     const handleNameChange = (value : string) => {
         setAssistantName(value);
+        validateForm(systemPrompt, links);
     };
 
     const addLinkField = () => {
@@ -61,35 +68,49 @@ export default function Home() {
         }  
     };
 
-    const validateForm = (prompt : string, linksArray : string[]) => {
+    const validateAfterFileChange = () => {
+        validateForm(systemPrompt, links);
+    }
 
+    const validateForm = (prompt : string, linksArray : string[]) => {
+        // console.log(files);
         if (assistantName.trim() === "") {
             setErrorMessage("Name for the assistant cannot be empty.");
             setIsButtonEnabled(false);
-            return;
+            return false;
         }
 
         if (prompt.trim() === "") {
             setErrorMessage("Instructions for the assistant cannot be empty.");
             setIsButtonEnabled(false);
-            return;
+            return false;
         }
 
-        for (let i = 0; i < linksArray.length; i++) {
-            if (linksArray[i].trim() === "") {
-                setErrorMessage(`Link ${i + 1} cannot be empty.`);
-                setIsButtonEnabled(false);
-                return;
-            }
-            if (!/^https?:\/\/.+/.test(linksArray[i])) {
-                setErrorMessage(`Link ${i + 1} must start with "http://" or "https://".`);
-                setIsButtonEnabled(false);
-                return;
+        
+        if(links.length === 0 && files.length === 0){
+            setErrorMessage("Add at least 1 link or file");
+            setIsButtonEnabled(false);
+            return false;
+        }
+      
+        if(links.length > 0){
+            for (let i = 0; i < linksArray.length; i++) {
+                if (linksArray[i].trim() === "") {
+                    setErrorMessage(`Link ${i + 1} cannot be empty.`);
+                    setIsButtonEnabled(false);
+                    return false;
+                }
+                if (!/^https?:\/\/.+/.test(linksArray[i])) {
+                    setErrorMessage(`Link ${i + 1} must start with "http://" or "https://".`);
+                    setIsButtonEnabled(false);
+                    return false;
+                }
             }
         }
-
+        
         setErrorMessage(""); // Clear error message if everything is valid
         setIsButtonEnabled(true);
+        return true;
     };
 
     const handleSubmit = async () => {
@@ -97,6 +118,10 @@ export default function Home() {
         let check : boolean =  await checkUniqueName(assistantName);
         if(check){
             setErrorMessage("Assistant name already exists, please select a new one");
+            return;
+        }
+        let validationCheck : boolean = validateForm(systemPrompt, links);
+        if(!validationCheck){
             return;
         }
 
@@ -124,9 +149,6 @@ export default function Home() {
 
             const response = await fetch("/api/setupRag", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
                 body: formData, //add formdata here
             });
 
@@ -311,7 +333,7 @@ export default function Home() {
                 <div className="section">
                     <h2 className="titles">Context from files</h2>
                     {/* <FileUpload/> */}
-                    <FileUpload files={files} setFiles={setFiles}/>
+                    <FileUpload files={files} setFiles={setFiles} runValidation={validateAfterFileChange}/>
                 </div>
 
                 {errorMessage && <div style={{display: "flex", flexDirection: 'row'}}>

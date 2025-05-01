@@ -8,9 +8,10 @@ const MAX_TOTAL_SIZE = 200 * 1024 * 1024 // 200 MB
 interface FileUploadProps {
   files: File[];
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  runValidation: any;
 }
 
-const FileUpload = ({ files, setFiles }: FileUploadProps) => {
+const FileUpload = ({ files, setFiles, runValidation }: FileUploadProps) => {
   
   const [error, setError] = useState<string | null>(null)
 
@@ -108,13 +109,13 @@ const FileUpload = ({ files, setFiles }: FileUploadProps) => {
 
       {error && <p className={styles.error}>{error}</p>}
 
-      <button
+      {/* <button
         className={styles.button}
         onClick={handleSubmit}
         disabled={files.length === 0 || !!error}
       >
         Upload
-      </button>
+      </button> */}
     </div>
   )
 }
