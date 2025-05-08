@@ -10,6 +10,7 @@ import { saveCustomModel, saveModelId } from "../chatbot/actions";
 import { sanitizeTableName } from "@/app/utils/functions/functions";
 // import FileUpload from "@/components/ragbuilder/FIleUpload";
 import FileUpload from "@/components/ragbuilder/FIleUpload2";
+import { getUserData } from "@/lib/db/drizzle/queries";
 import "@/app/styles/ragbuilder.css";
 
 export default function Home() {
@@ -125,11 +126,14 @@ export default function Home() {
             return;
         }
 
+        let user = await getUserData();
+        let owner = user?.email || 'jaakko';
+        
         const payload = {
             assistantName,
             systemPrompt,
             links,
-            username
+            owner
         };
 
         setLoading(true);
