@@ -56,6 +56,11 @@ export const routes: RouteConfig[] = [
     icon: "tabler:file-text",
   },
   {
+    path: "datasetmanager",
+    title: "Dataset manager",
+    icon: "tabler:file-text",
+  },
+  {
     path: "admin/invite-user",
     title: "Invite",
     icon: "tabler:send",

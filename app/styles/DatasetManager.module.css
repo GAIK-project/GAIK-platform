@@ -1,0 +1,63 @@
+.container {
+    padding: 2rem;
+  }
+  
+  .title {
+    margin-bottom: 1.5rem;
+  }
+  
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: #fafafa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .field {
+    margin-top: 1rem;
+  }
+  
+  .textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: #0070f3;
+    color: white;
+    transition: background 0.2s;
+  }
+  
+  .button:hover {
+    background-color: #005bb5;
+  }
+  
+  .sourceList {
+    padding-left: 1rem;
+  }
+  
+  .sourceItem {
+    margin-bottom: 0.5rem;
+    list-style: disc;
+  }
+  

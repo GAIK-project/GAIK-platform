@@ -10,7 +10,6 @@ import { saveCustomModel, saveModelId } from "../chatbot/actions";
 import { sanitizeTableName } from "@/app/utils/functions/functions";
 // import FileUpload from "@/components/ragbuilder/FIleUpload";
 import FileUpload from "@/components/ragbuilder/FIleUpload2";
-import { getUserData } from "@/lib/db/drizzle/queries";
 import "@/app/styles/ragbuilder.css";
 
 export default function Home() {
@@ -126,9 +125,12 @@ export default function Home() {
             return;
         }
 
-        let user = await getUserData();
-        let owner = user?.email || 'jaakko';
-        
+        let user = await getUserFromServer();
+        let owner = "jaakko";
+        if(user){
+            owner = user;
+        }
+
         const payload = {
             assistantName,
             systemPrompt,
@@ -179,6 +181,18 @@ export default function Home() {
         const data = await res.json();
         return data.isTaken;
     };
+
+    const getUserFromServer = async () => {
+        try {
+            const res = await fetch('/api/getUserFromServer');
+            if (!res.ok) throw new Error('Failed to fetch');
+            const data = await res.json();
+            return data.email;
+          } catch (err) {
+            console.error('Error:', err);
+            return false;
+          }
+    }
 
     async function checkStatus() {
         const interval = setInterval(async () => {
@@ -353,7 +367,6 @@ export default function Home() {
                 {(loading &&
                     <div className="loader-container">
                         <p className="loader-text">Data is being collected from the provided links and prepared to a form your AI assistant can understand... This might take several minutes depending on your data size</p>
-                        <p className="loader-text">Progress: {progressPercent}</p>
                         <div className="loader"></div>
                     </div>
                 )}
