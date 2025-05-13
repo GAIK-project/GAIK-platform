@@ -29,6 +29,9 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Use .env.example for production builds (Rahti-2 needs this this for BuildConfigs now idk why, better to setup environment variables in DeploymentConfig)
+COPY .env.example .env.local
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
