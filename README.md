@@ -2,6 +2,7 @@
 
 A modern web application for conversational AI, document management, and analytics, powered by RAG (Retrieval Augmented Generation) capabilities and built with Next.js 15.2 and React 19.
 
+
 ## Quick Start
 
 The easiest way to get started is using the guest mode:
