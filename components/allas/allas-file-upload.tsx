@@ -23,10 +23,10 @@ export default function AllasFileUpload({
   initialFiles,
 }: AllasFileUploadProps) {
   const [processingFiles, setProcessingFiles] = useState<Set<string>>(
-    new Set(),
+    new Set()
   );
   const [dragActive, setDragActive] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [optimisticFiles, addOptimisticAction] = useOptimistic<
     _Object[],
@@ -52,13 +52,13 @@ export default function AllasFileUpload({
       if (!file) return;
 
       const fileExists = optimisticFiles.some(
-        (existingFile) => existingFile.Key === file.name,
+        (existingFile) => existingFile.Key === file.name
       );
 
       if (fileExists) {
         toast.error(
           "File with same name already exists.\nPlease rename the file before uploading.",
-          { duration: 7000 },
+          { duration: 7000 }
         );
         return;
       }
@@ -78,7 +78,7 @@ export default function AllasFileUpload({
       try {
         await uploadFile(bucket, file);
         toast.success("Uploaded", { duration: 4000 });
-      } catch (err) {
+      } catch {
         toast.error("Upload failed", { duration: 4000 });
         startTransition(() => {
           addOptimisticAction({ type: "delete", fileKey: file.name });
@@ -91,7 +91,7 @@ export default function AllasFileUpload({
         });
       }
     },
-    [bucket, addOptimisticAction, optimisticFiles],
+    [bucket, addOptimisticAction, optimisticFiles]
   );
 
   const handleDelete = useCallback(
@@ -108,7 +108,7 @@ export default function AllasFileUpload({
         await deleteFile(bucket, key);
       } catch (err) {
         toast.error(
-          `Delete failed: ${err instanceof Error ? err.message : String(err)}`,
+          `Delete failed: ${err instanceof Error ? err.message : String(err)}`
         );
         startTransition(() => {
           addOptimisticAction({ type: "revert", file: fileToDelete });
@@ -123,7 +123,7 @@ export default function AllasFileUpload({
         });
       }
     },
-    [bucket, optimisticFiles, addOptimisticAction],
+    [bucket, optimisticFiles, addOptimisticAction]
   );
 
   const handleDownload = useCallback(
@@ -135,11 +135,11 @@ export default function AllasFileUpload({
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-      } catch (error) {
+      } catch {
         toast.error("Download failed", { duration: 4000 });
       }
     },
-    [bucket],
+    [bucket]
   );
 
   return (
@@ -152,7 +152,7 @@ export default function AllasFileUpload({
             dragActive
               ? "border-blue-500 bg-blue-50"
               : "border-gray-300 hover:border-gray-400",
-            "cursor-pointer",
+            "cursor-pointer"
           )}
           onDragEnter={() => setDragActive(true)}
           onDragLeave={() => setDragActive(false)}
@@ -202,7 +202,7 @@ export default function AllasFileUpload({
               processingFiles.has(file.Key || "")
                 ? "border-blue-200 bg-blue-50/70"
                 : "border-gray-200 hover:border-gray-300",
-              processingFiles.has(file.Key || "") && "animate-smooth-pulse",
+              processingFiles.has(file.Key || "") && "animate-smooth-pulse"
             )}
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">

@@ -8,20 +8,20 @@ interface ChatMessagesProps {
   isLoading: boolean;
 }
 
-const createTestMessages = (count: number): MessageType[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: String(i + 1),
-    role: i % 2 === 0 ? "user" : "assistant",
-    content: `Test message ${i + 1}`,
-  }));
-};
+// const createTestMessages = (count: number): MessageType[] => {
+//   return Array.from({ length: count }, (_, i) => ({
+//     id: String(i + 1),
+//     role: i % 2 === 0 ? "user" : "assistant",
+//     content: `Test message ${i + 1}`,
+//   }));
+// };
+// const testMessages = createTestMessages(15); // TODO: Remove when not needed anymore
 
 export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const isLastMessageFromUser =
     messages.length > 0 && messages[messages.length - 1].role === "user";
   const showThinkingMessage = isLoading && isLastMessageFromUser;
 
-  const testMessages = createTestMessages(15); // TODO: Remove when not needed anymore
 
   return (
     <div

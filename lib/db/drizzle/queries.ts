@@ -1,10 +1,11 @@
 // lib/db/drizzle/queries.ts
 import { UserData } from "@/lib/types/user";
+import type { User as SupabaseAuthUser } from "@supabase/supabase-js";
 import { and, eq, gt } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { createServerClient } from "../supabase/server";
 import { db } from "./drizzle";
-import { Invite, Organization, invites, userProfiles } from "./schema";
+import { Invite, Organization, UserProfile, invites, userProfiles } from "./schema";
 
 export async function getInviteByToken(token: string): Promise<Invite | null> {
   const invite = await db.query.invites.findFirst({
@@ -62,8 +63,8 @@ export async function getUserData(): Promise<UserData | null> {
 }
 
 async function getCachedUserData(
-  user: any,
-  profile: any
+  user: SupabaseAuthUser,
+  profile: UserProfile | null
 ): Promise<UserData | null> {
   "use cache";
   cacheTag("user-profile");
@@ -73,14 +74,14 @@ async function getCachedUserData(
       id: user.id,
       email: user.email!,
       name: user.user_metadata?.name || "",
-      organization: profile?.organization || "HAAGA_HELIA", // Muutettu
-      role: profile?.role || "USER", // Muutettu käyttämään profiilin roolia
+      organization: profile?.organization || "HAAGA_HELIA",
+      role: profile?.role || "USER",
       isActive: true,
       avatar: profile?.avatar || "/avatars/default.png",
       preferences: profile?.preferences || { language: "fi" },
       lastLoginAt: profile?.lastLoginAt || null,
       createdAt: new Date(user.created_at),
-      updatedAt: profile?.updatedAt || new Date(user.updated_at),
+      updatedAt: profile?.updatedAt || new Date(user.created_at)
     };
   } catch (error) {
     console.error("Error in getCachedUserData:", error);

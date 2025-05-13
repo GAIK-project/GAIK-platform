@@ -59,7 +59,7 @@ export function Chat({ id, initialMessages, selectedModelId, selectedCustomModel
     },
   });
 
-  const handleSuggestionClick = async (action: any) => {
+  const handleSuggestionClick = async (action: string) => {
     await append({
       content: action,
       role: "user",

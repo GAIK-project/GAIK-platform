@@ -1,26 +1,23 @@
+import { Model } from "@/ai/custom-model-names";
+import useStore from "@/app/utils/store/useStore";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ModelSelector } from "./model-selector";
 import { CustomModelSelector } from "./custom-model-selector";
-import { Model } from "@/ai/custom-model-names";
-import { models } from "@/ai/model-names";
-import useStore from "@/app/utils/store/useStore";
+import { ModelSelector } from "./model-selector";
 
 export function ChatHeader({
   modelId,
   onReset,
-  isMobile,
   customModelId,
-  customModels
+  customModels,
 }: {
   modelId: string;
   onReset: () => void;
   isLoading: boolean;
-  isMobile: boolean;
+  isMobile?: boolean;
   customModelId: string;
-  customModels: Model[]
+  customModels: Model[];
 }) {
-
   const { baseModel } = useStore();
 
   return (
@@ -38,16 +35,15 @@ export function ChatHeader({
         <p className="text-lg">AI system: </p>
         <ModelSelector selectedModelId={modelId} />
         {/* Tähän custom mallin valinta */}
-        {
-          (baseModel === "hyde-rag" || baseModel === "multi-stage-rag")
-          ? 
+        {baseModel === "hyde-rag" || baseModel === "multi-stage-rag" ? (
           <>
             <p className="text-lg">Custom dataset: </p>
-            <CustomModelSelector selectedModelId={customModelId} models={customModels}/>
+            <CustomModelSelector
+              selectedModelId={customModelId}
+              models={customModels}
+            />
           </>
-          : null
-        }
-
+        ) : null}
       </div>
     </header>
   );
