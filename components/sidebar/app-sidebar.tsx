@@ -7,35 +7,17 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { getNavMainItems } from "@/lib/config/routes";
-import { AudioWaveform, Command, GalleryVerticalEnd } from "lucide-react";
 import * as React from "react";
+import { CompanyLogo } from "./company-logo";
 import { NavMain } from "./nav-main";
-import { NavUser } from "./nav-user";
-import { TeamSwitcher } from "./team-switcher";
+import { UserDetails } from "./user-details";
 
 const data = {
   user: {
     name: "Kass",
     email: "kass@miukumauku.com",
     avatar: "/avatars/cat.png",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
+  }
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
@@ -51,14 +33,14 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+      <SidebarHeader className="px-4 py-3">
+        <CompanyLogo />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMainItems} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <UserDetails user={data.user} />
       </SidebarFooter>
     </Sidebar>
   );
