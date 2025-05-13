@@ -5,7 +5,6 @@ import { ModelSelector } from "./model-selector";
 export function ChatHeader({
   modelId,
   onReset,
-  isMobile,
 }: {
   modelId: string;
   onReset: () => void;

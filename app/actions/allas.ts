@@ -2,7 +2,8 @@
 
 import { allasClient } from "@/lib/allasClient";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// For debugging purposes, you can uncomment the sleep function to simulate a delay
+// const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function getFiles(bucket: string) {
   try {

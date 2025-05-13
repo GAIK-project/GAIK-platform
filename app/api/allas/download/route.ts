@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const stream = await allasClient.downloadFile(bucket, fileName);
-    return new Response(stream as any, {
+    return new Response(stream as ReadableStream<Uint8Array>, {
       headers: {
         "Content-Disposition": `attachment; filename="${fileName}"`,
       },
