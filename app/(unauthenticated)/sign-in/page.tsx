@@ -98,9 +98,14 @@ export default function LoginPage() {
           refresh={false}
           vy={0.1}
         />
-        <h1 className="text-4xl font-light mb-8 relative z-10 tracking-wide text-gray-800 dark:text-gray-100">
-          GAIK
-        </h1>
+        <Image
+          src="/logos/SVG/gaik_logo_big_fitted.svg"
+          alt="GAIK Logo"
+          width={400}
+          height={110}
+          priority
+          className="mb-8 relative z-10 w-auto h-32"
+        />
         <Card className="w-full max-w-md relative ">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Sign in</CardTitle>
