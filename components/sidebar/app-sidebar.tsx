@@ -33,7 +33,7 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="px-4 py-3">
+      <SidebarHeader>
         <CompanyLogo />
       </SidebarHeader>
       <SidebarContent>
