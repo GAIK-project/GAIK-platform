@@ -33,7 +33,7 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="pt-0">
         <CompanyLogo />
       </SidebarHeader>
       <SidebarContent>
