@@ -425,6 +425,8 @@ See `.env.example` for all available configuration options.
 
 ## Deployment to Rahti
 
+## Deployment to Rahti
+
 ### Automated Deployment with Git Webhooks
 
 The GAIK application is configured to automatically deploy to Rahti-2 service when new code is pushed. This CI/CD pipeline is triggered by Git webhooks.
@@ -447,5 +449,4 @@ To deploy your changes:
 
 > **Note**: This automated deployment is only configured for the GAIK repository. Other forks or repositories will need to set up their own CI/CD pipeline.
 
-You can monitor the deployment status in the Rahti-2 OpenShift console.
-
+You can find all available tags (versions) here: <https://github.com/GAIK-project/GAIK-dashboard/tags>
