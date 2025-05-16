@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description: "Generative AI-Enhanced Knowledge Management in Business (GAIK) - Advanced AI tools for organizational knowledge management",
     images: [
       {
-        url: "/logos/SVG/gaik_logo_medium.svg",
+        url: "/logos/gaik_logo_medium.png",
         width: 1200,
         height: 630,
         alt: "GAIK Dashboard logo",
