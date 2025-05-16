@@ -10,10 +10,6 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const user = await getUserData();
-  console.log('Käyttäjän tiedot:', user);
-  console.log('------------------------------------');
-  console.log('Käyttäjän rooli:', user?.role);
-  console.log('Käyttäjän organisaatio:', user?.organization);
   
   
   const userProfileData = user
