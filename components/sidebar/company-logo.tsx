@@ -37,7 +37,7 @@ export function CompanyLogo({ className }: { className?: string }) {
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
           >
             <Image
-              src="/logos/SVG/gaik-logo-letter-only.png"
+              src="/logos/gaik-logo-letter-only.png"
               alt="GAIK Icon"
               fill
               priority
