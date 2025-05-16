@@ -425,8 +425,6 @@ See `.env.example` for all available configuration options.
 
 ## Deployment to Rahti
 
-## Deployment to Rahti
-
 ### Automated Deployment with Git Webhooks
 
 The GAIK application is configured to automatically deploy to Rahti-2 service when new code is pushed. This CI/CD pipeline is triggered by Git webhooks.
