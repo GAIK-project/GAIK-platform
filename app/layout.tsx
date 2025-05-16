@@ -20,6 +20,7 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "GAIK Dashboard",
   description: "Generative AI-Enhanced Knowledge Management in Business",
+  metadataBase: new URL('https://dashboard.2.rahtiapp.fi/'),
   openGraph: {
     title: "GAIK Dashboard",
     description: "Generative AI-Enhanced Knowledge Management in Business (GAIK) - Advanced AI tools for organizational knowledge management",
