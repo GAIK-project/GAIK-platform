@@ -1,34 +1,28 @@
 .container {
-    overflow: auto !important;
     width: 100%;
+    overflow-x: auto !important;
     padding: 5px;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-  }
-
-  @media (min-width: 768px) {
-    .container {
-      padding: 2rem;
-    }
-  }
-  
-  .title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
+    position: relative;  /* Ensures proper positioning */
+    z-index: 10;         /* Ensures your element sits above potential conflicting layers */
   }
   
   .tableWrapper {
     width: 100%;
-    overflow-x: auto;  /* enables horizontal scroll explicitly */
-    flex: 1 1 auto;    /* ensures proper flex sizing */
-    -webkit-overflow-scrolling: touch;
+    overflow-x: auto !important;
+    position: relative;
   }
   
   .table {
-    min-width: 800px;  /* or a suitable min-width based on your table */
+    min-width: max-content; /* Ensure there's something to scroll */
+    width: 100%;
     border-collapse: separate;
+  }
+    
+  .title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
   }
   
   .tableHeader {
@@ -105,5 +99,57 @@
   
   .getStartedButton:hover {
     background-color: #45a049;
+  }
+
+  /* Mobile View: Stacked Rows */
+@media (max-width: 850px) {
+    .tableWrapper {
+      overflow-x: visible !important;
+    }
+  
+    .table,
+    .tableHeader,
+    .tableRow,
+    .tableCell {
+      display: block;
+      width: 100%;
+    }
+    .table tbody { /* explicitly include tbody */
+        display: block;
+        width: 100% !important;
+        box-sizing: border-box;
+      }
+    
+      .table {
+        min-width: 100% !important;
+      }
+    
+      .table tbody {
+        width: 100% !important;
+      }
+
+    .tableHeader {
+      display: none; /* Hide header on mobile for clean look */
+    }
+  
+    .tableRow {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #ccc;
+    }
+  
+    .tableCell {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      border: none;
+    }
+  
+    .tableCell::before {
+      content: attr(data-label);
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-right: 1rem;
+    }
   }
   

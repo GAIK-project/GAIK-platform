@@ -29,7 +29,7 @@ export default function ChatRedirectButton({ assistantName, enabled }: Props) {
       onClick={handleClick}
       disabled={!enabled}
     >
-      Chat with {assistantName}
+      Chat
     </button>
   );
 }
