@@ -24,6 +24,8 @@ export default function Home() {
     const [progressPercent, setProgressPercent] = useState<number>(0);
     const [files, setFiles] = useState<File[]>([]);
     const [username, setUsername] = useState<string>("jaakko");
+    const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'none'>('none');
+    const [message, setMessage] = useState<string>('');
 
     const router = useRouter();
 
@@ -114,6 +116,7 @@ export default function Home() {
     };
 
     const handleSubmit = async () => {
+        setStatus('loading');
         scrollToBottom();
         let check : boolean =  await checkUniqueName(assistantName);
         if(check){
@@ -138,8 +141,8 @@ export default function Home() {
             owner
         };
 
-        setLoading(true);
-        setIsButtonEnabled(false);
+        // setLoading(true);
+        // setIsButtonEnabled(false);
 
         try {
 
@@ -158,13 +161,15 @@ export default function Home() {
                 body: formData, //add formdata here
             });
 
+            console.log("json: ", response.json);
+
             if (response.ok) {
-                // checkStatus();
-                console.log("Data sent successfully!");
+                setStatus('success');
                 let newAssistantName : string = sanitizeTableName(assistantName);
                 setPersistantAssistantName(newAssistantName);
             } else {
                 console.error("Failed to send data.");
+                setStatus('error');
             }
         } catch (error) {
             console.error("Error occurred while sending data:", error);
@@ -194,92 +199,6 @@ export default function Home() {
           }
     }
 
-    async function checkStatus() {
-        const interval = setInterval(async () => {
-            try {
-                const res = await fetch('/api/checkTaskStatus', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ assistantName }),
-                });
-    
-                if (!res.ok) {
-                    console.error('Failed to fetch task status');
-                    return;
-                }
-    
-                const data = await res.json();
-    
-                setProgressPercent(data.percentageCompleted);
-    
-                setProcessCompleted(data.taskCompleted);
-    
-                if (data.taskCompleted) {
-                    clearInterval(interval);
-                    setLoading(false);
-                }
-            } catch (error) {
-                console.error('Error while checking task status:', error);
-            }
-        }, 5000); // Poll every x seconds
-    }
-
-    async function checkStatusWithFailureCheck() {
-        let failureCount = 0;
-        const maxFailures = 5;
-    
-        const interval = setInterval(async () => {
-            try {
-                const res = await fetch('/api/checkTaskStatus', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ assistantName }),
-                });
-    
-                if (!res.ok) {
-                    failureCount++;
-                    console.error(`Failed to fetch task status (${failureCount}/${maxFailures})`);
-    
-                    if (failureCount >= maxFailures) {
-                        clearInterval(interval);
-                        setLoading(false); // Optional: Stop loading due to error
-                        console.error('Max retry attempts reached. Stopping polling.');
-                    }
-                    return;
-                }
-    
-                // Reset failure count on success
-                failureCount = 0;
-    
-                const data = await res.json();
-    
-                setProgressPercent(data.percentageCompleted);
-                setProcessCompleted(data.taskCompleted);
-    
-                if (data.taskCompleted) {
-                    clearInterval(interval);
-                    setLoading(false);
-                }
-    
-            } catch (error) {
-                failureCount++;
-                console.error(`Error while checking task status (${failureCount}/${maxFailures}):`, error);
-    
-                if (failureCount >= maxFailures) {
-                    clearInterval(interval);
-                    setLoading(false);
-                    console.error('Max retry attempts reached due to errors. Stopping polling.');
-                }
-            }
-        }, 5000); // Poll every 5 seconds
-    }
-    
-
-    async function testDb() {
-        const res = await fetch(`/api/testDb`);
-        const data = await res.json();
-    }
-
     async function redirectToChat() {
         await saveModelId("hyde-rag");
         
@@ -288,6 +207,14 @@ export default function Home() {
         setCustomModel(persistantAssistantName);
         router.push('/chatbot');
     }
+
+    const handleRetry = () => {
+        window.location.reload();
+    };
+    
+    const handleNext = () => {
+        router.push('/datasetmanager');
+    };
 
     return (
         <div className="container">
@@ -364,12 +291,42 @@ export default function Home() {
                                  </div>
                 }
 
-                {(loading &&
-                    <div className="loader-container">
-                        <p className="loader-text">Data is being collected from the provided links and prepared to a form your AI assistant can understand... This might take several minutes depending on your data size</p>
-                        <div className="loader"></div>
-                    </div>
-                )}
+                <div className="status-container">
+                    {status === 'none' && (
+                        <>
+                        </>
+                    )}
+                    {status === 'loading' && (
+                        <>
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                        <p className="text-lg">Processing...</p>
+                        </>
+                    )}
+
+                    {status === 'success' && (
+                        <>
+                        <p className="text-green-600 text-lg mb-4">{message} Go to dataset manager here to see the progress on your datasets.</p>
+                        <button
+                            onClick={handleNext}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        >
+                            Next
+                        </button>
+                        </>
+                    )}
+
+                    {status === 'error' && (
+                        <>
+                        <p className="text-red-600 text-lg mb-4">{message} Reload the page here or try again later.</p>
+                        <button
+                            onClick={handleRetry}
+                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                        >
+                            Retry
+                        </button>
+                        </>
+                    )}
+                </div>
 
                 <div className="button-container">
                     <button
@@ -377,25 +334,10 @@ export default function Home() {
                         disabled={!isButtonEnabled}
                         onClick={handleSubmit}
                     >
-                        Create Your Own RAG Model
+                        Create Your Own RAG Model dataset
                     </button>
                 </div>
 
-                {(processCompleted &&
-                        <button
-                            className="create-button"
-                            onClick={redirectToChat}
-                        >
-                            See your new AI assistant!
-                        </button>
-                )}
-                {/*
-                    <button
-                        className="create-button"
-                        onClick={() => testDb()}
-                    >
-                        test
-                     </button> */}
             </div>
         </div>
     );

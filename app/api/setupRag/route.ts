@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
         const dataString = formData.get('data') as string;
         const { assistantName, links, systemPrompt, owner } = JSON.parse(dataString);
 
+        console.log("received request: ", `AssistantName: ${assistantName}`);
+
         const files = formData.getAll('files') as File[];
 
         //Validations
@@ -74,11 +76,12 @@ async function processDataInBackground({
     assistantName: string;
     links?: string[];
     systemPrompt: string;
-    files: File[];
+    files?: File[];
     safeTableName: string;
     owner?: string;
 }) {
     try {
+        console.log("Initiating rag creation...");
         await db.execute(sql.raw(`
             CREATE TABLE IF NOT EXISTS "assistants" (
                 id SERIAL PRIMARY KEY,
@@ -110,61 +113,66 @@ async function processDataInBackground({
         const originalSources: { filename: string; uniqueId: string }[] = [];
         const errors: { type: string; details: string }[] = [];
 
-        for await (const url of links) {
-            const content = await scrapePage(url);
-            if (!content) {
-                errors.push({ type: "scrape", details: `Failed to scrape URL: ${url}` });
-                continue;
-            }
-            const sourceId = uuidv4();
-            originalSources.push({ filename: url, uniqueId: sourceId });
-            const chunks = await splitter.createDocuments([content]);
-            chunks.forEach(chunk => allChunks.push({ pageContent: chunk.pageContent, link: url, sourceId }));
-        }
-
-        let totalSize = 0;
-        for (const file of files) {
-            const buffer = Buffer.from(await file.arrayBuffer());
-            totalSize += buffer.length;
-            if (totalSize > MAX_TOTAL_SIZE_BYTES) {
-                errors.push({ type: "sizeLimit", details: `File exceeds total size limit: ${file.name}` });
-                continue;
-            }
-
-            const category = getFileCategory(file.type);
-            const sourceId = uuidv4();
-            const sanitizedFileName = sanitizeTableName(file.name);
-
-            if (!category) {
-                errors.push({ type: "unsupportedFile", details: `Unsupported file type (${file.type}) for file: ${file.name}` });
-                continue;
-            }
-
-            originalSources.push({ filename: sanitizedFileName, uniqueId: sourceId });
-
-            let text = '';
-            switch (category) {
-                case 'pdf':
-                case 'document':
-                    text = await parsePdfOrDoc(buffer, file.name);
-                    break;
-                case 'text':
-                    text = await parseTxt(buffer);
-                    break;
-                case 'images':
-                    text = await parseImage(buffer, file.name);
-                    break;
-                case 'excel':
-                    text = await parseExcel(buffer, file.name);
-                    break;
-                default:
-                    errors.push({ type: "unknownCategory", details: `Unknown category (${category}) for file: ${file.name}` });
+        if(links[0]){
+            for await (const url of links) {
+                const content = await scrapePage(url);
+                if (!content) {
+                    errors.push({ type: "scrape", details: `Failed to scrape URL: ${url}` });
                     continue;
+                }
+                const sourceId = uuidv4();
+                originalSources.push({ filename: url, uniqueId: sourceId });
+                const chunks = await splitter.createDocuments([content]);
+                chunks.forEach(chunk => allChunks.push({ pageContent: chunk.pageContent, link: url, sourceId }));
             }
-
-            const chunks = await splitter.createDocuments([text]);
-            chunks.forEach(chunk => allChunks.push({ pageContent: chunk.pageContent, link: sanitizedFileName, sourceId }));
         }
+        
+        if(files){
+            let totalSize = 0;
+            for (const file of files) {
+                const buffer = Buffer.from(await file.arrayBuffer());
+                totalSize += buffer.length;
+                if (totalSize > MAX_TOTAL_SIZE_BYTES) {
+                    errors.push({ type: "sizeLimit", details: `File exceeds total size limit: ${file.name}` });
+                    continue;
+                }
+    
+                const category = getFileCategory(file.type);
+                const sourceId = uuidv4();
+                const sanitizedFileName = sanitizeTableName(file.name);
+    
+                if (!category) {
+                    errors.push({ type: "unsupportedFile", details: `Unsupported file type (${file.type}) for file: ${file.name}` });
+                    continue;
+                }
+    
+                originalSources.push({ filename: sanitizedFileName, uniqueId: sourceId });
+    
+                let text = '';
+                switch (category) {
+                    case 'pdf':
+                    case 'document':
+                        text = await parsePdfOrDoc(buffer, file.name);
+                        break;
+                    case 'text':
+                        text = await parseTxt(buffer);
+                        break;
+                    case 'images':
+                        text = await parseImage(buffer, file.name);
+                        break;
+                    case 'excel':
+                        text = await parseExcel(buffer, file.name);
+                        break;
+                    default:
+                        errors.push({ type: "unknownCategory", details: `Unknown category (${category}) for file: ${file.name}` });
+                        continue;
+                }
+    
+                const chunks = await splitter.createDocuments([text]);
+                chunks.forEach(chunk => allChunks.push({ pageContent: chunk.pageContent, link: sanitizedFileName, sourceId }));
+            }
+        }
+        
 
         owner = owner ? owner : "jaakko";
         const [assistantRow] = await db.insert(assistants).values({

@@ -52,6 +52,7 @@
     "@xyflow/react": "^12.4.4",
     "ai": "^4.1.50",
     "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "dedent": "^1.5.3",
     "docx": "^9.2.0",

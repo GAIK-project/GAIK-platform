@@ -1,0 +1,109 @@
+.container {
+    overflow: auto !important;
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding: 2rem;
+    }
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .tableWrapper {
+    width: 100%;
+    overflow-x: auto;  /* enables horizontal scroll explicitly */
+    flex: 1 1 auto;    /* ensures proper flex sizing */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .table {
+    min-width: 800px;  /* or a suitable min-width based on your table */
+    border-collapse: separate;
+  }
+  
+  .tableHeader {
+    background-color: #f5f5f5;
+  }
+  
+  .tableRow {
+    text-align: center;
+  }
+  
+  .tableCell {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+  }
+  
+  .tableRow:last-child .tableCell {
+    border-bottom: none;
+  }
+  
+  .statusIcon {
+    font-size: 1.5rem;
+  }
+  
+  .green {
+    color: green;
+  }
+  
+  .red {
+    color: red;
+  }
+  
+  .chatButton {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+  
+  .emptyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    gap: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .getStartedButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .getStartedButton:hover {
+    background-color: #45a049;
+  }
+  
