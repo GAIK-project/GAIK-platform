@@ -11,6 +11,7 @@ import { sanitizeTableName } from "@/app/utils/functions/functions";
 // import FileUpload from "@/components/ragbuilder/FIleUpload";
 import FileUpload from "@/components/ragbuilder/FIleUpload2";
 import "@/app/styles/ragbuilder.css";
+import InfoBox from "@/components/ragbuilder/InfoBox";
 
 export default function Home() {
     const [assistantName, setAssistantName] = useState<string>("");
@@ -327,6 +328,8 @@ export default function Home() {
                         </>
                     )}
                 </div>
+
+                <InfoBox/>
 
                 <div className="button-container">
                     <button

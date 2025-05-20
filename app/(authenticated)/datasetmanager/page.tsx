@@ -3,6 +3,7 @@ import styles from '@/app/styles/Monitorpage.module.css';
 import { getUserData } from '@/lib/db/drizzle/queries';
 import Link from 'next/link';
 import AssistantTable from '@/components/ragbuilder/AssistantTable';
+import { RefreshButton } from '@/components/ragbuilder/RefreshButton';
 
 export type Assistant = {
   id: number;
@@ -40,7 +41,11 @@ export default async function MonitorPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Dataset Monitor</h1>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+            <h1 className={styles.title}>Dataset Manager</h1>
+            <RefreshButton/>
+        </div>
+
       <AssistantTable assistants={assistants} />
     </div>
   );

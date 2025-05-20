@@ -21,11 +21,12 @@ export const DEFAULT_CUSTOM_MODEL_NAME: string = "None";
 const supabase = createBrowserClient();
 
 // --- Fetch models or fallback ---
-export async function fetchModels(): Promise<Model[]> {
+export async function fetchModels(owner : string): Promise<Model[]> {
   try {
     const { data, error } = await supabase
       .from("assistants")
-      .select("assistant_name");
+      .select("assistant_name")
+      .eq("owner", owner);
 
     if (error) throw error;
     if (!data || data.length === 0) return defaultModels;
