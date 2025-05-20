@@ -17,7 +17,7 @@ const data = {
     name: "Kass",
     email: "kass@miukumauku.com",
     avatar: "/avatars/cat.png",
-  }
+  },
 };
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
