@@ -24,23 +24,25 @@ export function VoiceRecorder({
       audioChunksRef.current = [];
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
-      
+
       mediaRecorderRef.current = mediaRecorder;
-      
+
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunksRef.current.push(event.data);
         }
       };
-      
+
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
         await transcribeAudio(audioBlob);
-        
+
         // Stop all audio tracks
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       };
-      
+
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
@@ -59,21 +61,21 @@ export function VoiceRecorder({
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
       setIsTranscribing(true);
-      
+
       // Create a FormData instance to send the audio file
       const formData = new FormData();
-      formData.append('file', audioBlob, 'audio.webm');
-      
+      formData.append("file", audioBlob, "audio.webm");
+
       // Send the audio to the OpenAI Whisper API
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
         body: formData,
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to transcribe audio');
+        throw new Error("Failed to transcribe audio");
       }
-      
+
       const { text } = await response.json();
       onTranscriptionComplete(text);
     } catch (error) {

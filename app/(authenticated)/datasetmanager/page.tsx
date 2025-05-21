@@ -1,16 +1,16 @@
-import { createClient } from '@/app/utils/supabaseragbuilder/client';
 import styles from '@/app/styles/Monitorpage.module.css';
-import { getUserData } from '@/lib/db/drizzle/queries';
-import Link from 'next/link';
+import { createClient } from '@/app/utils/supabaseragbuilder/client';
 import AssistantTable from '@/components/ragbuilder/AssistantTable';
 import { RefreshButton } from '@/components/ragbuilder/RefreshButton';
+import { getUserData } from '@/lib/db/drizzle/queries';
+import Link from 'next/link';
 
 export type Assistant = {
   id: number;
   assistant_name: string;
   owner: string;
-  original_sources: any;
-  errors: any;
+  original_sources: unknown;
+  errors: unknown;
   system_prompt: string;
   current_chunk: number;
   total_chunks: number;

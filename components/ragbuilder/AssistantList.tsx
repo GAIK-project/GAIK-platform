@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { createBrowserClient } from '@/lib/db/supabase/client';
-import styles from '@/app/styles/AssistantList.module.css';
+import styles from "@/app/styles/AssistantList.module.css";
+import { createBrowserClient } from "@/lib/db/supabase/client";
+import { useEffect, useState } from "react";
 
 const supabase = createBrowserClient();
 
@@ -26,23 +25,25 @@ interface Props {
 
 export default function AssistantList({ owner }: Props) {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
-  const [editing, setEditing] = useState<Record<number, Partial<Assistant>>>({});
+  const [editing, setEditing] = useState<Record<number, Partial<Assistant>>>(
+    {}
+  );
 
   useEffect(() => {
     const fetchAssistants = async () => {
       const { data, error } = await supabase
-        .from('assistants')
-        .select('*')
-        .eq('owner', owner);
+        .from("assistants")
+        .select("*")
+        .eq("owner", owner);
 
-      if (error) console.error('Fetch error:', error);
+      if (error) console.error("Fetch error:", error);
       else setAssistants(data);
     };
 
     fetchAssistants();
   }, [owner]);
 
-  const handleChange = (id: number, field: keyof Assistant, value: any) => {
+  const handleChange = (id: number, field: keyof Assistant, value: unknown) => {
     setEditing((prev) => ({
       ...prev,
       [id]: { ...prev[id], [field]: value },
@@ -54,12 +55,12 @@ export default function AssistantList({ owner }: Props) {
     if (!updated) return;
 
     const { error } = await supabase
-      .from('assistants')
+      .from("assistants")
       .update(updated)
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
-      console.error('Update failed:', error);
+      console.error("Update failed:", error);
     } else {
       setAssistants((prev) =>
         prev.map((a) => (a.id === id ? { ...a, ...updated } : a))
@@ -80,14 +81,14 @@ export default function AssistantList({ owner }: Props) {
             className={styles.input}
             value={editing[a.id]?.assistant_name ?? a.assistant_name}
             onChange={(e) =>
-              handleChange(a.id, 'assistant_name', e.target.value)
+              handleChange(a.id, "assistant_name", e.target.value)
             }
           />
           <textarea
             className={styles.textarea}
             value={editing[a.id]?.system_prompt ?? a.system_prompt}
             onChange={(e) =>
-              handleChange(a.id, 'system_prompt', e.target.value)
+              handleChange(a.id, "system_prompt", e.target.value)
             }
           />
           <input
@@ -95,7 +96,7 @@ export default function AssistantList({ owner }: Props) {
             className={styles.input}
             value={editing[a.id]?.current_chunk ?? a.current_chunk}
             onChange={(e) =>
-              handleChange(a.id, 'current_chunk', Number(e.target.value))
+              handleChange(a.id, "current_chunk", Number(e.target.value))
             }
           />
           <input
@@ -103,26 +104,34 @@ export default function AssistantList({ owner }: Props) {
             className={styles.input}
             value={editing[a.id]?.total_chunks ?? a.total_chunks}
             onChange={(e) =>
-              handleChange(a.id, 'total_chunks', Number(e.target.value))
+              handleChange(a.id, "total_chunks", Number(e.target.value))
             }
           />
           <input
             className={styles.input}
             value={editing[a.id]?.owner ?? a.owner}
-            onChange={(e) => handleChange(a.id, 'owner', e.target.value)}
+            onChange={(e) => handleChange(a.id, "owner", e.target.value)}
           />
           <input
             className={styles.input}
-            value={(editing[a.id]?.files ?? a.files).join(', ')}
+            value={(editing[a.id]?.files ?? a.files).join(", ")}
             onChange={(e) =>
-              handleChange(a.id, 'files', e.target.value.split(',').map(s => s.trim()))
+              handleChange(
+                a.id,
+                "files",
+                e.target.value.split(",").map((s) => s.trim())
+              )
             }
           />
           <input
             className={styles.input}
-            value={(editing[a.id]?.fileids ?? a.fileids).join(', ')}
+            value={(editing[a.id]?.fileids ?? a.fileids).join(", ")}
             onChange={(e) =>
-              handleChange(a.id, 'fileids', e.target.value.split(',').map(s => s.trim()))
+              handleChange(
+                a.id,
+                "fileids",
+                e.target.value.split(",").map((s) => s.trim())
+              )
             }
           />
           <label className={styles.checkbox}>
@@ -130,15 +139,12 @@ export default function AssistantList({ owner }: Props) {
               type="checkbox"
               checked={editing[a.id]?.task_completed ?? a.task_completed}
               onChange={(e) =>
-                handleChange(a.id, 'task_completed', e.target.checked)
+                handleChange(a.id, "task_completed", e.target.checked)
               }
             />
             Task Completed
           </label>
-          <button
-            className={styles.button}
-            onClick={() => handleUpdate(a.id)}
-          >
+          <button className={styles.button} onClick={() => handleUpdate(a.id)}>
             Update Info
           </button>
         </div>

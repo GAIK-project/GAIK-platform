@@ -1,80 +1,81 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import styles from '@/app/styles/FileUpload.module.css'
+import styles from "@/app/styles/FileUpload.module.css";
+import React, { useState } from "react";
 
-const MAX_TOTAL_SIZE = 200 * 1024 * 1024 // 200 MB
+const MAX_TOTAL_SIZE = 200 * 1024 * 1024; // 200 MB
 
 interface FileUploadProps {
   files: File[];
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  runValidation: any;
+  runValidation?: unknown;
 }
 
-const FileUpload = ({ files, setFiles, runValidation }: FileUploadProps) => {
-  
-  const [error, setError] = useState<string | null>(null)
+const FileUpload = ({ files, setFiles }: FileUploadProps) => {
+  const [error, setError] = useState<string | null>(null);
 
   const getTotalSize = (fileList: File[]) =>
-    fileList.reduce((acc, file) => acc + file.size, 0)
+    fileList.reduce((acc, file) => acc + file.size, 0);
 
   const updateFiles = (newFiles: File[]) => {
-    const updated = [...files, ...newFiles]
-    const totalSize = getTotalSize(updated)
+    const updated = [...files, ...newFiles];
+    const totalSize = getTotalSize(updated);
 
     if (totalSize > MAX_TOTAL_SIZE) {
-      setError('Total file size exceeds 200 MB limit.')
+      setError("Total file size exceeds 200 MB limit.");
     } else {
-      setFiles(updated)
-      setError(null)
+      setFiles(updated);
+      setError(null);
     }
-  }
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    const droppedFiles = Array.from(e.dataTransfer.files)
-    updateFiles(droppedFiles)
-  }
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    updateFiles(droppedFiles);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || [])
-    updateFiles(selectedFiles)
-  }
+    const selectedFiles = Array.from(e.target.files || []);
+    updateFiles(selectedFiles);
+  };
 
   const handleRemoveFile = (index: number) => {
-    const updated = files.filter((_, i) => i !== index)
-    setFiles(updated)
+    const updated = files.filter((_, i) => i !== index);
+    setFiles(updated);
 
     if (getTotalSize(updated) <= MAX_TOTAL_SIZE) {
-      setError(null)
+      setError(null);
     }
-  }
+  };
 
-  const handleSubmit = async () => {
-    const formData = new FormData()
-    files.forEach(file => formData.append('files', file))
+  // const handleSubmit = async () => {
+  //   const formData = new FormData();
+  //   files.forEach((file) => formData.append("files", file));
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    })
+  //   const res = await fetch("/api/upload", {
+  //     method: "POST",
+  //     body: formData,
+  //   });
 
-    const result = await res.json()
-    console.log(result)
-  }
+  //   const result = await res.json();
+  //   console.log(result);
+  // };
 
   const formatSize = (bytes: number) =>
-    `${(bytes / 1024 / 1024).toFixed(2)} MB`
+    `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 
   return (
     <div className={styles.container}>
       <h2>Upload Files</h2>
-      <p className={styles.infoText}>Supported file types: PDF, JPG, PNG, EXCEL, WORD, TXT</p>
+      <p className={styles.infoText}>
+        Supported file types: PDF, JPG, PNG, EXCEL, WORD, TXT
+      </p>
       <p className={styles.infoText}>Max total file size: 200 MB</p>
 
       <div
         className={styles.dropzone}
-        onDragOver={e => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
         <p>Drag and drop files here</p>
@@ -117,7 +118,7 @@ const FileUpload = ({ files, setFiles, runValidation }: FileUploadProps) => {
         Upload
       </button> */}
     </div>
-  )
-}
+  );
+};
 
-export default FileUpload
+export default FileUpload;

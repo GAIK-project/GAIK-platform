@@ -1,20 +1,20 @@
 "use client";
 
+import { useChat } from "@ai-sdk/react";
 import type { Message } from "ai";
-import { useChat } from "ai/react";
 import { ArrowBigRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWindowSize } from "usehooks-ts";
 
+import { Model } from "@/ai/custom-model-names";
+import useStore from "@/app/utils/store/useStore";
 import { Button } from "@/components/ui/button";
 import { useScrollToBottom } from "@/lib/hooks/useScrollToBottom";
 import { motion } from "motion/react";
 import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
 import { ChatMessages } from "./chat-messages";
-import { Model } from "@/ai/custom-model-names";
-import useStore from "@/app/utils/store/useStore";
 
 const suggestedActions = [
   {
@@ -32,12 +32,18 @@ interface ChatProps {
   customModels: Model[];
 }
 
-export function Chat({ id, initialMessages, selectedModelId, selectedCustomModel, customModels }: ChatProps) {
+export function Chat({
+  id,
+  initialMessages,
+  selectedModelId,
+  selectedCustomModel,
+  customModels,
+}: ChatProps) {
   const router = useRouter();
   const { width } = useWindowSize();
 
   // const [customModel, setCustomModel] = useState("none");
-  const { customModel, setCustomModel } = useStore();
+  const { customModel } = useStore();
 
   const {
     messages,

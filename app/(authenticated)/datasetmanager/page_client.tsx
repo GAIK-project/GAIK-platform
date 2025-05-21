@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/db/supabase/createNewClient';
 import styles from '@/app/styles/Monitorpage.module.css';
+import { supabase } from '@/lib/db/supabase/createNewClient';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type Assistant = {
   id: number;
   assistant_name: string;
   owner: string;
-  original_sources: any;
-  errors: any;
+  original_sources: unknown;
+  errors: unknown;
   system_prompt: string;
   current_chunk: number;
   total_chunks: number;

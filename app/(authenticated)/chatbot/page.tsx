@@ -1,7 +1,7 @@
-import { DEFAULT_MODEL_NAME, models } from "@/ai/model-names";
 import { DEFAULT_CUSTOM_MODEL_NAME, fetchModels } from "@/ai/custom-model-names";
-import { getUserData } from "@/lib/db/drizzle/queries";
+import { DEFAULT_MODEL_NAME, models } from "@/ai/model-names";
 import { Chat } from "@/components/chat/chat";
+import { getUserData } from "@/lib/db/drizzle/queries";
 import { generateUUID } from "@/lib/utils";
 import { cookies } from "next/headers";
 
@@ -18,8 +18,8 @@ export default async function ChatPage() {
     models.find((model) => model.id === modelFromCookie)?.id ||
     DEFAULT_MODEL_NAME;
 
-  let user = await getUserData();
-  let owner = user?.email || 'jaakko';
+  const user = await getUserData();
+  const owner = user?.email || 'jaakko';
 
   //sama homma custom malleille
   const customModels = await fetchModels(owner);

@@ -2,22 +2,25 @@ import { openAIembeddings } from "@/ai/middleware/index";
 import { db } from "@/lib/db/drizzle/drizzle";
 import { assistants } from "@/lib/db/drizzle/schema";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { NextRequest, NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { assistantName, textData, systemPrompt } = await request.json();
 
     if (!assistantName || !textData || !systemPrompt) {
-      return NextResponse.json({ error: "Missing assistantName, textData, or systemPrompt" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing assistantName, textData, or systemPrompt" },
+        { status: 400 }
+      );
     }
 
-    const safeTableName = assistantName.replace(/[^a-zA-Z0-9_]/g, '');
+    const safeTableName = assistantName.replace(/[^a-zA-Z0-9_]/g, "");
 
     //create assistants table if not exists
     await db.execute(
-    sql.raw(`
+      sql.raw(`
         CREATE TABLE IF NOT EXISTS "assistants" (
         id SERIAL PRIMARY KEY,
         assistant_name TEXT NOT NULL,
@@ -55,6 +58,7 @@ export async function POST(request: NextRequest) {
       .insert(assistants)
       .values({
         assistantName,
+        owner: "system", // Adding required owner field
         systemPrompt,
         currentChunk: 0,
         totalChunks: chunks.length,
@@ -64,12 +68,14 @@ export async function POST(request: NextRequest) {
 
     // Generate embeddings in parallel
     const embeddings = await Promise.all(
-      chunks.map(chunk => openAIembeddings.embedQuery(chunk.pageContent))
+      chunks.map((chunk) => openAIembeddings.embedQuery(chunk.pageContent))
     );
 
     // Prepare batch insert array
     const valuesSql = chunks.map((chunk, i) => {
-      const embeddingArray = embeddings[i].map((val: number) => parseFloat(val.toFixed(6)));
+      const embeddingArray = embeddings[i].map((val: number) =>
+        parseFloat(val.toFixed(6))
+      );
       return sql`(${chunk.pageContent}, ${JSON.stringify({
         chunkIndex: i,
         totalChunks: chunks.length,
@@ -104,7 +110,7 @@ export async function POST(request: NextRequest) {
     console.error("Error processing document:", error);
     return NextResponse.json(
       { error: "Failed to process document" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
