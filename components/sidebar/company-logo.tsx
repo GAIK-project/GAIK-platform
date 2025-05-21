@@ -11,7 +11,7 @@ export function CompanyLogo({ className }: { className?: string }) {
     <div
       className={cn(
         "flex items-start justify-start px-1 mx-0 transition-all duration-300 w-full",
-        className
+        className,
       )}
     >
       {state === "expanded" ? (

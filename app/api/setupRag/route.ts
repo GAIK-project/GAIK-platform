@@ -4,10 +4,10 @@ import { db } from "@/lib/db/drizzle/drizzle";
 import { assistants } from "@/lib/db/drizzle/schema";
 import { getFileCategory } from "@/lib/middleware/validateFileType";
 import {
-    parseExcel,
-    parseImage,
-    parsePdfOrDoc,
-    parseTxt,
+  parseExcel,
+  parseImage,
+  parsePdfOrDoc,
+  parseTxt,
 } from "@/lib/parsers/parser";
 import { scrapePage } from "@/lib/ragbuilder/autoScraper";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (!assistantName || !systemPrompt || !links || files.length === 0) {
       return NextResponse.json(
         { error: "Missing required data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Invalid data types" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,18 +59,18 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Data length limits exceeded" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (
       !links.every(
-        (link) => typeof link === "string" && link.length <= MAX_LINK_LENGTH
+        (link) => typeof link === "string" && link.length <= MAX_LINK_LENGTH,
       )
     ) {
       return NextResponse.json(
         { error: "Invalid links provided" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     console.error("Error initializing processing:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -136,7 +136,7 @@ async function processDataInBackground({
                 task_completed BOOLEAN NOT NULL DEFAULT FALSE,
                 created_at TIMESTAMP NOT NULL DEFAULT NOW()
             );
-        `)
+        `),
     );
 
     await db.execute(
@@ -147,7 +147,7 @@ async function processDataInBackground({
                 metadata JSONB,
                 embedding VECTOR(1536)
             );
-        `)
+        `),
     );
 
     const splitter = new RecursiveCharacterTextSplitter({
@@ -178,7 +178,7 @@ async function processDataInBackground({
             pageContent: chunk.pageContent,
             link: url,
             sourceId,
-          })
+          }),
         );
       }
     }
@@ -242,7 +242,7 @@ async function processDataInBackground({
             pageContent: chunk.pageContent,
             link: sanitizedFileName,
             sourceId,
-          })
+          }),
         );
       }
     }
@@ -267,7 +267,7 @@ async function processDataInBackground({
     for (let i = 0; i < allChunks.length; i += BATCH_SIZE) {
       const batch = allChunks.slice(i, i + BATCH_SIZE);
       const embeddings = await Promise.all(
-        batch.map((chunk) => openAIembeddings.embedQuery(chunk.pageContent))
+        batch.map((chunk) => openAIembeddings.embedQuery(chunk.pageContent)),
       );
 
       const valuesSql = batch.map(
@@ -277,7 +277,7 @@ async function processDataInBackground({
             totalChunks: allChunks.length,
             link: chunk.link,
             sourceId: chunk.sourceId,
-          })}, ${sql.raw(`ARRAY[${embeddings[idx].map((val) => val.toFixed(6)).join(",")}]::vector`)})`
+          })}, ${sql.raw(`ARRAY[${embeddings[idx].map((val) => val.toFixed(6)).join(",")}]::vector`)})`,
       );
 
       await db.execute(sql`
@@ -301,7 +301,7 @@ async function processDataInBackground({
       .update(assistants)
       .set({
         errors: sql.raw(
-          `errors || ${JSON.stringify([{ type: "processingError", details: String(error) }])}`
+          `errors || ${JSON.stringify([{ type: "processingError", details: String(error) }])}`,
         ),
       })
       .where(sql`${assistants.assistantName} = ${assistantName}`);

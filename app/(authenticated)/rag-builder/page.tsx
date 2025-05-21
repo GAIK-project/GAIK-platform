@@ -107,7 +107,7 @@ export default function Home() {
         }
         if (!/^https?:\/\/.+/.test(linksArray[i])) {
           setErrorMessage(
-            `Link ${i + 1} must start with "http://" or "https://".`
+            `Link ${i + 1} must start with "http://" or "https://".`,
           );
           setIsButtonEnabled(false);
           return false;

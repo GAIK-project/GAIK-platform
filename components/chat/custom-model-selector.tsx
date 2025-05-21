@@ -23,7 +23,6 @@ export function CustomModelSelector({
   models,
   className,
 }: ModelSelectorProps) {
-
   const { setCustomModel } = useStore();
 
   const selectedModel = models.find((model) => model.id === selectedModelId);

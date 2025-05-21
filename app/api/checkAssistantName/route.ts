@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     if (typeof assistantName !== "string") {
       return NextResponse.json(
         { error: "Invalid assistantName" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     if (!safeTableName) {
       return NextResponse.json(
         { error: "Invalid assistantName after sanitization" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (safeTableName === "none" || safeTableName === "None") {
       return NextResponse.json(
         { error: "Name you tried is reserved, try another" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     console.error("Error checking assistantName:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

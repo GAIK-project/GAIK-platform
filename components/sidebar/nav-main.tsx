@@ -101,7 +101,7 @@ export function NavMain({
                       ? "bg-secondary hover:bg-secondary"
                       : !isCollapsed
                         ? "hover:bg-secondary"
-                        : "hover:bg-white"
+                        : "hover:bg-white",
                   )}
                 >
                   <Link
@@ -114,7 +114,7 @@ export function NavMain({
                           "flex items-center justify-center rounded-md",
                           "transition-all duration-200 ease-in-out",
                           "bg-white shadow-xs p-1.5",
-                          active && "border-primary/30 bg-primary/10"
+                          active && "border-primary/30 bg-primary/10",
                         )}
                       >
                         <Icon
@@ -123,7 +123,7 @@ export function NavMain({
                             "w-5 h-5",
                             "transition-colors duration-200",
                             active ? "text-primary" : "text-muted-foreground",
-                            !isCollapsed && "group-hover:text-primary" // Corrected syntax
+                            !isCollapsed && "group-hover:text-primary", // Corrected syntax
                           )}
                         />
                       </div>
@@ -141,7 +141,7 @@ export function NavMain({
                           ? "block"
                           : isCollapsed
                             ? "hidden"
-                            : "inline-block"
+                            : "inline-block",
                       )}
                     >
                       {item.title}
@@ -169,7 +169,7 @@ export function NavMain({
                       "px-3 rounded-md",
                       active
                         ? "bg-secondary hover:bg-secondary"
-                        : "hover:bg-secondary"
+                        : "hover:bg-secondary",
                     )}
                   >
                     <div className="flex items-center w-full space-x-3">
@@ -179,7 +179,7 @@ export function NavMain({
                             "flex items-center justify-center rounded-md",
                             "transition-all duration-200 ease-in-out",
                             "bg-white shadow-xs p-1.5",
-                            active && "border-primary/30 bg-primary/10"
+                            active && "border-primary/30 bg-primary/10",
                           )}
                         >
                           <Icon
@@ -188,7 +188,7 @@ export function NavMain({
                               "w-5 h-5",
                               "transition-colors duration-200",
                               active ? "text-primary" : "text-muted-foreground",
-                              !isCollapsed && "group-hover:text-primary" // Apply hover only when not collapseder:text-primary" // Apply hover only when not collapsed
+                              !isCollapsed && "group-hover:text-primary", // Apply hover only when not collapseder:text-primary" // Apply hover only when not collapsed
                             )}
                           />
                         </div>
@@ -201,7 +201,7 @@ export function NavMain({
                             ? "font-medium text-foreground"
                             : "text-muted-foreground",
                           "group-hover:text-foreground",
-                          isCollapsed ? "hidden" : "inline-block"
+                          isCollapsed ? "hidden" : "inline-block",
                         )}
                       >
                         {item.title}
@@ -224,7 +224,7 @@ export function NavMain({
                               "h-8 px-8 rounded-md transition-colors",
                               subActive
                                 ? "bg-secondary hover:bg-secondary"
-                                : "hover:bg-secondary"
+                                : "hover:bg-secondary",
                             )}
                           >
                             <Link href={subItem.url} className="block">
@@ -238,7 +238,7 @@ export function NavMain({
                                     ? "block"
                                     : isCollapsed
                                       ? "hidden"
-                                      : "inline-block"
+                                      : "inline-block",
                                 )}
                               >
                                 {subItem.title}

@@ -1,4 +1,7 @@
-import { DEFAULT_CUSTOM_MODEL_NAME, fetchModels } from "@/ai/custom-model-names";
+import {
+  DEFAULT_CUSTOM_MODEL_NAME,
+  fetchModels,
+} from "@/ai/custom-model-names";
 import { DEFAULT_MODEL_NAME, models } from "@/ai/model-names";
 import { Chat } from "@/components/chat/chat";
 import { getUserData } from "@/lib/db/drizzle/queries";
@@ -19,7 +22,7 @@ export default async function ChatPage() {
     DEFAULT_MODEL_NAME;
 
   const user = await getUserData();
-  const owner = user?.email || 'jaakko';
+  const owner = user?.email || "jaakko";
 
   //sama homma custom malleille
   const customModels = await fetchModels(owner);
@@ -28,13 +31,19 @@ export default async function ChatPage() {
     cookieStore.get("custom-model")?.value || DEFAULT_CUSTOM_MODEL_NAME;
 
   const customSelectedModelId =
-  customModels.find((model) => model.id === customModelFromCookie)?.id ||
-  customModels[0]?.id || // fallback if customModels is not empty
-  DEFAULT_CUSTOM_MODEL_NAME;     // fallback if no models at all
+    customModels.find((model) => model.id === customModelFromCookie)?.id ||
+    customModels[0]?.id || // fallback if customModels is not empty
+    DEFAULT_CUSTOM_MODEL_NAME; // fallback if no models at all
 
   return (
     <div className="h-full ">
-      <Chat id={id} initialMessages={[]} selectedModelId={selectedModelId} selectedCustomModel={customSelectedModelId} customModels={customModels}/>
+      <Chat
+        id={id}
+        initialMessages={[]}
+        selectedModelId={selectedModelId}
+        selectedCustomModel={customSelectedModelId}
+        customModels={customModels}
+      />
     </div>
   );
 }

@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 const AddTodoForm = () => {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
 
   const handleAddTodo = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (title.trim() === '') return;
+    if (title.trim() === "") return;
 
-    const response = await fetch('/api/addDataToRagBuilderDb', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/addDataToRagBuilderDb", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
     });
 
     if (response.ok) {
-      setTitle('');
-      window.location.reload();  // Refresh to show new todo
+      setTitle("");
+      window.location.reload(); // Refresh to show new todo
     } else {
-      console.error('Failed to add todo');
+      console.error("Failed to add todo");
     }
   };
 

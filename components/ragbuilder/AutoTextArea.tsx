@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 
 interface AutoGrowingTextareaProps {
   value: string;
@@ -6,18 +6,28 @@ interface AutoGrowingTextareaProps {
   placeholder?: string;
 }
 
-function useAutoResizeTextarea(textareaRef: React.RefObject<HTMLTextAreaElement>, value: string) {
+function useAutoResizeTextarea(
+  textareaRef: React.RefObject<HTMLTextAreaElement>,
+  value: string,
+) {
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [value, textareaRef]);
 }
 
-export default function AutoGrowingTextarea({ value, onChange, placeholder }: AutoGrowingTextareaProps) {
+export default function AutoGrowingTextarea({
+  value,
+  onChange,
+  placeholder,
+}: AutoGrowingTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  useAutoResizeTextarea(textareaRef as React.RefObject<HTMLTextAreaElement>, value);
+  useAutoResizeTextarea(
+    textareaRef as React.RefObject<HTMLTextAreaElement>,
+    value,
+  );
 
   return (
     <textarea
@@ -28,8 +38,8 @@ export default function AutoGrowingTextarea({ value, onChange, placeholder }: Au
       maxLength={500}
       onChange={onChange}
       style={{
-        overflow: 'hidden',
-        resize: 'none',
+        overflow: "hidden",
+        resize: "none",
       }}
     />
   );

@@ -42,7 +42,7 @@ export default function IncidentReportForm() {
   `;
 
   const [incidentDetails, setIncidentDetails] = useState(
-    placeholderText.trim()
+    placeholderText.trim(),
   );
   const [partialReport, setPartialReport] = useState<Partial<ReportType>>({});
   const [isProcessing, setIsProcessing] = useState(false);
@@ -70,7 +70,7 @@ export default function IncidentReportForm() {
       // Automatically submit the form after confirming transcription
       if (formRef.current) {
         formRef.current.dispatchEvent(
-          new Event("submit", { cancelable: true, bubbles: true })
+          new Event("submit", { cancelable: true, bubbles: true }),
         );
       }
     }, 100);
@@ -96,13 +96,13 @@ export default function IncidentReportForm() {
         }
       } catch (err: unknown) {
         setError(
-          err instanceof Error ? err.message : "Error generating report"
+          err instanceof Error ? err.message : "Error generating report",
         );
       } finally {
         setIsProcessing(false);
       }
     },
-    [incidentDetails]
+    [incidentDetails],
   );
 
   return (

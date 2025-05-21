@@ -8,7 +8,7 @@ import { CoreMessage, generateObject } from "ai";
 import { searchDocuments } from "./ai-actions/search";
 
 // Helper function to get last user message text
-  export const getLastUserMessageText = (
+export const getLastUserMessageText = (
   messages: CoreMessage[],
 ): string | null => {
   const lastMessage = messages.at(-1);

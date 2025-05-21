@@ -48,23 +48,19 @@ const createSearchContext = async (
 
 const fetchAndRerankDocuments = async (
   context: SearchContext,
-  customModel: string
+  customModel: string,
 ): Promise<SearchDocument[]> => {
   try {
     // 1. Get initial search results
     let retvievedDocs;
-    if(customModel.toLowerCase() !== "none"){
-      retvievedDocs = await searchCustomDocuments(        
+    if (customModel.toLowerCase() !== "none") {
+      retvievedDocs = await searchCustomDocuments(
         context.searchTerms.join(" "),
         7,
-        customModel
+        customModel,
       );
-    }
-    else{
-      retvievedDocs = await searchDocuments(
-        context.searchTerms.join(" "),
-        7,
-      );
+    } else {
+      retvievedDocs = await searchDocuments(context.searchTerms.join(" "), 7);
     }
 
     if (!retvievedDocs) {
@@ -144,7 +140,10 @@ const answerCheck = async (
   return analysis.missingInfo;
 };
 
-const enhancedRAG = async (userMessage: string, customModel: string): Promise<string> => {
+const enhancedRAG = async (
+  userMessage: string,
+  customModel: string,
+): Promise<string> => {
   // 1. Create search context
   const context = await createSearchContext(userMessage);
 
@@ -183,12 +182,13 @@ const enhancedRAG = async (userMessage: string, customModel: string): Promise<st
 
     // 2. Batch search in parallel
     let additionalDocs;
-    if(customModel.toLowerCase() !== "none"){
+    if (customModel.toLowerCase() !== "none") {
       additionalDocs = await Promise.all(
-        uniqueSearchTerms.map((term) => searchCustomDocuments(term, 2, customModel)),
+        uniqueSearchTerms.map((term) =>
+          searchCustomDocuments(term, 2, customModel),
+        ),
       );
-    }
-    else{
+    } else {
       additionalDocs = await Promise.all(
         uniqueSearchTerms.map((term) => searchDocuments(term, 2)),
       );
@@ -236,7 +236,9 @@ const enhancedRAG = async (userMessage: string, customModel: string): Promise<st
   return formatResults(results);
 };
 
-export const createMultiStagellmMiddleware = (customModel : string): LanguageModelV1Middleware => ({
+export const createMultiStagellmMiddleware = (
+  customModel: string,
+): LanguageModelV1Middleware => ({
   transformParams: async ({ params }) => {
     console.log("multiStageRAG middleware kutsuttu");
 

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     if (!assistantName || !textData || !systemPrompt) {
       return NextResponse.json(
         { error: "Missing assistantName, textData, or systemPrompt" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         task_completed BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
         );
-    `)
+    `),
     );
 
     // Ensure dynamic table exists
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
           metadata JSONB,
           embedding VECTOR(1536)
         );
-      `)
+      `),
     );
 
     // Split text into chunks
@@ -68,13 +68,13 @@ export async function POST(request: NextRequest) {
 
     // Generate embeddings in parallel
     const embeddings = await Promise.all(
-      chunks.map((chunk) => openAIembeddings.embedQuery(chunk.pageContent))
+      chunks.map((chunk) => openAIembeddings.embedQuery(chunk.pageContent)),
     );
 
     // Prepare batch insert array
     const valuesSql = chunks.map((chunk, i) => {
       const embeddingArray = embeddings[i].map((val: number) =>
-        parseFloat(val.toFixed(6))
+        parseFloat(val.toFixed(6)),
       );
       return sql`(${chunk.pageContent}, ${JSON.stringify({
         chunkIndex: i,
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       sql`
         INSERT INTO "${sql.raw(safeTableName)}" (content, metadata, embedding)
         VALUES ${sql.join(valuesSql, sql`, `)}
-      `
+      `,
     );
 
     // Update assistant to mark task as completed
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     console.error("Error processing document:", error);
     return NextResponse.json(
       { error: "Failed to process document" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

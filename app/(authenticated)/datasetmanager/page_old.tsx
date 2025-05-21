@@ -28,7 +28,7 @@ export default async function MonitorPage() {
     () => import("@/components/ragbuilder/ChatRedirectButton"),
     {
       ssr: false,
-    }
+    },
   );
 
   const getUserFromServer = async () => {

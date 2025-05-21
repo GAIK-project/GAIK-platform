@@ -52,18 +52,18 @@ const findSources = async (text: string, customModel: string) => {
 
     // Retrieve relevant sources, use custom model if defined
     // console.log(customModel.toLocaleLowerCase());
-    let newName : string = sanitizeTableName(customModel);
+    let newName: string = sanitizeTableName(customModel);
     console.log("Checking params: ", `${newName} + ${customModel}`);
-    if(newName !== "none"){
-      console.log("Searching from documents with: ", `${newName} + ${customModel}`);
+    if (newName !== "none") {
+      console.log(
+        "Searching from documents with: ",
+        `${newName} + ${customModel}`,
+      );
       return await searchCustomDocuments(hypotheticalAnswer, 5, customModel);
-      
-    }
-    else{
+    } else {
       console.log("Searching from documents");
       return await searchDocuments(hypotheticalAnswer, 5);
     }
-    
   } catch (error) {
     console.error("Error finding sources:", error);
     return [];
@@ -130,7 +130,9 @@ const addToLastUserMessage = (
 //   },
 // };
 
-export const createHydeMiddleware = (customModel: string): LanguageModelV1Middleware => ({
+export const createHydeMiddleware = (
+  customModel: string,
+): LanguageModelV1Middleware => ({
   transformParams: async ({ params }) => {
     try {
       const userMessage = getLastUserMessageText(params.prompt);

@@ -1,9 +1,9 @@
-import styles from '@/app/styles/Monitorpage.module.css';
-import { createClient } from '@/app/utils/supabaseragbuilder/client';
-import AssistantTable from '@/components/ragbuilder/AssistantTable';
-import { RefreshButton } from '@/components/ragbuilder/RefreshButton';
-import { getUserData } from '@/lib/db/drizzle/queries';
-import Link from 'next/link';
+import styles from "@/app/styles/Monitorpage.module.css";
+import { createClient } from "@/app/utils/supabaseragbuilder/client";
+import AssistantTable from "@/components/ragbuilder/AssistantTable";
+import { RefreshButton } from "@/components/ragbuilder/RefreshButton";
+import { getUserData } from "@/lib/db/drizzle/queries";
+import Link from "next/link";
 
 export type Assistant = {
   id: number;
@@ -20,20 +20,22 @@ export type Assistant = {
 
 export default async function MonitorPage() {
   const user = await getUserData();
-  const ownerId = user?.email || 'example@domain.com';
+  const ownerId = user?.email || "example@domain.com";
 
   const supabase = await createClient();
   const { data: assistants } = await supabase
-    .from('assistants')
+    .from("assistants")
     .select()
-    .eq('owner', ownerId);
+    .eq("owner", ownerId);
 
   if (!assistants || assistants.length === 0) {
     return (
       <div className={styles.emptyContainer}>
         <h2>You have not created any custom RAG datasets yet</h2>
         <Link href="/rag-builder">
-          <button className={styles.getStartedButton}>Click here to get started</button>
+          <button className={styles.getStartedButton}>
+            Click here to get started
+          </button>
         </Link>
       </div>
     );
@@ -41,10 +43,10 @@ export default async function MonitorPage() {
 
   return (
     <div className={styles.container}>
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-            <h1 className={styles.title}>Dataset Manager</h1>
-            <RefreshButton/>
-        </div>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <h1 className={styles.title}>Dataset Manager</h1>
+        <RefreshButton />
+      </div>
 
       <AssistantTable assistants={assistants} />
     </div>

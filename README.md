@@ -184,7 +184,7 @@ The `ai/ai-actions/search.ts` server action handles vector comparisons by:
 // Example from ai/ai-actions/search.ts
 export async function searchDocuments(
   query: string,
-  limit = 5
+  limit = 5,
 ): Promise<SearchDocument[]> {
   const supabase = createBrowserClient();
   try {

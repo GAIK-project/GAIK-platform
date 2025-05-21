@@ -5,14 +5,20 @@ import { and, eq, gt } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { createServerClient } from "../supabase/server";
 import { db } from "./drizzle";
-import { Invite, Organization, UserProfile, invites, userProfiles } from "./schema";
+import {
+  Invite,
+  Organization,
+  UserProfile,
+  invites,
+  userProfiles,
+} from "./schema";
 
 export async function getInviteByToken(token: string): Promise<Invite | null> {
   const invite = await db.query.invites.findFirst({
     where: and(
       eq(invites.token, token),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date())
+      gt(invites.expiresAt, new Date()),
     ),
   });
 
@@ -64,7 +70,7 @@ export async function getUserData(): Promise<UserData | null> {
 
 async function getCachedUserData(
   user: SupabaseAuthUser,
-  profile: UserProfile | null
+  profile: UserProfile | null,
 ): Promise<UserData | null> {
   "use cache";
   cacheTag("user-profile");
@@ -81,7 +87,7 @@ async function getCachedUserData(
       preferences: profile?.preferences || { language: "fi" },
       lastLoginAt: profile?.lastLoginAt || null,
       createdAt: new Date(user.created_at),
-      updatedAt: profile?.updatedAt || new Date(user.created_at)
+      updatedAt: profile?.updatedAt || new Date(user.created_at),
     };
   } catch (error) {
     console.error("Error in getCachedUserData:", error);
@@ -91,14 +97,14 @@ async function getCachedUserData(
 
 export async function validateInvite(
   email: string,
-  organization: Organization
+  organization: Organization,
 ): Promise<Invite | null> {
   const existingInvite = await db.query.invites.findFirst({
     where: and(
       eq(invites.email, email.toLowerCase()),
       eq(invites.organization, organization),
       eq(invites.used, false),
-      gt(invites.expiresAt, new Date())
+      gt(invites.expiresAt, new Date()),
     ),
   });
 
@@ -114,7 +120,7 @@ type UserProfileUpdate = Partial<{
 
 export async function updateUserProfile(
   userId: string,
-  data: UserProfileUpdate
+  data: UserProfileUpdate,
 ) {
   try {
     const [updatedProfile] = await db

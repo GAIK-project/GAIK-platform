@@ -9,7 +9,7 @@ import {
   timestamp,
   uuid,
   vector,
-  integer
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const organizationEnum = pgEnum("organization_type", [
@@ -49,7 +49,9 @@ export const userProfiles = pgTable("user_profiles", {
   id: uuid("id").primaryKey(), // References auth.users.id
   avatar: text("avatar"),
   role: userRoleEnum("role").default("USER").notNull(),
-  organization: organizationEnum("organization").default("HAAGA_HELIA").notNull(), 
+  organization: organizationEnum("organization")
+    .default("HAAGA_HELIA")
+    .notNull(),
   lastLoginAt: timestamp("last_login_at"),
   preferences: jsonb("preferences")
     .$type<UserPreferences>()

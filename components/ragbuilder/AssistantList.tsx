@@ -26,7 +26,7 @@ interface Props {
 export default function AssistantList({ owner }: Props) {
   const [assistants, setAssistants] = useState<Assistant[]>([]);
   const [editing, setEditing] = useState<Record<number, Partial<Assistant>>>(
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function AssistantList({ owner }: Props) {
       console.error("Update failed:", error);
     } else {
       setAssistants((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, ...updated } : a))
+        prev.map((a) => (a.id === id ? { ...a, ...updated } : a)),
       );
       setEditing((prev) => {
         const newState = { ...prev };
@@ -119,7 +119,7 @@ export default function AssistantList({ owner }: Props) {
               handleChange(
                 a.id,
                 "files",
-                e.target.value.split(",").map((s) => s.trim())
+                e.target.value.split(",").map((s) => s.trim()),
               )
             }
           />
@@ -130,7 +130,7 @@ export default function AssistantList({ owner }: Props) {
               handleChange(
                 a.id,
                 "fileids",
-                e.target.value.split(",").map((s) => s.trim())
+                e.target.value.split(",").map((s) => s.trim()),
               )
             }
           />

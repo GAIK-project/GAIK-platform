@@ -7,14 +7,17 @@ import { createMultiStagellmMiddleware } from "./multistage-rag";
 
 const BASE_MODEL = "gpt-4o";
 
-export const createMultiStageRag = (modelName: string = BASE_MODEL, customModel : string) => {
+export const createMultiStageRag = (
+  modelName: string = BASE_MODEL,
+  customModel: string,
+) => {
   return wrapLanguageModel({
     model: openai(modelName),
     middleware: createMultiStagellmMiddleware(customModel),
   });
 };
 
-export const createHydeRag = (modelName: string, customModel : string) => {
+export const createHydeRag = (modelName: string, customModel: string) => {
   return wrapLanguageModel({
     model: openai(modelName),
     middleware: createHydeMiddleware(customModel),

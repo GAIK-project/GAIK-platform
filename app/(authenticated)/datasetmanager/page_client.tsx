@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import styles from '@/app/styles/Monitorpage.module.css';
-import { supabase } from '@/lib/db/supabase/createNewClient';
-import classNames from 'classnames';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import styles from "@/app/styles/Monitorpage.module.css";
+import { supabase } from "@/lib/db/supabase/createNewClient";
+import classNames from "classnames";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Assistant = {
   id: number;
@@ -21,7 +21,7 @@ type Assistant = {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return `klo ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')} ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  return `klo ${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")} ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 }
 
 export default function MonitorPage() {
@@ -35,25 +35,25 @@ export default function MonitorPage() {
       try {
         const getUserFromServer = async () => {
           try {
-            const res = await fetch('/api/getUserFromServer');
-            if (!res.ok) throw new Error('Failed to fetch');
+            const res = await fetch("/api/getUserFromServer");
+            if (!res.ok) throw new Error("Failed to fetch");
             const data = await res.json();
             return data.email;
           } catch (err) {
-            console.error('Error fetching user:', err);
-            return 'example@domain.com';
+            console.error("Error fetching user:", err);
+            return "example@domain.com";
           }
         };
 
         const OWNER_ID = await getUserFromServer();
 
         const { data, error } = await supabase
-          .from('assistants')
+          .from("assistants")
           .select()
-          .eq('owner', OWNER_ID);
+          .eq("owner", OWNER_ID);
 
         if (error) {
-          console.error('Supabase error:', error);
+          console.error("Supabase error:", error);
           return;
         }
 
@@ -61,7 +61,7 @@ export default function MonitorPage() {
           setAssistants(data ?? []);
         }
       } catch (error) {
-        console.error('Unexpected error:', error);
+        console.error("Unexpected error:", error);
         if (mounted) setAssistants([]);
       } finally {
         if (mounted) setLoading(false);
@@ -75,14 +75,21 @@ export default function MonitorPage() {
     };
   }, []);
 
-  if (loading) return <div className={styles.container}><p>Loading...</p></div>;
+  if (loading)
+    return (
+      <div className={styles.container}>
+        <p>Loading...</p>
+      </div>
+    );
 
   if (!assistants || assistants.length === 0) {
     return (
       <div className={styles.emptyContainer}>
         <h2>You have not created any custom RAG datasets yet</h2>
         <Link href="/rag-builder">
-          <button className={styles.getStartedButton}>Click here to get started</button>
+          <button className={styles.getStartedButton}>
+            Click here to get started
+          </button>
         </Link>
       </div>
     );
@@ -114,7 +121,7 @@ export default function MonitorPage() {
                       <pre>{JSON.stringify(a.errors, null, 2)}</pre>
                     </details>
                   ) : (
-                    'None'
+                    "None"
                   )}
                 </td>
                 <td className={styles.tableCell}>
@@ -123,9 +130,15 @@ export default function MonitorPage() {
                 <td className={styles.tableCell}>{formatDate(a.created_at)}</td>
                 <td className={styles.tableCell}>
                   {a.task_completed ? (
-                    <span className={classNames(styles.statusIcon, styles.green)}>✔</span>
+                    <span
+                      className={classNames(styles.statusIcon, styles.green)}
+                    >
+                      ✔
+                    </span>
                   ) : (
-                    <span className={classNames(styles.statusIcon, styles.red)}>✘</span>
+                    <span className={classNames(styles.statusIcon, styles.red)}>
+                      ✘
+                    </span>
                   )}
                 </td>
                 <td className={styles.tableCell}>

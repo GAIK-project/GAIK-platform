@@ -37,24 +37,29 @@ export function UserDetails({
     } catch (error) {
       console.error("Failed to log out:", error);
     }
-  };  return (
+  };
+  return (
     <div className="px-3 py-3 border-t">
       {state === "expanded" ? (
         <>
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-9 w-9 rounded-lg shadow-sm">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">{user.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
+                {user.name.charAt(0)}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col overflow-hidden">
               <span className="font-medium text-sm truncate">{user.name}</span>
-              <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+              <span className="text-xs text-muted-foreground truncate">
+                {user.email}
+              </span>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full justify-start text-muted-foreground hover:text-foreground transition-colors" 
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start text-muted-foreground hover:text-foreground transition-colors"
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />

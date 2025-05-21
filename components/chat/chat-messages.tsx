@@ -22,7 +22,6 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
     messages.length > 0 && messages[messages.length - 1].role === "user";
   const showThinkingMessage = isLoading && isLastMessageFromUser;
 
-
   return (
     <div
       className={cn(

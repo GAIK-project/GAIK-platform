@@ -13,8 +13,8 @@ export default function NotFound() {
           This page is lost.
         </h1>
         <p className="text-lg text-muted-foreground">
-          It looks like the page you were looking for doesn&apos;t exist. Maybe it
-          was moved, or perhaps it never existed at all...
+          It looks like the page you were looking for doesn&apos;t exist. Maybe
+          it was moved, or perhaps it never existed at all...
         </p>
         <Link
           href="/"

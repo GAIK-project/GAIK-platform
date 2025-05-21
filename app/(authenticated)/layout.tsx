@@ -10,8 +10,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const user = await getUserData();
-  
-  
+
   const userProfileData = user
     ? {
         name: user.name,

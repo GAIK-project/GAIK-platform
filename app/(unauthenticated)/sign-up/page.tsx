@@ -53,9 +53,9 @@ function InvalidTokenMessage() {
             Invalid Invitation
           </AlertTitle>
           <AlertDescription className="text-sm">
-            The invitation link you&apos;re trying to use is either invalid or has
-            expired. Please contact your administrator for a valid invitation
-            link.
+            The invitation link you&apos;re trying to use is either invalid or
+            has expired. Please contact your administrator for a valid
+            invitation link.
           </AlertDescription>
         </Alert>
 

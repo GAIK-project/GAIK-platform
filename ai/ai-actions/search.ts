@@ -38,7 +38,7 @@ export async function searchDocuments(
 export async function searchCustomDocuments(
   query: string,
   limit = 5,
-  tableName: string
+  tableName: string,
 ): Promise<SearchDocument[]> {
   const supabase = createBrowserClient();
   try {
@@ -47,7 +47,7 @@ export async function searchCustomDocuments(
       value: query,
     });
 
-    let newName : string = sanitizeTableName(tableName);
+    let newName: string = sanitizeTableName(tableName);
 
     // We are using match_documents function that we implemented from 'drizzle/functions.sql'
     const { data, error } = await supabase.rpc("match_documents_dynamic", {

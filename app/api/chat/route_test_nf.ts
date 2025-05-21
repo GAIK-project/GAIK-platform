@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     const documents = await searchDocuments(latestMessage, 10);
     const docContext = JSON.stringify(
-      documents.map((d: Document) => d.content)
+      documents.map((d: Document) => d.content),
     );
 
     const template = {

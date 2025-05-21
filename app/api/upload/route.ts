@@ -1,9 +1,5 @@
 import { getFileCategory } from "@/lib/middleware/validateFileType";
-import {
-  parseImage,
-  parsePdfOrDoc,
-  parseTxt
-} from "@/lib/parsers/parser";
+import { parseImage, parsePdfOrDoc, parseTxt } from "@/lib/parsers/parser";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -31,7 +27,7 @@ export async function POST(req: NextRequest) {
         JSON.stringify({
           error: `❌ Total file size exceeds ${MAX_TOTAL_SIZE_MB}MB.`,
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -58,7 +54,7 @@ export async function POST(req: NextRequest) {
         const text = await parseImage(buffer, file.name);
         // console.log("text: ", text);
         results.push(
-          `${file.name}: ✅ Image parsed to text (${text.length} chars)`
+          `${file.name}: ✅ Image parsed to text (${text.length} chars)`,
         );
         break;
       }

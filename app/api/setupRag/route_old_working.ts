@@ -19,7 +19,7 @@
 //       // Get JSON data (sent as "data")
 //       const dataString = formData.get('data') as string;
 //       const { assistantName, links, systemPrompt } = JSON.parse(dataString);
-      
+
 //       //check for missing values
 //       if (!assistantName || !links || !systemPrompt) {
 //         return NextResponse.json({ error: "Missing req data" }, { status: 400 });
@@ -47,9 +47,9 @@
 //       if (!links.every(link => typeof link === "string" && link.length <= MAX_LINK_LENGTH)) {
 //           return NextResponse.json({ error: `Each link must be a string with max ${MAX_LINK_LENGTH} characters` }, { status: 400 });
 //       }
-  
+
 //       const safeTableName = sanitizeTableName(assistantName);
-  
+
 //       //create assistants table if not exists
 //       await db.execute(
 //         sql.raw(`
@@ -76,7 +76,7 @@
 //           );
 //         `)
 //       );
-      
+
 //       //setup textsplitter
 //       const splitter = new RecursiveCharacterTextSplitter({
 //         chunkSize: 1000,
@@ -158,4 +158,3 @@
 //       );
 //     }
 //   }
-  

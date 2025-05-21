@@ -10,11 +10,16 @@ export async function POST(request: NextRequest) {
     const { assistantName, textData, systemPrompt } = await request.json();
 
     if (!assistantName || !textData || !systemPrompt) {
-      return NextResponse.json({ error: "Missing assistantName or textData" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing assistantName or textData" },
+        { status: 400 },
+      );
     }
 
     // Sanitize table name to avoid SQL injection risks
-    const sanitizedTableName = assistantName.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase();
+    const sanitizedTableName = assistantName
+      .replace(/[^a-zA-Z0-9_]/g, "")
+      .toLowerCase();
 
     // Dynamically create a table for this assistantName if it doesn't exist
     await db.execute(
@@ -25,7 +30,7 @@ export async function POST(request: NextRequest) {
           metadata JSONB,
           embedding VECTOR(1536) -- Assuming OpenAI embedding size
         );
-      `)
+      `),
     );
 
     // Split text into chunks
@@ -41,7 +46,9 @@ export async function POST(request: NextRequest) {
       const chunk = chunks[i];
       const embedding = await openAIembeddings.embedQuery(chunk.pageContent);
 
-      const embeddingArray = embedding.map((val: number) => parseFloat(val.toFixed(6)));
+      const embeddingArray = embedding.map((val: number) =>
+        parseFloat(val.toFixed(6)),
+      );
 
       await db.execute(
         sql`
@@ -54,7 +61,7 @@ export async function POST(request: NextRequest) {
             })},
             ${sql.raw(`ARRAY[${embeddingArray.join(",")}]::vector`)}
           )
-        `
+        `,
       );
     }
 
