@@ -5,7 +5,19 @@ export async function updateSession(request: NextRequest) {
   // Check for a guest mode cookie
   const guestMode = request.cookies.get("guest-mode")?.value === "true";
 
-  // If guest mode is active, skip authentication
+  // Check if the request is for an API route
+  const isApiRoute = request.nextUrl.pathname.startsWith("/api/");
+
+  // Block API access for guest mode users
+  if (guestMode && isApiRoute) {
+    // Option 1: Return a 403 Forbidden response
+    return NextResponse.json(
+      { error: "API access not allowed in guest mode" },
+      { status: 403 }
+    );
+  }
+
+  // If guest mode is active but not accessing API, skip authentication
   if (guestMode) {
     return NextResponse.next({ request });
   }
@@ -23,15 +35,15 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
-    },
+    }
   );
 
   const {
@@ -43,7 +55,7 @@ export async function updateSession(request: NextRequest) {
   const isPublicRoute = publicRoutes.some(
     (route) =>
       request.nextUrl.pathname === route ||
-      request.nextUrl.pathname.startsWith(`${route}/`),
+      request.nextUrl.pathname.startsWith(`${route}/`)
   );
 
   // If user is not logged in, redirect to sign-in page
