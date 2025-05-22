@@ -3,7 +3,20 @@
 import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 import { createStreamableValue } from "ai/rsc";
+import { cookies } from "next/headers";
 import { z } from "zod";
+
+/**
+ * Check if the user is in guest mode.
+ */
+async function checkGuestModeAccess() {
+  const cookieStore = await cookies();
+  const isGuestMode = cookieStore.get("guest-mode")?.value === "true";
+
+  if (isGuestMode) {
+    throw new Error("Incident reporting is not available in guest mode");
+  }
+}
 
 // Define the schema for the incident report
 const incidentReportSchema = z.object({
@@ -17,6 +30,9 @@ const incidentReportSchema = z.object({
 });
 
 export async function processIncidentReport(incidentDetails: string) {
+  // Check if user is in guest mode
+  await checkGuestModeAccess();
+
   const stream = createStreamableValue();
 
   (async () => {

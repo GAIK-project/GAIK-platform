@@ -21,3 +21,13 @@ export async function enableGuestMode() {
   // Redirect to home page
   redirect("/");
 }
+
+export async function clearGuestCookies() {
+  const cookieStore = await cookies();
+
+  // Poista guest-mode eväste
+  cookieStore.delete("guest-mode");
+
+  // Poista myös model-id eväste, koska se asetetaan guest-modessa
+  cookieStore.delete("model-id");
+}

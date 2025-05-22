@@ -10,7 +10,7 @@ export async function updateSession(request: NextRequest) {
 
   // Block API access for guest mode users
   if (guestMode && isApiRoute) {
-    // Option 1: Return a 403 Forbidden response
+    // Return a 403 Forbidden response
     return NextResponse.json(
       { error: "API access not allowed in guest mode" },
       { status: 403 },

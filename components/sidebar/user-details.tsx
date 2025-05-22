@@ -1,5 +1,6 @@
 "use client";
 
+import { clearGuestCookies } from "@/app/actions/auth/guest-mode";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -32,6 +33,7 @@ export function UserDetails({
   const handleLogout = async () => {
     try {
       await signOut();
+      await clearGuestCookies();
       router.push("/sign-in");
       router.refresh();
     } catch (error) {
