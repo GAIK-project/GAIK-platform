@@ -58,7 +58,7 @@
     "dedent": "^1.6.0",
     "docx": "^9.5.0",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.30.6",
+    "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.40.1",
     "gsap": "^3.13.0",
     "highlight.js": "^11.11.1",
