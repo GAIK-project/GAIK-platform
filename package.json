@@ -3,10 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter=gaik-dashboard dev",
-    "build": "pnpm run build --recursive",
-    "lint": "pnpm run lint --recursive", 
-    "clean": "pnpm run clean --recursive",
-    "type-check": "pnpm run type-check --recursive",
-    "docker:build": "docker build -f web/dashboard/Dockerfile -t gaik-dashboard ."
+    "dashboard:build": "pnpm --filter=gaik-dashboard build",
+    "dashboard:docker": "docker build -f web/dashboard/Dockerfile -t gaik-dashboard ."
   }
 }

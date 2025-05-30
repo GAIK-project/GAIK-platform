@@ -1,89 +1,47 @@
 # GAIK Monorepo
 
-Simple pnpm monorepo structure for GAIK applications.
+Simple pnpm monorepo for GAIK applications.
 
 ## 📁 Structure
 
 ```
-gaik-monorepo/
-├── apps/                    # Applications
-│   ├── gaik-dashboard/     # Next.js Dashboard with AI features
-│   └── python/             # Python applications
-├── packages/               # Shared code
-│   ├── shared-types/       # TypeScript type definitions
-│   └── shared-utils/       # Shared utilities
-├── package.json            # Monorepo main configuration
-└── pnpm-workspace.yaml     # Workspace definitions
+gaik-dashboard/
+├── web/                    # Web applications
+│   ├── dashboard/          # Next.js Dashboard with AI features
+│   └── another-web-app/    # Other web applications
+├── shared/                 # Shared code
+│   ├── types/              # TypeScript type definitions
+│   └── utils/              # Shared utilities
+├── python/                 # Python applications (not managed by pnpm)
+└── pnpm-workspace.yaml     # Workspace configuration
 ```
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### Install dependencies for the entire monorepo:
+**1. Install dependencies:**
 
 ```bash
 pnpm install
 ```
 
-### Start development server:
+**2. Start dashboard:**
 
 ```bash
-# Start gaik-dashboard
 pnpm dev
-
-# OR go directly to the app folder
-cd apps/gaik-dashboard
-npm run dev
 ```
 
-### Build all applications:
+This starts the development server at `http://localhost:3000`
 
-```bash
-pnpm build
-```
+## 🔧 Commands
 
-## 📦 Applications
-
-### gaik-dashboard
-
-Next.js-based dashboard application with AI functionality.
-
-**Location:** `apps/gaik-dashboard/`
-
-**Start:**
-
-```bash
-# From monorepo root
-pnpm dev
-
-# From app directory
-cd apps/gaik-dashboard
-npm run dev
-```
-
-### Python applications
-
-Python-based services and scripts.
-
-**Location:** `apps/python/`
-
-## 🔧 Monorepo Commands
-
-| Command        | Description                               |
-| -------------- | ----------------------------------------- |
-| `pnpm install` | Install all dependencies                  |
-| `pnpm dev`     | Start development server (gaik-dashboard) |
-| `pnpm build`   | Build all applications                    |
-| `pnpm lint`    | Lint all applications                     |
-| `pnpm clean`   | Clean all build files                     |
+| Command                | Description                    |
+| ---------------------- | ------------------------------ |
+| `pnpm install`         | Install all dependencies       |
+| `pnpm dev`             | Start dashboard                |
+| `pnpm dashboard:build` | Build dashboard for production |
 
 ## 💡 Tips
 
-- **Individual app startup:** You can always navigate to the `apps/` folder and start the application normally without pnpm commands
-- **Adding new apps:** Create a new folder under `apps/`
-- **Shared code:** Put common code in `packages/` with `shared-` prefix
-- **Python and Node.js:** Both work in the same monorepo structure
-
-## 📖 More Information
-
-- [pnpm workspace documentation](https://pnpm.io/workspaces)
-- [Monorepo best practices](https://monorepo.tools/)
+- **Individual applications:** You can navigate to `web/` folder and start the application normally
+- **Python applications:** Located in `python/` folder and work independently
+- **Shared code:** Put common code in `shared/` folder
