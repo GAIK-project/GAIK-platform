@@ -1,5 +1,5 @@
 {
-  "name": "gaik-monorepo",
+  "name": "gaik-platform",
   "private": true,
   "scripts": {
     "dev": "pnpm --filter=gaik-dashboard dev",
