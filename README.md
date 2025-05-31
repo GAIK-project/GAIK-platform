@@ -50,10 +50,10 @@ pnpm dev
 For Next.js apps using shared workspace packages, add this to your `next.config.js`:
 
 ```javascript
-const nextConfig = {
-  transpilePackages: [
+const nextConfig = {  transpilePackages: [
     "@gaik/shared-utils", // Shared utility functions
     "@gaik/shared-types", // Shared TypeScript types
+    "@gaik/shared-components", // Shared React components
   ],
 };
 ```
@@ -63,10 +63,10 @@ This tells Next.js to transpile your local workspace packages during build time.
 ## 🎯 Beginner Tips
 
 - **Start small:** Begin with the existing `dashboard` app in `web/dashboard/`
-- **Shared packages:** Use `@gaik/shared-types` and `@gaik/shared-utils` in your apps
+- **Shared packages:** Use `@gaik/shared-types`, `@gaik/shared-utils`, and `@gaik/shared-components` in your apps
 - **Development workflow:** Always run `pnpm install` at root first, then `cd` to your app folder
 - **Hot reload:** Changes in `shared/` folders will trigger rebuilds in your Next.js apps
-- **Import example:** `import { SomeType } from '@gaik/shared-types'`
+- **Import example:** `import { SomeType } from '@gaik/shared-types'` or `import { Button } from '@gaik/shared-components'`
 
 ## 📦 Package Management
 
