@@ -5,13 +5,16 @@ Simple pnpm monorepo for GAIK applications.
 ## 📁 Structure
 
 ```
-gaik-dashboard/
+gaik-platform/
 ├── web/                    # Web applications
 │   ├── dashboard/          # Next.js Dashboard with AI features
 │   └── another-web-app/    # Other web applications
-├── shared/                 # Shared code
+├── shared/                 # Shared code packages
+│   ├── components/         # Shared React components
 │   ├── types/              # TypeScript type definitions
-│   └── utils/              # Shared utilities
+│   ├── utils/              # Shared utilities
+│   ├── auth/               # Authentication utilities (Supabase)
+│   └── allas/              # CSC Allas (S3) client utilities
 ├── python/                 # Python applications (not managed by pnpm)
 └── pnpm-workspace.yaml     # Workspace configuration
 ```
@@ -50,10 +53,14 @@ pnpm dev
 For Next.js apps using shared workspace packages, add this to your `next.config.js`:
 
 ```javascript
-const nextConfig = {  transpilePackages: [
+const nextConfig = {
+  transpilePackages: [
+    // Add only the packages you actually use in your app
     "@gaik/shared-utils", // Shared utility functions
     "@gaik/shared-types", // Shared TypeScript types
     "@gaik/shared-components", // Shared React components
+    "@gaik/auth", // Authentication utilities
+    "@gaik/allas", // CSC Allas (S3) utilities
   ],
 };
 ```
@@ -63,10 +70,14 @@ This tells Next.js to transpile your local workspace packages during build time.
 ## 🎯 Beginner Tips
 
 - **Start small:** Begin with the existing `dashboard` app in `web/dashboard/`
-- **Shared packages:** Use `@gaik/shared-types`, `@gaik/shared-utils`, and `@gaik/shared-components` in your apps
+- **Shared packages:** Available packages: `@gaik/shared-types`, `@gaik/shared-utils`, `@gaik/shared-components`, `@gaik/auth`, and `@gaik/allas` - use only what you need
 - **Development workflow:** Always run `pnpm install` at root first, then `cd` to your app folder
 - **Hot reload:** Changes in `shared/` folders will trigger rebuilds in your Next.js apps
-- **Import example:** `import { SomeType } from '@gaik/shared-types'` or `import { Button } from '@gaik/shared-components'`
+- **Import examples:**
+  - `import { SomeType } from '@gaik/shared-types'`
+  - `import { Button } from '@gaik/shared-components'`
+  - `import { loginUser } from '@gaik/auth'`
+  - `import { getFiles } from '@gaik/allas'`
 
 ## 📦 Package Management
 
@@ -76,6 +87,8 @@ This tells Next.js to transpile your local workspace packages during build time.
 # Add workspace packages (shared/) to specific app
 cd web/dashboard
 pnpm add @gaik/shared-types@workspace:*
+pnpm add @gaik/auth@workspace:*
+pnpm add @gaik/allas@workspace:*
 
 # Add external packages to specific app only
 cd web/dashboard
