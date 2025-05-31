@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -13,33 +13,23 @@ export const Layout: React.FC<LayoutProps> = ({
   header,
   sidebar,
   footer,
-  className = ''
+  className = "",
 }) => {
   return (
     <div className={`min-h-screen flex flex-col ${className}`}>
-      {header && (
-        <header className="flex-shrink-0">
-          {header}
-        </header>
-      )}
-      
+      {header && <header className="flex-shrink-0">{header}</header>}
+
       <div className="flex-1 flex">
         {sidebar && (
           <aside className="flex-shrink-0 w-64 bg-gray-50 border-r border-gray-200">
             {sidebar}
           </aside>
         )}
-        
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+
+        <main className="flex-1 overflow-auto">{children}</main>
       </div>
-      
-      {footer && (
-        <footer className="flex-shrink-0">
-          {footer}
-        </footer>
-      )}
+
+      {footer && <footer className="flex-shrink-0">{footer}</footer>}
     </div>
   );
 };

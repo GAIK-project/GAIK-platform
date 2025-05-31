@@ -5,19 +5,14 @@ Reusable React components for GAIK applications.
 ## Usage
 
 ```tsx
-import { Button, Card, Layout, Input, ChartContainer } from '@gaik/shared-components';
+import { Button, Card, Layout } from "@gaik/shared-components";
 
 function MyPage() {
   return (
     <Layout header={<h1>GAIK Dashboard</h1>}>
       <Card>
         <h2>Welcome to GAIK</h2>
-        <Input label="Name" placeholder="Enter your name" />
-        <Button onClick={() => alert('Hello!')}>Click me</Button>
-        
-        <ChartContainer title="Analytics" loading={false}>
-          <p>Chart content would go here</p>
-        </ChartContainer>
+        <Button onClick={() => alert("Hello!")}>Click me</Button>
       </Card>
     </Layout>
   );
@@ -28,10 +23,8 @@ function MyPage() {
 
 ```text
 shared/components/
-├── ui/        # Basic UI components
-├── layout/    # Layout components  
-├── forms/     # Form components
-└── charts/    # Data visualization
+├── ui/        # Basic UI components (Button, Card)
+└── layout/    # Layout components (Layout)
 ```
 
 ## Development
@@ -41,8 +34,9 @@ shared/components/
 3. Use types from `@gaik/shared-types`
 
 Example:
+
 ```tsx
-import { ButtonProps } from '@gaik/shared-types';
+import { ButtonProps } from "@gaik/shared-types";
 
 export const Button: React.FC<ButtonProps> = ({ children, ...props }) => (
   <button {...props}>{children}</button>
