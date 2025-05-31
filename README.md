@@ -68,8 +68,60 @@ This tells Next.js to transpile your local workspace packages during build time.
 - **Hot reload:** Changes in `shared/` folders will trigger rebuilds in your Next.js apps
 - **Import example:** `import { SomeType } from '@gaik/shared-types'`
 
-## 💡 Tips
+## 📦 Package Management
 
-- **Shared code:** Common utilities and types are in `shared/` folder
-- **Python applications:** Located in `python/` folder, managed independently
-- **Development:** Work in individual app folders for day-to-day development
+### Adding Dependencies
+
+```bash
+# Add workspace packages (shared/) to specific app
+cd web/dashboard
+pnpm add @gaik/shared-types@workspace:*
+
+# Add external packages to specific app only
+cd web/dashboard
+pnpm add react-icons
+
+# Or use filters from root
+pnpm --filter=dashboard add react-icons
+```
+
+### Key Points
+
+- **One lock file:** Single `pnpm-lock.yaml` at root for all apps
+- **App-specific deps:** Dependencies added in `web/dashboard/` only affect that app
+- **Workspace packages:** Reference shared packages by their `package.json` name (e.g., `@gaik/shared-types`)
+- **Filtering:** Use `--filter=<app-name>` to target commands to specific apps
+
+### Benefits
+
+✅ **Optimized installs** - Shared dependencies across apps  
+✅ **Isolated apps** - Each app has its own dependencies  
+✅ **Hot reload** - Changes in shared packages trigger rebuilds
+
+## 📊 Monorepo Workflow
+
+```mermaid
+flowchart TD
+    A[Developer] -->|pnpm install| B[Root Directory]
+    B --> C[pnpm-workspace.yaml]
+    C --> D[Discovers packages]
+
+    D --> E[web/dashboard]
+    D --> F[shared/types]
+    D --> G[shared/utils]
+
+    E -->|depends on| H["@gaik/shared-types@workspace:*"]
+    E -->|depends on| I["@gaik/shared-utils@workspace:*"]
+
+    H --> F
+    I --> G
+
+    B --> J[pnpm-lock.yaml]
+    J --> K[Optimized Dependencies]
+
+    style B fill:#e1f5fe
+    style J fill:#fff3e0
+    style F fill:#f3e5f5
+    style G fill:#f3e5f5
+    style E fill:#e8f5e8
+```
