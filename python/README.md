@@ -1,92 +1,51 @@
-# Python Services
+# Python Applications
 
-Python microservices for GAIK platform, managed independently from the main pnpm workspace.
+Python applications and services for GAIK platform.
 
-## 📁 Recommended Structure
+## 📁 Structure
 
 ```text
 python/
-├── shared/                 # Common Python code
-│   ├── models/            # Pydantic models, DB schemas
-│   ├── utils/             # Helper functions
-│   └── config/            # Configuration
-├── api-gateway/           # Main FastAPI gateway
-│   ├── main.py           # FastAPI app entry point
-│   ├── routers/          # API route handlers
+├── your-app/              # Your Python application
+│   ├── main.py           # Application entry point
+│   ├── requirements.txt  # Dependencies
+│   └── venv/            # Virtual environment
+├── parsers/              # Document parsers (example)
+│   ├── pdf_parser.py     # PDF parser
+│   ├── excel_parser.py   # Excel parser
 │   └── requirements.txt
-├── ai-service/           # AI processing microservice
-│   ├── main.py
+├── ai/                   # AI services (example)
+│   ├── whisper.py        # Audio transcription
+│   ├── embeddings.py     # Text embeddings
 │   └── requirements.txt
-└── data-processor/       # Data processing service
-    ├── main.py
-    └── requirements.txt
+├── another-app/          # Another Python application
+└── requirements.txt      # Shared dependencies (optional)
 ```
 
-## 🚀 Quick Example
+## 🚀 Getting Started
 
-### API Gateway Setup
-
-```python
-# python/api-gateway/main.py
-from fastapi import FastAPI
-from routers import ai, data
-
-app = FastAPI(title="GAIK API")
-app.include_router(ai.router, prefix="/api/ai")
-app.include_router(data.router, prefix="/api/data")
-```
-
-### Next.js Integration
-
-```typescript
-// web/dashboard/app/api/python/route.ts
-export async function POST(request: Request) {
-  const data = await request.json();
-  const response = await fetch("http://localhost:8000/api/ai/process", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return Response.json(await response.json());
-}
-```
-
-### Production Proxy Setup
-
-For deployment (e.g., Rahti), add this to your `next.config.js`:
-
-```javascript
-const nextConfig = {
-  async rewrites() {
-    const rahtiServiceUrl =
-      process.env.RAHTI_SERVICE_URL || "http://127.0.0.1:8000";
-    return [
-      {
-        source: "/api/python/:path*",
-        destination: `${rahtiServiceUrl}/api/:path*`, // Proxy to Python FastAPI service
-      },
-    ];
-  },
-};
-```
-
-This allows you to call `/api/python/ai/process` from your Next.js app instead of hardcoding `localhost:8000`.
-
-## 🔄 Development Workflow
+### Create Virtual Environment
 
 ```bash
-# Start Python services
-cd python/api-gateway
-uvicorn main:app --port 8000 --reload
+cd python/your-app
+python -m venv venv
 
-# Start Next.js (separate terminal)
-cd web/dashboard
-pnpm dev
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-## 💡 Benefits
+### Run Application
 
-- **Independent deployment** - Each service scales separately
-- **Technology freedom** - Different Python versions/dependencies per service
-- **Clear separation** - Frontend (Next.js) communicates via HTTP APIs
-- **Easy testing** - Each service can be tested in isolation
+```bash
+python main.py
+```
+
+## 💡 Note
+
+Python applications in this folder are not managed by pnpm. Each application can have its own virtual environment and dependencies.
