@@ -2,13 +2,38 @@
 
 Simple pnpm monorepo for GAIK applications.
 
+## 🏗️ Development Strategy
+
+This repository follows a **fork-based development model** with clear branch structure:
+
+### Branch Strategy:
+
+- **development** - Unstable code, work in progress, not ready for public use
+- **main** - Stable, tested code that works out-of-box for anyone cloning the repo
+- **minimal** - Clean template without dashboard - ready for client forks
+- **deployment** - Contains only shared components for public toolkit releases (no client demos)
+
+### Repository Flow:
+
+1. **Main repo** (this one) contains stable toolkit components and demo applications
+2. **Client forks** should be created from **minimal** branch for clean start without unnecessary demo code
+3. **Generic improvements** can be contributed back to main repo (only non-sensitive code)
+4. **Main repo stays clean** - no client-specific or confidential code mixed with public toolkit
+
+### For Forks:
+
+```bash
+# Fork from minimal branch for clean start
+git clone -b minimal https://github.com/GAIK-project/GAIK-platform.git my-client-project
+```
+
 ## 📁 Structure
 
 ```
 gaik-platform/
 ├── web/                    # Web applications
 │   ├── dashboard/          # Next.js Dashboard with AI features
-│   └── another-web-app/    # Other web applications
+│   └── client-template/    # Other web applications
 ├── shared/                 # Shared code packages
 │   ├── components/         # Shared React components
 │   ├── types/              # TypeScript type definitions
