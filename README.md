@@ -448,4 +448,3 @@ To deploy your changes:
 > **Note**: This automated deployment is only configured for the GAIK repository. Other forks or repositories will need to set up their own CI/CD pipeline.
 
 You can find all available tags (versions) here: <https://github.com/GAIK-project/GAIK-dashboard/tags>
-
