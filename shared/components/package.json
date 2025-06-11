@@ -1,0 +1,12 @@
+{
+  "name": "@gaik/shared-components",
+  "version": "1.0.0",
+  "description": "Shared React components for GAIK applications",
+  "main": "index.ts",
+  "types": "index.ts",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

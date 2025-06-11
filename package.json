@@ -1,0 +1,9 @@
+{
+  "name": "gaik-platform",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter=dashboard dev",
+    "dashboard:build": "pnpm --filter=dashboard build",
+    "dashboard:docker": "docker build -f web/dashboard/Dockerfile -t dashboard ."
+  }
+}
