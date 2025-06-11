@@ -60,12 +60,12 @@ export const routes: RouteConfig[] = [
     title: "Dataset manager",
     icon: "tabler:list-check",
   },
-  {
-    path: "admin/invite-user",
-    title: "Invite",
-    icon: "tabler:send",
-    roles: ["ADMIN"], // Restrict to admin only
-  },
+  // {
+  //   path: "admin/invite-user",
+  //   title: "Invite",
+  //   icon: "tabler:send",
+  //   roles: ["ADMIN"], // Restrict to admin only
+  // },
 ];
 // Helper function to get route title by path
 export function getRouteTitle(
