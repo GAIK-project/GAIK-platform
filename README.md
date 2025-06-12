@@ -74,6 +74,10 @@ pnpm i
 pnpm dev
 ```
 
+**📦 Automatic Deployment:**
+
+The Dashboard application (`web/dashboard`) is automatically deployed via CI/CD pipeline when changes are pushed to the **main** branch. Any modifications to the dashboard will be live shortly after merging to main.
+
 ## 🔧 How it works
 
 - **Monorepo management:** `pnpm install` at root optimizes shared dependencies across all apps
