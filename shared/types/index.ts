@@ -44,7 +44,7 @@ export interface FileUpload {
 export interface ChatMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   timestamp: Date;
   userId?: string;
 }
@@ -83,9 +83,9 @@ export interface RagDataset {
 /**
  * Common utility types
  */
-export type Status = 'idle' | 'loading' | 'success' | 'error';
+export type Status = "idle" | "loading" | "success" | "error";
 
-export type SortOrder = 'asc' | 'desc';
+export type SortOrder = "asc" | "desc";
 
 export interface PaginationParams {
   page: number;

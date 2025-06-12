@@ -1,8 +1,0 @@
-{
-  "index": "Overview",
-  "authentication": "🔐 Authentication",
-  "rest": "🌐 REST API",
-  "graphql": "📊 GraphQL",
-  "webhooks": "🔗 Webhooks",
-  "examples": "📚 Examples"
-}
