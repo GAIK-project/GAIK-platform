@@ -1,0 +1,4 @@
+packages:
+  - 'web/*'                     # All web applications
+  - 'shared/*'                  # Shared JS/TS packages
+  # backend/ is not included - Python handles itself

@@ -1,0 +1,375 @@
+# Getting Started with JavaScript Toolkit
+
+Quick start guide for building AI-powered frontend applications with the GAIK JavaScript toolkit.
+
+## Installation
+
+```bash
+# Install via npm
+npm install @gaik/toolkit
+
+# Install via yarn
+yarn add @gaik/toolkit
+
+# Install via pnpm
+pnpm add @gaik/toolkit
+```
+
+## Basic Setup
+
+### React Application
+
+```jsx
+import React from 'react';
+import { GAIKProvider } from '@gaik/toolkit';
+import Dashboard from './components/Dashboard';
+
+function App() {
+  return (
+    <GAIKProvider 
+      apiKey={process.env.REACT_APP_GAIK_API_KEY}
+      config={{
+        endpoint: 'https://api.gaik.com/v1',
+        timeout: 30000
+      }}
+    >
+      <Dashboard />
+    </GAIKProvider>
+  );
+}
+
+export default App;
+```
+
+### Vue.js Application
+
+```vue
+<template>
+  <div id="app">
+    <gaik-provider :config="gaikConfig">
+      <dashboard />
+    </gaik-provider>
+  </div>
+</template>
+
+<script>
+import { GAIKProvider } from '@gaik/toolkit/vue';
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      gaikConfig: {
+        apiKey: process.env.VUE_APP_GAIK_API_KEY,
+        endpoint: 'https://api.gaik.com/v1'
+      }
+    };
+  }
+};
+</script>
+```
+
+## Your First AI Component
+
+### React Hook for Business Insights
+
+```jsx
+import React from 'react';
+import { useBusinessInsights, AIInsightCard } from '@gaik/toolkit';
+
+function BusinessDashboard({ businessData }) {
+  const { 
+    insights, 
+    loading, 
+    error, 
+    regenerateInsights 
+  } = useBusinessInsights(businessData);
+
+  if (loading) {
+    return <div className="loading">Generating AI insights...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        Error: {error.message}
+        <button onClick={regenerateInsights}>Retry</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard">
+      <h2>AI Business Insights</h2>
+      <div className="insights-grid">
+        {insights.map(insight => (
+          <AIInsightCard 
+            key={insight.id} 
+            insight={insight}
+            onActionClick={(action) => handleAction(insight, action)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function handleAction(insight, action) {
+  console.log(`Executing action: ${action} for insight: ${insight.id}`);
+  // Implement your business logic here
+}
+```
+
+### Interactive Data Visualization
+
+```jsx
+import React from 'react';
+import { BusinessChart, useChartData } from '@gaik/toolkit';
+
+function RevenueChart({ timeRange = '30d' }) {
+  const { data, loading } = useChartData('revenue', { timeRange });
+
+  return (
+    <BusinessChart
+      type="line"
+      data={data}
+      options={{
+        aiInsights: true,
+        predictions: true,
+        interactive: true,
+        theme: 'business'
+      }}
+      onDataPointClick={(point) => {
+        console.log('Clicked data point:', point);
+      }}
+      onInsightGenerated={(insight) => {
+        console.log('Chart generated insight:', insight);
+      }}
+    />
+  );
+}
+```
+
+## Real-time AI Processing
+
+```javascript
+import { GAIKWebSocket, useRealTimeInsights } from '@gaik/toolkit';
+
+function RealTimeDashboard() {
+  const { 
+    insights, 
+    connectionStatus, 
+    sendData 
+  } = useRealTimeInsights({
+    endpoint: 'wss://api.gaik.com/stream',
+    autoConnect: true
+  });
+
+  const handleNewData = (data) => {
+    sendData({
+      type: 'business_metrics',
+      payload: data,
+      requestInsights: true
+    });
+  };
+
+  return (
+    <div>
+      <div className={`status ${connectionStatus}`}>
+        Status: {connectionStatus}
+      </div>
+      
+      {insights.map(insight => (
+        <div key={insight.id} className="real-time-insight">
+          <h3>{insight.title}</h3>
+          <p>{insight.description}</p>
+          <span className="confidence">
+            Confidence: {(insight.confidence * 100).toFixed(1)}%
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Custom AI Components
+
+```jsx
+import React, { useState } from 'react';
+import { useGAIKClient } from '@gaik/toolkit';
+
+function CustomInsightGenerator() {
+  const [input, setInput] = useState('');
+  const [result, setResult] = useState(null);
+  const client = useGAIKClient();
+
+  const generateCustomInsight = async () => {
+    try {
+      const insight = await client.generateInsight({
+        type: 'custom',
+        data: { userInput: input },
+        options: {
+          model: 'gaik-custom-v1',
+          creativity: 0.8
+        }
+      });
+      
+      setResult(insight);
+    } catch (error) {
+      console.error('Failed to generate insight:', error);
+    }
+  };
+
+  return (
+    <div className="custom-generator">
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Describe your business scenario..."
+      />
+      
+      <button onClick={generateCustomInsight}>
+        Generate AI Insight
+      </button>
+
+      {result && (
+        <div className="result">
+          <h3>AI Generated Insight</h3>
+          <p>{result.description}</p>
+          
+          {result.recommendations && (
+            <div className="recommendations">
+              <h4>Recommendations:</h4>
+              <ul>
+                {result.recommendations.map((rec, index) => (
+                  <li key={index}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Configuration
+
+### Environment Variables
+
+```bash
+# .env
+REACT_APP_GAIK_API_KEY=your_api_key_here
+REACT_APP_GAIK_ENDPOINT=https://api.gaik.com/v1
+REACT_APP_GAIK_WS_ENDPOINT=wss://api.gaik.com/stream
+```
+
+### Configuration Object
+
+```javascript
+const gaikConfig = {
+  apiKey: process.env.REACT_APP_GAIK_API_KEY,
+  endpoint: 'https://api.gaik.com/v1',
+  websocket: {
+    endpoint: 'wss://api.gaik.com/stream',
+    reconnect: true,
+    maxRetries: 5
+  },
+  defaults: {
+    timeout: 30000,
+    retries: 3,
+    aiModel: 'gaik-business-v1'
+  },
+  ui: {
+    theme: 'light',
+    animations: true,
+    showConfidence: true
+  }
+};
+```
+
+## Styling
+
+### CSS Classes
+
+```css
+/* GAIK Component Styles */
+.gaik-insight-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+}
+
+.gaik-insight-card--high-confidence {
+  border-color: #4caf50;
+}
+
+.gaik-insight-card--low-confidence {
+  border-color: #ff9800;
+}
+
+.gaik-chart {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gaik-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+```
+
+### Tailwind CSS Classes
+
+```jsx
+<AIInsightCard 
+  className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
+  insight={insight}
+/>
+
+<BusinessChart 
+  className="w-full h-96 bg-gradient-to-br from-blue-50 to-indigo-50"
+  data={chartData}
+/>
+```
+
+## Testing
+
+```javascript
+import { render, screen } from '@testing-library/react';
+import { GAIKTestProvider } from '@gaik/toolkit/testing';
+import BusinessDashboard from './BusinessDashboard';
+
+describe('BusinessDashboard', () => {
+  test('renders insights correctly', async () => {
+    const mockInsights = [
+      {
+        id: '1',
+        description: 'Revenue is trending upward',
+        confidence: 0.9
+      }
+    ];
+
+    render(
+      <GAIKTestProvider mockInsights={mockInsights}>
+        <BusinessDashboard />
+      </GAIKTestProvider>
+    );
+
+    expect(await screen.findByText('Revenue is trending upward')).toBeInTheDocument();
+  });
+});
+```
+
+## Next Steps
+
+1. Explore [React Components](/javascript/react)
+2. Learn about [Vue.js Integration](/javascript/vue)
+3. Check out [Real-time Features](/javascript/realtime)
+4. Browse [Example Applications](/javascript/examples)
