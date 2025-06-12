@@ -66,6 +66,14 @@ cd web/dashboard
 pnpm dev
 ```
 
+**Dashboard quick start (from main branch):**
+
+```bash
+# Run dashboard directly from root
+pnpm i
+pnpm dev
+```
+
 ## 🔧 How it works
 
 - **Monorepo management:** `pnpm install` at root optimizes shared dependencies across all apps
