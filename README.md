@@ -33,6 +33,7 @@ git clone -b minimal https://github.com/GAIK-project/GAIK-platform.git my-client
 gaik-platform/
 ├── web/                    # Web applications
 │   ├── dashboard/          # Next.js Dashboard with AI features
+│   ├── docs/               # Toolkit API documentation
 │   └── client-template/    # Other web applications
 ├── shared/                 # Shared code packages
 │   ├── components/         # Shared React components
@@ -64,6 +65,18 @@ Navigate to specific app folders in `web/` and work with their individual `packa
 cd web/dashboard
 pnpm dev
 ```
+
+**Dashboard quick start (from main branch):**
+
+```bash
+# Run dashboard directly from root
+pnpm i
+pnpm dev
+```
+
+**📦 Automatic Deployment:**
+
+The Dashboard application (`web/dashboard`) is automatically deployed via CI/CD pipeline when changes are pushed to the **main** branch. Any modifications to the dashboard will be live shortly after merging to main.
 
 ## 🔧 How it works
 
