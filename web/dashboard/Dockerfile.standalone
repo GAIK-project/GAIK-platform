@@ -1,5 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
-FROM registry.access.redhat.com/ubi8/nodejs-20:latest AS base
+# This image is optimized for running Next.js applications in Rahti-2 and OpenShift environments.
+FROM registry.access.redhat.com/ubi9/nodejs-22-minimal:latest AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -10,10 +11,14 @@ USER 1001
 
 # Install dependencies based on the preferred package manager
 COPY --chown=1001:1001 package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+
+# Install pnpm globally if pnpm-lock.yaml exists
+RUN if [ -f pnpm-lock.yaml ]; then npm install -g pnpm; fi
+
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm i --frozen-lockfile --ignore-scripts; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
@@ -22,37 +27,63 @@ FROM base AS builder
 WORKDIR /opt/app-root/src
 USER 1001
 
+# Copy node_modules from deps stage
 COPY --from=deps --chown=1001:1001 /opt/app-root/src/node_modules ./node_modules
 COPY --chown=1001:1001 . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
-ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Use .env.example for production builds
-COPY --chown=1001:1001 .env.example .env.local
+# Install pnpm globally in builder stage if needed
+RUN if [ -f pnpm-lock.yaml ]; then npm install -g pnpm; fi
 
+# Build the application
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
 # Production image, copy all the files and run next
-FROM registry.access.redhat.com/ubi8/nodejs-20-minimal:latest AS runner
+FROM base AS runner
+
 WORKDIR /opt/app-root/src
-USER 1001
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Copy standalone build
-COPY --from=builder --chown=1001:1001 /opt/app-root/src/.next/standalone ./
-COPY --from=builder --chown=1001:1001 /opt/app-root/src/.next/static ./.next/static
-COPY --from=builder --chown=1001:1001 /opt/app-root/src/public ./public
+# Add required Red Hat container labels
+LABEL name="gaik/web-dashboard" \
+      vendor="GAIK Platform" \
+      version="1.0.0" \
+      release="1" \
+      summary="GAIK Platform Web Dashboard" \
+      description="Next.js web application for GAIK platform dashboard"
+
+# Create all necessary cache directories and set Red Hat/OpenShift compatible permissions
+# Use root group ownership and g=u permissions for arbitrary user ID compatibility
+RUN mkdir -p .next/cache/images \
+    .next/cache/fetch-cache \
+    .next/server/app \
+    .next/server/pages \
+    .next/cache/webpack \
+    .next/cache/swc \
+    tmp \
+    && chown -R 1001:0 .next tmp \
+    && chmod -R g=u .next tmp
+
+# Copy public files
+COPY --from=builder --chown=1001:0 /opt/app-root/src/public ./public
+
+# Automatically leverage output traces to reduce image size
+COPY --from=builder --chown=1001:0 /opt/app-root/src/.next/standalone ./
+COPY --from=builder --chown=1001:0 /opt/app-root/src/.next/static ./.next/static
+
+# Set final user to non-root for security (required by Red Hat/OpenShift)
+USER 1001
 
 EXPOSE 3000
 
