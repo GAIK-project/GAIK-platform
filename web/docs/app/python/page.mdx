@@ -1,84 +1,101 @@
-# Python Toolkit
+# Python API Services
 
-This section documents all Python-based AI components and tools developed for the GAIK project.
+This section documents the Python-based API services in the GAIK platform.
 
 ## Overview
 
-Our Python toolkit provides powerful AI/ML capabilities for knowledge management, including:
+Our Python services provide:
 
-- **Knowledge Extraction**: NLP models for extracting insights from documents
-- **Data Processing**: Pipelines for cleaning and structuring business data
-- **AI Models**: Custom-trained models for specific business use cases
-- **Integration Tools**: Connectors for various data sources and systems
+- **🎵 Whisper API**: Audio/video transcription using OpenAI Whisper
+- **🔧 Processing Pipelines**: Data processing and analysis tools
+- **🤖 AI Integration**: OpenAI and Azure OpenAI service integrations
 
-## Components
+## Services
 
-### 🧠 Knowledge Extraction
+### Whisper Transcription API
 
-```python
-from gaik.knowledge import DocumentProcessor
+High-quality audio and video transcription service with automatic chunking for large files.
 
-# Extract key information from business documents
-processor = DocumentProcessor()
-insights = processor.extract_insights("document.pdf")
-print(insights.summary)
-```
+**Location**: `python/whisper-api/`  
+**Port**: `8000` (default)  
+**Base URL**: `http://localhost:8000`
 
-### 📊 Data Processing
+#### Key Features
+- Automatic file chunking for large audio/video files (>20MB)
+- Multiple output formats (text, SRT, VTT, JSON)
+- Dual provider support (Azure OpenAI & OpenAI)
+- Automatic language detection
+- Comprehensive error handling
 
-```python
-from gaik.data import DataPipeline
-
-# Process and structure business data
-pipeline = DataPipeline()
-cleaned_data = pipeline.process(raw_data)
-```
-
-### 🔬 AI Models
-
-```python
-from gaik.models import BusinessInsightModel
-
-# Generate business insights using AI
-model = BusinessInsightModel()
-prediction = model.predict(business_data)
-```
-
-## Installation
+#### Quick Start
 
 ```bash
-# Install the GAIK Python package
-pip install gaik-toolkit
+# Navigate to whisper API directory
+cd python/whisper-api
 
-# Or install from source
-git clone <repo-url>
-cd gaik-python
-pip install -e .
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment variables
+cp .env.example .env
+# Add your OPENAI_API_KEY or AZURE credentials
+
+# Start the service
+python main.py
 ```
 
-## API Reference
+#### Basic Usage
 
-### DocumentProcessor
+```python
+import requests
 
-| Method | Description | Parameters |
-|--------|-------------|------------|
-| `extract_insights()` | Extract key insights from documents | `file_path: str` |
-| `summarize()` | Generate document summaries | `text: str, max_length: int` |
-| `classify()` | Classify document types | `document: Document` |
+# Transcribe an audio file
+with open("audio.mp3", "rb") as f:
+    response = requests.post(
+        "http://localhost:8000/transcribe",
+        files={"file": f},
+        data={
+            "language": "fi",
+            "response_format": "srt",
+            "provider": "azure"
+        }
+    )
 
-### DataPipeline
+result = response.json()
+print(result["content"])
+```
 
-| Method | Description | Parameters |
-|--------|-------------|------------|
-| `process()` | Clean and structure data | `data: pandas.DataFrame` |
-| `validate()` | Validate data quality | `data: pandas.DataFrame` |
-| `transform()` | Apply business rules | `data: pandas.DataFrame` |
+For detailed API documentation, see the [API Reference](/api#whisper-transcription-api) section.
 
-## Examples
+## Development
 
-See the [examples directory](https://github.com/your-repo/examples) for complete usage examples.
+### Environment Setup
 
-## Contributing
+Each Python service requires its own environment configuration:
+
+```bash
+# Whisper API
+cd python/whisper-api
+pip install -r requirements.txt
+
+# Create .env file with your credentials
+echo "OPENAI_API_KEY=your_key_here" > .env
+# OR for Azure
+echo "AZURE_API_KEY=your_key" > .env
+echo "AZURE_API_BASE=https://your-resource.openai.azure.com/" >> .env
+```
+
+### Testing
+
+```bash
+# Test Whisper API health
+curl http://localhost:8000/health
+
+# Test transcription with sample file
+curl -X POST "http://localhost:8000/transcribe" \
+  -F "file=@sample.wav" \
+  -F "response_format=text"
+```
 
 1. Fork the repository
 2. Create a feature branch

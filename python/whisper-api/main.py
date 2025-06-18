@@ -1,12 +1,15 @@
 import os
 import tempfile
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal, Optional
 
+import jwt
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi import (Depends, FastAPI, File, Form, Header, HTTPException,
+                     UploadFile)
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from openai import AzureOpenAI, OpenAI
 from pydantic import BaseModel
 from pydub import AudioSegment
@@ -16,10 +19,57 @@ env_path = Path(__file__).parent / ".env"
 load_dotenv(env_path, override=True)  # Force reload with specific path
 
 app = FastAPI(
-    title="Whisper API",
-    description="Simple OpenAI Whisper transcription API with automatic chunking",
+    title="GAIK Whisper API",
+    description="Secure OpenAI Whisper transcription API with JWT authentication",
     version="1.0.0"
 )
+
+# JWT configuration
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-this-in-production")
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
+
+# Security
+security = HTTPBearer()
+
+class TokenResponse(BaseModel):
+    """Response model for authentication token."""
+    access_token: str
+    token_type: str
+    expires_in: int
+
+def create_jwt_token(data: dict) -> str:
+    """Create JWT token with expiration."""
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
+def verify_jwt_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    """Verify JWT token and return payload."""
+    try:
+        payload = jwt.decode(credentials.credentials, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Token has expired"
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token"
+        )
+
+def validate_api_key(x_api_key: str = Header(..., alias="X-API-Key")) -> str:
+    """Validate API key from header."""
+    valid_api_keys = os.getenv("VALID_API_KEYS", "").split(",")
+    if not x_api_key or x_api_key not in valid_api_keys:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid API key"
+        )
+    return x_api_key
 
 class TranscriptionResponse(BaseModel):
     """Response model for transcription results."""
@@ -163,17 +213,41 @@ def combine_transcriptions(
             # Simple SRT combination - in production you'd want proper timestamp adjustment
             if combined_srt:
                 combined_srt += "\n\n"
-            combined_srt += transcription
-            
+            combined_srt += transcription            
         return combined_srt
     else:
         # For text formats, just join with spaces
         return " ".join(t.strip() for t in transcriptions if t.strip())
 
+@app.post("/auth/token", response_model=TokenResponse)
+async def get_access_token(api_key: str = Form(...)):
+    """
+    Get JWT access token using API key.
+    
+    - **api_key**: Your API key for authentication
+    """
+    # Simple API key validation - in production use proper user management
+    valid_api_keys = os.getenv("VALID_API_KEYS", "").split(",")
+    if not api_key or api_key not in valid_api_keys:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid API key"
+        )
+    
+    # Create JWT token
+    token_data = {"sub": api_key, "type": "access_token"}
+    access_token = create_jwt_token(token_data)
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        expires_in=JWT_EXPIRATION_HOURS * 3600
+    )
+
 @app.get("/")
 async def root():
     """Health check endpoint."""
-    return {"message": "Whisper API is running"}
+    return {"message": "GAIK Whisper API is running", "version": "1.0.0"}
 
 @app.get("/health")
 async def health():
@@ -187,13 +261,15 @@ async def health():
         # Simple test to verify connection works
         return {
             "status": "healthy",
-            "openai_configured": True
+            "openai_configured": True,
+            "version": "1.0.0"
         }
     except Exception as e:
         return {
             "status": "unhealthy",
             "openai_configured": False,
-            "error": str(e)
+            "error": str(e),
+            "version": "1.0.0"
         }
 
 @app.post("/transcribe", response_model=TranscriptionResponse)
@@ -201,10 +277,11 @@ async def transcribe_audio(
     file: UploadFile = File(...),
     language: Optional[str] = Form(None),
     response_format: Literal["text", "srt", "vtt", "json", "verbose_json"] = Form("text"),
-    provider: Literal["azure", "openai"] = Form("azure")
+    provider: Literal["azure", "openai"] = Form("azure"),
+    token_data: dict = Depends(verify_jwt_token)
 ):
     """
-    Transcribe audio file using OpenAI Whisper.
+    Transcribe audio file using OpenAI Whisper. Requires JWT authentication.
     
     - **file**: Audio file to transcribe (mp3, wav, m4a, etc.)
     - **language**: Language code (fi, en, sv, etc.) - optional for auto-detect  
@@ -213,22 +290,28 @@ async def transcribe_audio(
     """
     start_time = time.time()
     
+    # Extract user info from token for logging and tracking
+    user_id = token_data.get("sub", "unknown")
+    
+    print(f"Transcription request from user: {user_id}")
+    
     # Validate file type
     if not file.content_type or not file.content_type.startswith(('audio/', 'video/')):
+        print(f"Invalid file type '{file.content_type}' from user: {user_id}")
         raise HTTPException(
             status_code=400,
             detail="File must be an audio or video file"
         )
-    
     # Save uploaded file temporarily
     file_suffix = Path(file.filename).suffix if file.filename else ".tmp"
     with tempfile.NamedTemporaryFile(delete=False, suffix=file_suffix) as temp_file:
         content = await file.read()
         temp_file.write(content)
         temp_file_path = temp_file.name    
+    
     try:
         file_size_mb = get_file_size_mb(temp_file_path)
-        print(f"Processing file: {file.filename} ({file_size_mb:.1f} MB)")
+        print(f"Processing file: {file.filename} ({file_size_mb:.1f} MB) for user: {user_id}, provider: {provider}, format: {response_format}")
         
         # Get OpenAI client based on provider parameter
         client = get_client(provider)
@@ -264,17 +347,18 @@ async def transcribe_audio(
         detected_language = language or "auto"
         
         processing_time = time.time() - start_time
-        
-        # Token usage info (Whisper API doesn't provide detailed token usage)
+          # Token usage info (Whisper API doesn't provide detailed token usage)
         token_info = {
             "provider": provider,
             "model": "whisper-1", 
             "chunks_processed": total_chunks,
+            "user_id": user_id,
             "note": "Whisper API does not provide detailed token usage information"
         }
         
-        return TranscriptionResponse(
-            language=detected_language,
+        print(f"Transcription completed for user: {user_id}, chunks: {total_chunks}, time: {processing_time:.2f}s")
+        
+        return TranscriptionResponse(            language=detected_language,
             content=combined_content,
             format=response_format,
             file_size_mb=file_size_mb,
@@ -284,7 +368,7 @@ async def transcribe_audio(
         )
         
     except Exception as e:
-        print(f"Transcription error: {str(e)}")
+        print(f"Transcription error for user {user_id}: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"Transcription failed: {str(e)}"

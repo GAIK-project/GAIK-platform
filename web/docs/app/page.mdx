@@ -1,55 +1,58 @@
-# GAIK - Generative AI-Enhanced Knowledge Management
+# GAIK Platform Documentation
 
-Welcome to the **GAIK Project** documentation! This project develops advanced AI tools to solve critical business challenges in knowledge management and information access.
+Welcome to the **GAIK Platform** - an AI-powered knowledge management system with advanced transcription and document processing capabilities.
 
-## Project Overview
+## Architecture Overview
 
-The GAIK project leverages world-class generative AI (GenAI) to address organizations' critical business challenges in knowledge management and information access. We research and develop advanced AI tools that help companies eliminate information bottlenecks and significantly improve their ability to create, combine, and utilize essential business information.
+The GAIK platform consists of several integrated components:
 
-### Key Information
+### 🖥️ Web Dashboard
+- Next.js-based frontend application
+- User management and authentication
+- File upload and processing interface
 
-- **Duration**: 2/2025–1/2027
-- **Funding**: European Regional Development Fund (ERDF)
-- **Partners**: University of Helsinki, Tampere University, Azets Insight Oy, Dynamik Oy, Etec Automation Oy, Lotus Demolition Oy, Luvata Oy, QAdental, TIB Germany, 3IA France, MCI Austria
+### 🐍 Python API Services
+- Audio/video transcription service
+- AI/ML processing pipelines
+- Document analysis tools
 
-## What You'll Find Here
-
-This documentation covers the AI toolkit components, tools, and APIs developed for the GAIK project:
-
-### 🐍 Python Components
-- AI/ML models and algorithms
-- Data processing pipelines
-- Knowledge extraction tools
-- Integration modules
-
-### 🟨 JavaScript Tools
-- Frontend AI components
-- Interactive data visualization
-- Real-time processing tools
-- Web-based interfaces
-
-### 🔗 API Documentation
-- RESTful API endpoints
-- GraphQL schemas
-- Integration guides
-- Authentication methods
+### 🔧 Shared Components
+- TypeScript utilities and types
+- Reusable UI components
+- Authentication modules
 
 ## Quick Start
 
+### Prerequisites
+- Python 3.8+
+- Node.js 18+
+- OpenAI API key or Azure OpenAI credentials
+
+### Setup
 ```bash
-# Clone the repository
-git clone <your-gaik-repo>
+# Clone and install dependencies
+git clone <repo-url>
+cd GAIK-platform
 
-# Install Python dependencies
-pip install -r requirements.txt
+# Install dependencies
+pnpm install
 
-# Install JavaScript dependencies
-npm install
+# Start development
+pnpm dev
+```
 
-# Start development server
-npm run dev
+## Development
+
+The platform uses a monorepo structure with pnpm workspaces:
+
+```
+GAIK-platform/
+├── python/whisper-api/     # Transcription API service
+├── web/dashboard/          # Next.js frontend
+├── web/docs/              # Documentation site
+└── shared/                # Shared TypeScript components
 ```
 
 ---
 
-Built with ❤️ for the GAIK Project at [Haaga-Helia](https://www.haaga-helia.fi/en/rdi-projects/gaik)
+For more information, visit the [GAIK project page](https://www.haaga-helia.fi/en/rdi-projects/gaik)

@@ -1,305 +1,317 @@
 # API Documentation
 
-Complete API reference for the GAIK platform's REST and GraphQL APIs.
-
-## Overview
-
-The GAIK API provides programmatic access to:
-
-- **Knowledge Extraction**: Extract insights from documents and data
-- **AI Processing**: Generate business insights using AI models
-- **Data Management**: Store and retrieve business knowledge
-- **Integration**: Connect with external systems and data sources
+API reference for the GAIK Whisper transcription service.
 
 ## Base URL
 
 ```
-Production: https://api.gaik.com/v1
-Development: https://dev-api.gaik.com/v1
+Production: https://your-gaik-api.2.rahtiapp.fi
+Development: http://localhost:8000
 ```
 
 ## Authentication
 
-All API requests require authentication using API keys:
+The API uses JWT (JSON Web Token) authentication. You need to:
+
+1. **Get an API key** from the GAIK team
+2. **Exchange API key for JWT token**
+3. **Use JWT token in API requests**
+
+**Token Expiry**: JWT tokens expire after 24 hours and need to be refreshed.
+
+**Tip**: For production applications, implement automatic token refresh in your client code. Check if token is expired before making requests and automatically get a new one using your stored API key.
+
+### Get JWT Token
+
+```http
+POST /auth/token
+```
+
+**Request:**
+```bash
+curl -X POST "https://your-gaik-api.2.rahtiapp.fi/auth/token" \
+  -F "api_key=your_api_key_here"
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "token_type": "bearer",
+  "expires_in": 86400
+}
+```
+
+### Use JWT Token
+
+Include the JWT token in the `Authorization` header for all API requests:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" \
-     -H "Content-Type: application/json" \
-     https://api.gaik.com/v1/insights
+curl -H "Authorization: Bearer your_jwt_token_here" \
+     "https://your-gaik-api.2.rahtiapp.fi/transcribe"
 ```
 
-```javascript
-const headers = {
-  'Authorization': 'Bearer YOUR_API_KEY',
-  'Content-Type': 'application/json'
-};
-```
+## Endpoints
 
-## REST API Endpoints
-
-### Knowledge Extraction
-
-#### Extract Document Insights
+### Health Check
 
 ```http
-POST /v1/knowledge/extract
+GET /health
 ```
 
-**Request Body:**
+Check if the API is running and properly configured.
+
+**Response:**
 ```json
 {
-  "document": {
-    "type": "pdf|docx|txt",
-    "content": "base64_encoded_content",
-    "url": "https://example.com/document.pdf"
-  },
-  "options": {
-    "language": "fi|en",
-    "extract_entities": true,
-    "generate_summary": true
-  }
+  "status": "healthy",
+  "openai_configured": true,
+  "version": "1.0.0"
 }
+```
+
+### Transcribe Audio/Video
+
+```http
+POST /transcribe
+```
+
+**Authentication Required**: Yes (JWT token)
+
+Transcribe audio or video files. Large files (>20MB) are automatically chunked.
+
+**Parameters:**
+- `file` (required): Audio/video file (mp3, wav, m4a, mp4, etc.)
+- `language` (optional): Language code (fi, en, sv, etc.)
+- `response_format` (optional): `text`, `srt`, `vtt`, `json`, `verbose_json` (default: `text`)
+- `provider` (optional): `azure` or `openai` (default: `azure`)
+
+**Example:**
+```bash
+curl -X POST "https://your-gaik-api.2.rahtiapp.fi/transcribe" \
+  -H "Authorization: Bearer your_jwt_token" \
+  -F "file=@audio.mp3" \
+  -F "language=fi" \
+  -F "response_format=srt"
 ```
 
 **Response:**
 ```json
 {
-  "id": "insight_123",
-  "status": "completed",
-  "insights": {
-    "summary": "Document summary...",
-    "entities": ["entity1", "entity2"],
-    "key_points": ["point1", "point2"],
-    "confidence": 0.95
-  },
-  "processing_time": 2.3
-}
-```
-
-#### Get Processing Status
-
-```http
-GET /v1/knowledge/extract/{insight_id}
-```
-
-**Response:**
-```json
-{
-  "id": "insight_123",
-  "status": "processing|completed|failed",
-  "progress": 75,
-  "estimated_completion": "2025-05-28T10:30:00Z"
-}
-```
-
-### AI Processing
-
-#### Generate Business Insights
-
-```http
-POST /v1/ai/insights
-```
-
-**Request Body:**
-```json
-{
-  "data": {
-    "type": "business_metrics|customer_data|financial",
-    "content": { /* your business data */ }
-  },
-  "model": "gaik-business-v1",
-  "options": {
-    "generate_recommendations": true,
-    "include_predictions": true
+  "language": "fi",
+  "content": "Transkriboidun tekstin sisältö...",
+  "format": "srt",
+  "file_size_mb": 15.2,
+  "processing_time_seconds": 23.5,
+  "chunks_processed": 1,
+  "token_usage": {
+    "provider": "azure",
+    "model": "whisper-1",
+    "chunks_processed": 1
   }
 }
 ```
 
-**Response:**
-```json
-{
-  "insights": [
-    {
-      "type": "trend_analysis",
-      "description": "Sales trending upward by 15%",
-      "confidence": 0.88,
-      "recommendations": ["action1", "action2"]
-    }
-  ],
-  "predictions": {
-    "next_quarter": 125000,
-    "confidence_interval": [120000, 130000]
-  }
-}
-```
+## Features
 
-### Data Management
+- **🔒 JWT Authentication**: Secure API access with token-based authentication
+- **📁 Large File Support**: Automatic chunking for files >20MB
+- **🌐 Multiple Formats**: Text, SRT, VTT, JSON output formats
+- **🔄 Dual Provider**: Azure OpenAI and OpenAI support
+- **🎯 Language Detection**: Auto-detect or specify language
+- **⚡ Error Handling**: Comprehensive error handling and cleanup
 
-#### Store Knowledge
+## Language Codes
 
-```http
-POST /v1/data/knowledge
-```
+Common language codes:
+- `fi` - Finnish
+- `en` - English  
+- `sv` - Swedish
+- `de` - German
+- `fr` - French
+- `es` - Spanish
 
-**Request Body:**
-```json
-{
-  "title": "Business Process Documentation",
-  "content": "Process description...",
-  "tags": ["process", "business"],
-  "metadata": {
-    "department": "IT",
-    "created_by": "user123"
-  }
-}
-```
-
-#### Search Knowledge
-
-```http
-GET /v1/data/knowledge/search?q=business%20process&limit=10
-```
-
-**Response:**
-```json
-{
-  "results": [
-    {
-      "id": "kb_456",
-      "title": "Business Process Documentation",
-      "snippet": "Process description excerpt...",
-      "relevance_score": 0.92,
-      "metadata": { /* metadata */ }
-    }
-  ],
-  "total": 156,
-  "page": 1
-}
-```
-
-## GraphQL API
-
-### Endpoint
-```
-POST /v1/graphql
-```
-
-### Schema Overview
-
-```graphql
-type Query {
-  insights(input: InsightInput!): [Insight]
-  knowledge(id: ID!): Knowledge
-  searchKnowledge(query: String!, limit: Int): [Knowledge]
-}
-
-type Mutation {
-  extractInsights(input: ExtractionInput!): ExtractionResult
-  createKnowledge(input: KnowledgeInput!): Knowledge
-  updateKnowledge(id: ID!, input: KnowledgeInput!): Knowledge
-}
-
-type Insight {
-  id: ID!
-  type: InsightType!
-  description: String!
-  confidence: Float!
-  recommendations: [String]
-  createdAt: DateTime!
-}
-```
-
-### Example Queries
-
-```graphql
-# Extract insights from document
-mutation ExtractInsights($input: ExtractionInput!) {
-  extractInsights(input: $input) {
-    id
-    status
-    insights {
-      type
-      description
-      confidence
-    }
-  }
-}
-
-# Search knowledge base
-query SearchKnowledge($query: String!) {
-  searchKnowledge(query: $query, limit: 10) {
-    id
-    title
-    snippet
-    relevanceScore
-  }
-}
-```
-
-## Error Handling
-
-All API errors follow this format:
-
-```json
-{
-  "error": {
-    "code": "INVALID_INPUT",
-    "message": "The provided document format is not supported",
-    "details": {
-      "supported_formats": ["pdf", "docx", "txt"]
-    }
-  }
-}
-```
-
-### Common Error Codes
-
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `INVALID_API_KEY` | 401 | Invalid or missing API key |
-| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
-| `INVALID_INPUT` | 400 | Invalid request data |
-| `PROCESSING_FAILED` | 500 | AI processing failed |
-
-## Rate Limits
-
-- **Free Tier**: 100 requests/hour
-- **Pro Tier**: 1,000 requests/hour  
-- **Enterprise**: Custom limits
-
-## SDKs
+## Code Examples
 
 ### Python
 
 ```python
-from gaik_client import GAIKClient
+import requests
 
-client = GAIKClient(api_key="your_key")
-insights = client.extract_insights("document.pdf")
+# Get JWT token
+def get_jwt_token(api_key):
+    response = requests.post(
+        "https://your-gaik-api.2.rahtiapp.fi/auth/token",
+        data={"api_key": api_key}
+    )
+    return response.json()["access_token"]
+
+# Transcribe file
+def transcribe_file(file_path, jwt_token, language="fi"):
+    headers = {"Authorization": f"Bearer {jwt_token}"}
+    
+    with open(file_path, "rb") as f:
+        response = requests.post(
+            "https://your-gaik-api.2.rahtiapp.fi/transcribe",
+            headers=headers,
+            files={"file": f},
+            data={"language": language, "response_format": "text"}
+        )
+    
+    return response.json()
+
+# Usage
+token = get_jwt_token("your_api_key")
+result = transcribe_file("meeting.mp3", token, "fi")
+print(result["content"])
 ```
 
 ### JavaScript
 
 ```javascript
-import { GAIKClient } from '@gaik/client';
+class WhisperClient {
+  constructor(apiKey, baseUrl = 'https://your-gaik-api.2.rahtiapp.fi') {
+    this.apiKey = apiKey;
+    this.baseUrl = baseUrl;
+    this.token = null;
+    this.tokenExpiry = null;
+  }
 
-const client = new GAIKClient({ apiKey: 'your_key' });
-const insights = await client.extractInsights(document);
+  // Get JWT token with automatic refresh
+  async getJwtToken() {
+    // Check if token is still valid (with 1 minute buffer)
+    if (this.token && this.tokenExpiry && Date.now() < this.tokenExpiry - 60000) {
+      return this.token;
+    }
+
+    const formData = new FormData();
+    formData.append('api_key', this.apiKey);
+    
+    const response = await fetch(`${this.baseUrl}/auth/token`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    const data = await response.json();
+    this.token = data.access_token;
+    this.tokenExpiry = Date.now() + (data.expires_in * 1000);
+    
+    return this.token;
+  }
+
+  // Transcribe file with automatic token refresh
+  async transcribeFile(file, options = {}) {
+    const token = await this.getJwtToken();
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    if (options.language) formData.append('language', options.language);
+    if (options.format) formData.append('response_format', options.format);
+    
+    const response = await fetch(`${this.baseUrl}/transcribe`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    
+    return await response.json();
+  }
+}
+
+// Usage with automatic token management
+const client = new WhisperClient('your_api_key');
+const result = await client.transcribeFile(audioFile, {
+  language: 'fi',
+  format: 'srt'
+});
+console.log(result.content);
 ```
 
-## Webhooks
+### Simple JavaScript (no automatic refresh)
 
-Configure webhooks to receive real-time notifications:
+```javascript
+// Get JWT token
+async function getJwtToken(apiKey) {
+  const formData = new FormData();
+  formData.append('api_key', apiKey);
+  
+  const response = await fetch('https://your-gaik-api.2.rahtiapp.fi/auth/token', {
+    method: 'POST',
+    body: formData
+  });
+  
+  const data = await response.json();
+  return data.access_token;
+}
 
-```http
-POST /v1/webhooks
+// Transcribe file
+async function transcribeFile(file, jwtToken, options = {}) {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (options.language) formData.append('language', options.language);
+  if (options.format) formData.append('response_format', options.format);
+  
+  const response = await fetch('https://your-gaik-api.2.rahtiapp.fi/transcribe', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${jwtToken}`
+    },
+    body: formData
+  });
+  
+  return await response.json();
+}
+
+// Usage
+const token = await getJwtToken('your_api_key');
+const result = await transcribeFile(audioFile, token, {
+  language: 'fi',
+  format: 'srt'
+});
+console.log(result.content);
 ```
 
-**Request Body:**
+## Error Handling
+
+### Authentication Errors
+
 ```json
 {
-  "url": "https://your-app.com/webhook",
-  "events": ["insight.completed", "processing.failed"],
-  "secret": "webhook_secret"
+  "detail": "Invalid API key"
 }
 ```
+
+```json
+{
+  "detail": "Token has expired"
+}
+```
+
+### Request Errors
+
+```json
+{
+  "detail": "File must be an audio or video file"
+}
+```
+
+```json
+{
+  "detail": "Transcription failed: [specific error message]"
+}
+```
+
+## Getting API Access
+
+To get an API key for the GAIK Whisper API:
+
+1. Contact the GAIK project team
+2. Provide your use case and organization details
+3. Receive your API key via secure channel
+4. Use the API key to get JWT tokens for API access
+
+---
+
+**Production Deployment**: This API will be deployed on CSC Rahti OpenShift platform with high availability and security.

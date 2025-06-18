@@ -12,6 +12,7 @@ dependencies = [
     "python-dotenv",
     "pydantic",
     "pydub",
+    "pyjwt",
 ]
 
 [tool.hatch.build.targets.wheel]
