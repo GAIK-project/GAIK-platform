@@ -1,8 +1,8 @@
 {
   "name": "gaik-monorepo",
-  "private": true,
-  "scripts": {
+  "private": true,  "scripts": {
     "dev": "pnpm --filter=gaik-dashboard dev",
+    "docs:dev": "pnpm --filter=docs dev",
     "dashboard:build": "pnpm --filter=gaik-dashboard build",
     "dashboard:docker": "docker build -f web/dashboard/Dockerfile -t gaik-dashboard ."
   }

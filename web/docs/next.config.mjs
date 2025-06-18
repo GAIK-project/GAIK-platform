@@ -5,7 +5,9 @@ const withNextra = nextra({
   search: true,
 });
 
-const NextConfig = {};
+const NextConfig = {
+  output: 'standalone'
+};
 
 // Export the final Next.js config with Nextra included
 export default withNextra({

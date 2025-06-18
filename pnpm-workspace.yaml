@@ -1,4 +1,5 @@
 packages:
-  - 'web/*'                     # All web applications
+  - 'web/dashboard'             # Dashboard application only
   - 'shared/*'                  # Shared JS/TS packages
+  - '!web/docs'                 # Explicitly exclude docs - standalone project
   # backend/ is not included - Python handles itself
