@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getInviteByToken } from "@/lib/db/drizzle/queries";
 import { XCircle } from "lucide-react";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import SignupForm from "./signup-form";
 
 interface SignupPageProps {

@@ -21,7 +21,7 @@ import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState } from "react";
+import React, { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 const fadeInUp = {
@@ -32,10 +32,6 @@ const fadeInUp = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeInOut",
-    },
   },
 };
 
@@ -110,6 +106,10 @@ export default function LoginPage() {
         initial="initial"
         animate="animate"
         variants={fadeInUp}
+        transition={{
+          duration: 0.5,
+          ease: "easeInOut",
+        }}
         className="flex flex-col h-full w-full items-center justify-center"
       >
         <Particles

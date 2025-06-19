@@ -1,7 +1,7 @@
 import Dashboard from "@/components/allas/dashboard";
 import { LoadingDashboard } from "@/components/loading";
 import { allasClient } from "@/lib/allasClient";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 
 async function getFiles(bucket: string) {
   try {
