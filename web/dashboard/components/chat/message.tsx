@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { memo, type ReactNode } from "react";
+import React, { memo, type ReactNode } from "react";
 import { Markdown } from "./markdown";
 
 interface MessageProps {

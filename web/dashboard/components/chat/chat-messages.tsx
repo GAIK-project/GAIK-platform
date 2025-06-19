@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { Message as MessageType } from "ai";
 import { PaperclipIcon } from "lucide-react";
+import React from "react";
 import { Message, ThinkingMessage } from "./message";
 
 interface ChatMessagesProps {
